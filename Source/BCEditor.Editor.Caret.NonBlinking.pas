@@ -3,7 +3,7 @@ unit BCEditor.Editor.Caret.NonBlinking;
 interface
 
 uses
-  System.Classes, BCEditor.Editor.Caret.NonBlinking.Colors;
+  Classes, BCEditor.Editor.Caret.NonBlinking.Colors;
 
 type
   TBCEditorCaretNonBlinking = class(TPersistent)

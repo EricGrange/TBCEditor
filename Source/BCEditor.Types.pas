@@ -3,8 +3,8 @@ unit BCEditor.Types;
 interface
 
 uses
-  Winapi.Windows, System.Classes, Vcl.Forms, Vcl.Graphics, Vcl.Controls, BCEditor.Highlighter.Attributes,
-  BCEditor.Consts, System.SysUtils, BCEditor.Editor.CompletionProposal.Columns;
+  Windows, Classes, Forms, Graphics, Controls, BCEditor.Highlighter.Attributes,
+  BCEditor.Consts, SysUtils, BCEditor.Editor.CompletionProposal.Columns;
 
 type
   TBCEditorArrayOfString = array of string;

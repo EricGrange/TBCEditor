@@ -3,7 +3,7 @@ unit BCEditor.Editor.ActiveLine;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Editor.Glyph, BCEditor.Consts;
+  Classes, Graphics, BCEditor.Editor.Glyph, BCEditor.Consts;
 
 type
   TBCEditorActiveLine = class(TPersistent)

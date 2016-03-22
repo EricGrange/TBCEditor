@@ -3,7 +3,7 @@ unit BCEditor.Highlighter.Rules;
 interface
 
 uses
-  Vcl.Graphics, System.Classes, System.SysUtils, BCEditor.Highlighter.Token, BCEditor.Highlighter.Attributes,
+  Graphics, Classes, SysUtils, BCEditor.Highlighter.Token, BCEditor.Highlighter.Attributes,
   BCEditor.Consts, BCEditor.Types;
 
 type
@@ -172,7 +172,7 @@ type
 implementation
 
 uses
-  BCEditor.Utils, System.Types;
+  BCEditor.Utils, Types;
 
 { TBCEditorParser }
 

@@ -3,7 +3,7 @@ unit BCEditor.Print.Types;
 interface
 
 uses
-  System.Classes, System.SysUtils;
+  Classes, SysUtils;
 
 const
   BCEDITOR_DEFAULT_LEFT_MARGIN_MM = 20;

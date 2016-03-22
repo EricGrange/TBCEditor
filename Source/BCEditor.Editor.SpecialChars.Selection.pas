@@ -3,7 +3,7 @@ unit BCEditor.Editor.SpecialChars.Selection;
 interface
 
 uses
-  System.Classes, Vcl.Graphics;
+  Classes, Graphics;
 
 type
   TBCEditorSpecialCharsSelection = class(TPersistent)

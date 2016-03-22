@@ -3,7 +3,7 @@ unit BCEditor.Editor.Caret.Styles;
 interface
 
 uses
-  System.Classes, BCEditor.Types;
+  Classes, BCEditor.Types;
 
 type
   TBCEditorCaretStyles = class(TPersistent)

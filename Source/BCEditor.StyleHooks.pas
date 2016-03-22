@@ -3,7 +3,7 @@ unit BCEditor.StyleHooks;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, Vcl.Controls, Vcl.Themes, System.Classes, System.Types;
+  Windows, Messages, Controls, Themes, Classes, Types;
 
 const
   CM_UPDATE_VCLSTYLE_SCROLLBARS = CM_BASE + 2050;

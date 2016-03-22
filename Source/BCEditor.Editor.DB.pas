@@ -3,7 +3,7 @@ unit BCEditor.Editor.DB;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes, Vcl.Controls, Vcl.DbCtrls, Data.DB, BCEditor.Editor,
+  Windows, Messages, SysUtils, Classes, Controls, DbCtrls, DB, BCEditor.Editor,
   BCEditor.Editor.KeyCommands;
 
 type
@@ -136,7 +136,7 @@ type
     property ShowHint;
     {$if defined(USE_ALPHASKINS)}
     property SkinData;
-    {$endif}
+    {$ifend}
     property SpecialChars;
     property SyncEdit;
     property TabOrder;

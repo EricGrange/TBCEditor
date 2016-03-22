@@ -3,7 +3,7 @@ unit BCEditor.Editor.CompletionProposal.Columns.Items;
 interface
 
 uses
-  System.Classes;
+  Classes;
 
 type
   TBCEditorCompletionProposalColumnItem = class(TCollectionItem)

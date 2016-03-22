@@ -3,7 +3,7 @@ unit BCEditor.Editor.Undo.Item;
 interface
 
 uses
-  System.Classes, BCEditor.Types;
+  Classes, BCEditor.Types;
 
 type
   TBCEditorUndoItem = class(TPersistent)

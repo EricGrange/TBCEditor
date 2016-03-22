@@ -3,7 +3,7 @@ unit BCEditor.Editor.LeftMargin.Border;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Types;
+  Classes, Graphics, BCEditor.Types;
 
 type
   TBCEditorLeftMarginBorder = class(TPersistent)

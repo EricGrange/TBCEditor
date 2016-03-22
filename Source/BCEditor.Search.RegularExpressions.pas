@@ -3,7 +3,7 @@ unit BCEditor.Search.RegularExpressions;
 interface
 
 uses
-  System.Classes, System.RegularExpressions, BCEditor.Search, BCEditor.Lines;
+  Classes, RegularExpressions, BCEditor.Search, BCEditor.Lines;
 
 type
   TBCEditorRegexSearch = class(TBCEditorSearchBase)
@@ -29,7 +29,7 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  SysUtils;
 
 constructor TBCEditorRegexSearch.Create;
 begin
@@ -38,7 +38,7 @@ begin
   FOptions := [roMultiLine];
   {$if CompilerVersion > 26}
   Include(FOptions, roNotEmpty);
-  {$endif}
+  {$ifend}
   FPositions := TList.Create;
   FLengths := TList.Create;
 end;

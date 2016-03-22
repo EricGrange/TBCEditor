@@ -3,7 +3,7 @@ unit BCEditor.Editor.Glyph;
 interface
 
 uses
-  System.Classes, Vcl.Graphics;
+  Classes, Graphics;
 
 type
   TBCEditorGlyph = class(TPersistent)
@@ -41,7 +41,7 @@ type
 implementation
 
 uses
-  Winapi.Windows, System.SysUtils;
+  SysUtils, Windows;
 
 constructor TBCEditorGlyph.Create(AModule: THandle = 0; const AName: string = ''; AMaskColor: TColor = clFuchsia);
 begin
@@ -49,7 +49,7 @@ begin
 
   if AName <> '' then
   begin
-    FInternalGlyph := Vcl.Graphics.TBitmap.Create;
+    FInternalGlyph := Graphics.TBitmap.Create;
     FInternalGlyph.Handle := LoadBitmap(AModule, PChar(AName));
     FInternalMaskColor := AMaskColor;
   end
@@ -57,7 +57,7 @@ begin
     FInternalMaskColor := clNone;
 
   FVisible := True;
-  FBitmap := Vcl.Graphics.TBitmap.Create;
+  FBitmap := Graphics.TBitmap.Create;
   FBitmap.OnChange := GlyphChange;
   FMaskColor := clNone;
   FLeft := 2;
@@ -96,7 +96,7 @@ end;
 
 procedure TBCEditorGlyph.Draw(ACanvas: TCanvas; X, Y: Integer; ALineHeight: Integer = 0);
 var
-  LGlyphBitmap: Vcl.Graphics.TBitmap;
+  LGlyphBitmap: Graphics.TBitmap;
   LMaskColor: TColor;
 begin
   if not FBitmap.Empty then
@@ -122,7 +122,7 @@ begin
   ACanvas.Draw(X, Y, LGlyphBitmap);
 end;
 
-procedure TBCEditorGlyph.SetBitmap(AValue: Vcl.Graphics.TBitmap);
+procedure TBCEditorGlyph.SetBitmap(AValue: Graphics.TBitmap);
 begin
   FBitmap.Assign(AValue);
 end;

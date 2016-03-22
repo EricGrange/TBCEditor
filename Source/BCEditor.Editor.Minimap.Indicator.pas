@@ -3,7 +3,7 @@ unit BCEditor.Editor.Minimap.Indicator;
 interface
 
 uses
-  System.Classes, BCEditor.Types;
+  Classes, BCEditor.Types;
 
 type
   TBCEditorMinimapIndicator = class(TPersistent)

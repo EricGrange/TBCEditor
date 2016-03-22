@@ -3,7 +3,7 @@ unit BCEditor.Lines;
 interface
 
 uses
-  System.SysUtils, Vcl.Graphics, BCEditor.Utils, System.Classes, BCEditor.Consts, BCEditor.Types;
+  SysUtils, Graphics, BCEditor.Utils, Classes, BCEditor.Consts, BCEditor.Types;
 
 type
   TBCEditorLinesRange = Pointer;

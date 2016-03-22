@@ -3,7 +3,7 @@ unit BCEditor.Editor.SpecialChars.EndOfLine;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Types;
+  Classes, Graphics, BCEditor.Types;
 
 type
   TBCEditorSpecialCharsEndOfLine = class(TPersistent)

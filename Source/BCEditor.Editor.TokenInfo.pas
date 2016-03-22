@@ -3,7 +3,7 @@ unit BCEditor.Editor.TokenInfo;
 interface
 
 uses
-  System.Classes, Vcl.Controls, Vcl.Graphics, BCEditor.Types, BCEditor.Editor.TokenInfo.Colors,
+  Classes, Controls, Graphics, BCEditor.Types, BCEditor.Editor.TokenInfo.Colors,
   BCEditor.Editor.TokenInfo.Title;
 
 const

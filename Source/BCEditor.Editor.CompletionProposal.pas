@@ -3,7 +3,7 @@ unit BCEditor.Editor.CompletionProposal;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.ImgList, BCEditor.Editor.CompletionProposal.Colors,
+  Classes, Graphics, Controls, ImgList, BCEditor.Editor.CompletionProposal.Colors,
   BCEditor.Editor.CompletionProposal.Columns, BCEditor.Editor.CompletionProposal.Trigger, BCEditor.Types;
 
 const
@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  Vcl.Menus;
+  Menus;
 
 constructor TBCEditorCompletionProposal.Create(AOwner: TComponent);
 begin
@@ -68,7 +68,7 @@ begin
   FCompletionColumnIndex := 0;
   FEnabled := True;
   FOptions := BCEDITOR_COMPLETION_PROPOSAL_DEFAULT_OPTIONS;
-  FShortCut := Vcl.Menus.ShortCut(Ord(' '), [ssCtrl]);
+  FShortCut := Menus.ShortCut(Ord(' '), [ssCtrl]);
   FTrigger := TBCEditorCompletionProposalTrigger.Create;
   FVisibleLines := 8;
   FWidth := 260;

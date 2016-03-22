@@ -3,7 +3,7 @@ unit BCEditor.Editor.Minimap;
 interface
 
 uses
-  System.Classes, System.UITypes, Vcl.Graphics, BCEditor.Types, BCEditor.Editor.Minimap.Indicator,
+  Classes, UITypes, Graphics, BCEditor.Types, BCEditor.Editor.Minimap.Indicator,
   BCEditor.Editor.Minimap.Colors, BCEditor.Editor.Minimap.Shadow;
 
 type
@@ -59,7 +59,7 @@ type
 implementation
 
 uses
-  System.Math;
+  Math;
 
 constructor TBCEditorMinimap.Create;
 begin

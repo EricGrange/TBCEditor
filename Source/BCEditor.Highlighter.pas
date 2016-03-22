@@ -3,7 +3,7 @@ unit BCEditor.Highlighter;
 interface
 
 uses
-  System.Classes, System.SysUtils, Vcl.Controls, Vcl.Graphics, BCEditor.Highlighter.Rules, BCEditor.Highlighter.Token,
+  Classes, SysUtils, Controls, Graphics, BCEditor.Highlighter.Rules, BCEditor.Highlighter.Token,
   BCEditor.Consts, BCEditor.Highlighter.Attributes, BCEditor.Highlighter.Info, BCEditor.Editor.SkipRegions,
   BCEditor.Highlighter.Colors, BCEditor.Editor.CodeFolding.Regions, BCEditor.Highlighter.Comments, BCEditor.Types;
 
@@ -99,7 +99,7 @@ type
 implementation
 
 uses
-  BCEditor.Highlighter.Import.JSON, System.Types, BCEditor.Editor.Base, System.IOUtils;
+  BCEditor.Highlighter.Import.JSON, Types, BCEditor.Editor.Base, IOUtils;
 
 procedure TBCEditorHighlighter.AddKeyChar(AKeyCharType: TBCEditorKeyCharType; AChar: Char);
 begin

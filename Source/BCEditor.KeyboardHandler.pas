@@ -3,7 +3,7 @@ unit BCEditor.KeyboardHandler;
 interface
 
 uses
-  System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, BCEditor.Types;
+  SysUtils, Classes, Graphics, Controls, Forms, BCEditor.Types;
 
 type
   TBCEditorMethodList = class

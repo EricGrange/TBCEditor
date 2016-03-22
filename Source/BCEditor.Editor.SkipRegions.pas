@@ -3,7 +3,7 @@ unit BCEditor.Editor.SkipRegions;
 interface
 
 uses
-  System.Classes, System.SysUtils, BCEditor.Consts;
+  Classes, SysUtils, BCEditor.Consts;
 
 type
   TBCEditorSkipRegionItemType = (ritUnspecified, ritMultiLineString, ritSingleLineString, ritMultiLineComment, ritSingleLineComment);
@@ -35,7 +35,7 @@ type
 implementation
 
 uses
-  Winapi.Windows;
+  Windows;
 
 { TBCEditorSkipRegions }
 

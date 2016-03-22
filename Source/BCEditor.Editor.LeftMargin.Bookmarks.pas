@@ -3,7 +3,7 @@ unit BCEditor.Editor.LeftMargin.Bookmarks;
 interface
 
 uses
-  Vcl.Controls, System.Classes, Vcl.Graphics, Vcl.ImgList;
+  Controls, Classes, Graphics, ImgList;
 
 type
   TBCEditorLeftMarginBookMarks = class(TPersistent)

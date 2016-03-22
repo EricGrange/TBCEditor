@@ -3,7 +3,7 @@ unit BCEditor.Editor.CodeFolding;
 interface
 
 uses
-  System.Classes, System.SysUtils, Vcl.Graphics, BCEditor.Types, BCEditor.Editor.CodeFolding.Colors,
+  Classes, SysUtils, Graphics, BCEditor.Types, BCEditor.Editor.CodeFolding.Colors,
   BCEditor.Editor.CodeFolding.Hint;
 
 const
@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  System.Math;
+  Math;
 
 constructor TBCEditorCodeFolding.Create;
 begin

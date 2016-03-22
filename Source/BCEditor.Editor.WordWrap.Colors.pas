@@ -3,7 +3,7 @@ unit BCEditor.Editor.WordWrap.Colors;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Consts;
+  Classes, Graphics, BCEditor.Consts;
 
 type
   TBCEditorWordWrapColors = class(TPersistent)

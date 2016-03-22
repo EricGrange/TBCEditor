@@ -3,7 +3,7 @@ unit BCEditor.Encoding;
 interface
 
 uses
-  System.SysUtils;
+  SysUtils;
 
 type
   TUTF8WithoutBOM = class(TUTF8Encoding)
@@ -11,7 +11,7 @@ type
     function GetPreamble: TBytes; override;
   end;
 
-  TEncoding = class(System.SysUtils.TEncoding)
+  TEncoding = class(SysUtils.TEncoding)
   strict private
   class var
     FUTF8WithoutBOM: TEncoding;
@@ -23,7 +23,7 @@ type
 implementation
 
 uses
-  Winapi.Windows;
+  SyncObjs, Windows;
 
 { TUTF8WithoutBOM }
 
@@ -36,12 +36,12 @@ end;
 
 class function TEncoding.GetUTF8WithoutBOM: TEncoding;
 var
-  LEncoding: System.SysUtils.TEncoding;
+  LEncoding: SysUtils.TEncoding;
 begin
   if not Assigned(FUTF8WithoutBOM) then
   begin
     LEncoding := TUTF8WithoutBOM.Create(CP_UTF8, 0, 0);
-    if Assigned(AtomicCmpExchange(Pointer(FUTF8WithoutBOM), Pointer(LEncoding), nil)) then
+    if Assigned(TInterlocked.CompareExchange(Pointer(FUTF8WithoutBOM), Pointer(LEncoding), nil)) then
       LEncoding.Free;
   end;
   Result := FUTF8WithoutBOM;

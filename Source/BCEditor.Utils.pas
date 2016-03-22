@@ -3,7 +3,7 @@ unit BCEditor.Utils;
 interface
 
 uses
-  Winapi.Windows, System.Math, System.Classes, Vcl.Graphics, System.UITypes, BCEditor.Consts, BCEditor.Types;
+  Windows, Math, Classes, Graphics, UITypes, BCEditor.Consts, BCEditor.Types;
 
 function ActivateDropShadow(const AHandle: THandle): Boolean;
 function CaseNone(const AChar: Char): Char;
@@ -24,7 +24,7 @@ procedure FreeList(var AList: TList);
 implementation
 
 uses
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.SysUtils, System.Character;
+  Controls, Forms, Dialogs, SysUtils, Character, StrUtils;
 
 function ActivateDropShadow(const AHandle: THandle): Boolean;
 
@@ -89,7 +89,12 @@ begin
   LPosition := 1;
   while True do
   begin
+    {$IF CompilerVersion < 24}
+    LPosition := PosEx(BCEDITOR_TAB_CHAR, Result, LPosition);
+    {$ELSE}
     LPosition := Pos(BCEDITOR_TAB_CHAR, Result, LPosition);
+    {$IFEND}
+
     if LPosition = 0 then
       Break;
 
@@ -169,7 +174,11 @@ begin
   SetLength(Result, Length(AText));
   LIndex2 := 0;
   for LIndex := 1 to Length(AText) do
+  {$IF CompilerVersion < 25}
+    if not IsWhiteSpace(AText[LIndex]) then
+  {$ELSE}
     if not AText[LIndex].IsWhiteSpace then
+  {$IFEND}
     begin
       Inc(LIndex2);
       Result[LIndex2] := AText[LIndex];

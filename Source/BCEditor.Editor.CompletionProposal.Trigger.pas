@@ -3,7 +3,7 @@ unit BCEditor.Editor.CompletionProposal.Trigger;
 interface
 
 uses
-  System.Classes;
+  Classes;
 
 type
   TBCEditorCompletionProposalTrigger = class(TPersistent)

@@ -3,7 +3,7 @@ unit BCEditor.Editor.MatchingPair.Colors;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Consts;
+  Classes, Graphics, BCEditor.Consts;
 
 type
   TBCEditorMatchingPairColors = class(TPersistent)

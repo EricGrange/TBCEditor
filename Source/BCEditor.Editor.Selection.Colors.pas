@@ -3,7 +3,7 @@ unit BCEditor.Editor.Selection.Colors;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Consts;
+  Classes, Graphics, BCEditor.Consts;
 
 type
   TBCEditorSelectionColors = class(TPersistent)

@@ -3,7 +3,7 @@ unit BCEditor.Search.Normal;
 interface
 
 uses
-  System.Classes, System.SysUtils, BCEditor.Search, BCEditor.Lines;
+  Classes, SysUtils, BCEditor.Search, BCEditor.Lines;
 
 type
   TBCEditorNormalSearch = class(TBCEditorSearchBase)
@@ -46,7 +46,7 @@ type
 implementation
 
 uses
-  System.Character, BCEditor.Consts, BCEditor.Language, Winapi.Windows;
+  Character, BCEditor.Consts, BCEditor.Language, Windows;
 
 constructor TBCEditorNormalSearch.Create;
 begin
@@ -100,13 +100,21 @@ var
 
   function IsWordBreakChar(AChar: Char): Boolean;
   begin
+  {$IF CompilerVersion < 25}
+    if (AChar < BCEDITOR_EXCLAMATION_MARK) or TCharacter.IsWhiteSpace(AChar) then
+  {$ELSE}
     if (AChar < BCEDITOR_EXCLAMATION_MARK) or AChar.IsWhiteSpace then
+  {$IFEND}
       Result := True
     else
     if AChar = BCEDITOR_LOW_LINE then
       Result := False
     else
+    {$IF CompilerVersion < 25}
+      Result := not TCharacter.IsLetterOrDigit(AChar);
+    {$ELSE}
       Result := not AChar.IsLetterOrDigit;
+    {$IFEND}
   end;
 
 begin

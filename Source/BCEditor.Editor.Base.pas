@@ -3,8 +3,8 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.Classes, System.SysUtils, System.Contnrs, System.UITypes, Vcl.Forms,
-  Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Dialogs, BCEditor.Consts, BCEditor.Editor.ActiveLine,
+  Windows, Messages, Classes, SysUtils, Contnrs, UITypes, Forms,
+  Controls, Graphics, StdCtrls, ExtCtrls, Dialogs, BCEditor.Consts, BCEditor.Editor.ActiveLine,
   BCEditor.Editor.Marks, BCEditor.Editor.Caret, BCEditor.Editor.CodeFolding, BCEditor.Editor.CodeFolding.Regions,
   BCEditor.Editor.CodeFolding.Ranges, BCEditor.Types, BCEditor.Editor.CompletionProposal,
   BCEditor.Editor.CompletionProposal.PopupWindow, BCEditor.Editor.Glyph, BCEditor.Editor.InternalImage,
@@ -15,7 +15,7 @@ uses
   BCEditor.Editor.CodeFolding.Hint.Form, BCEditor.Highlighter, BCEditor.Highlighter.Attributes,
   BCEditor.KeyboardHandler, BCEditor.Lines, BCEditor.Search, BCEditor.PaintHelper, BCEditor.Editor.SyncEdit,
   BCEditor.Editor.TokenInfo, BCEditor.Utils, BCEditor.Editor.UnknownChars, BCEditor.Editor.TokenInfo.PopupWindow
-  {$if defined(USE_ALPHASKINS)}, sCommonData, acSBUtils{$endif};
+  {$if defined(USE_ALPHASKINS)}, sCommonData, acSBUtils{$ifend};
 
 const
   BCEDITOR_DEFAULT_OPTIONS = [eoAutoIndent, eoDragDropEditing];
@@ -46,7 +46,7 @@ type
     FCommandDrop: Boolean;
 {$if defined(USE_ALPHASKINS)}
     FCommonData: TsScrollWndData;
-{$endif}
+{$ifend}
     FCompletionProposal: TBCEditorCompletionProposal;
     FCompletionProposalPopupWindow: TBCEditorCompletionProposalPopupWindow;
     FCompletionProposalResize: Boolean;
@@ -91,15 +91,15 @@ type
     FMatchingPairMatchStack: array of TBCEditorMatchingPairTokenMatch;
     FMatchingPairOpenDuplicate, FMatchingPairCloseDuplicate: array of Integer;
     FMinimap: TBCEditorMinimap;
-    FMinimapBufferBitmap: Vcl.Graphics.TBitmap;
+    FMinimapBufferBitmap: Graphics.TBitmap;
     FMinimapClickOffsetY: Integer;
     FMinimapIndicatorBlendFunction: TBlendFunction;
-    FMinimapIndicatorBitmap: Vcl.Graphics.TBitmap;
+    FMinimapIndicatorBitmap: Graphics.TBitmap;
     FMinimapShadowAlphaArray: TBCEditorArrayOfSingle;
     FMinimapShadowAlphaByteArray: PByteArray;
     FMinimapShadowAlphaByteArrayLength: Integer;
     FMinimapShadowBlendFunction: TBlendFunction;
-    FMinimapShadowBitmap: Vcl.Graphics.TBitmap;
+    FMinimapShadowBitmap: Graphics.TBitmap;
     FModified: Boolean;
     FMouseDownX: Integer;
     FMouseDownY: Integer;
@@ -176,14 +176,14 @@ type
     FScrollShadowAlphaByteArray: PByteArray;
     FScrollShadowAlphaByteArrayLength: Integer;
     FScrollShadowBlendFunction: TBlendFunction;
-    FScrollShadowBitmap: Vcl.Graphics.TBitmap;
+    FScrollShadowBitmap: Graphics.TBitmap;
     FScrollDeltaX: Integer;
     FScrollDeltaY: Integer;
     FScrollPageWidth: Integer;
     FScrollTimer: TTimer;
 {$if defined(USE_ALPHASKINS)}
     FScrollWnd: TacScrollWnd;
-{$endif}
+{$ifend}
     FSearch: TBCEditorSearch;
     FSearchEngine: TBCEditorSearchBase;
     FSelectedCaseCycle: TBCEditorCase;
@@ -300,7 +300,7 @@ type
     procedure CompletionProposalTimerHandler(ASender: TObject);
     procedure ComputeScroll(const APoint: TPoint);
     procedure CreateLineNumbersCache(const AResetCache: Boolean = False);
-    procedure CreateShadowBitmap(const AClipRect: TRect; ABitmap: Vcl.Graphics.TBitmap;
+    procedure CreateShadowBitmap(const AClipRect: TRect; ABitmap: Graphics.TBitmap;
       const AShadowAlphaArray: TBCEditorArrayOfSingle; const AShadowAlphaByteArray: PByteArray);
     procedure DeflateMinimapAndSearchMapRect(var ARect: TRect);
     procedure DeleteChar;
@@ -585,7 +585,7 @@ type
     procedure AddMultipleCarets(const ADisplayPosition: TBCEditorDisplayPosition);
 {$if defined(USE_ALPHASKINS)}
     procedure AfterConstruction; override;
-{$endif}
+{$ifend}
     procedure Assign(ASource: TPersistent); override;
     procedure BeginUndoBlock;
     procedure BeginUpdate;
@@ -610,8 +610,8 @@ type
     procedure EndUpdate;
     procedure EnsureCursorPositionVisible(AForceToMiddle: Boolean = False; AEvenIfVisible: Boolean = False);
     procedure ExecuteCommand(ACommand: TBCEditorCommand; AChar: Char; AData: Pointer); virtual;
-    procedure ExportToHTML(const AFileName: string; const ACharSet: string = ''; AEncoding: System.SysUtils.TEncoding = nil); overload;
-    procedure ExportToHTML(AStream: TStream; const ACharSet: string = ''; AEncoding: System.SysUtils.TEncoding = nil); overload;
+    procedure ExportToHTML(const AFileName: string; const ACharSet: string = ''; AEncoding: SysUtils.TEncoding = nil); overload;
+    procedure ExportToHTML(AStream: TStream; const ACharSet: string = ''; AEncoding: SysUtils.TEncoding = nil); overload;
     procedure FillRect(const ARect: TRect);
     procedure FindAll;
     procedure FoldAll(const AFromLineNumber: Integer = -1; const AToLineNumber: Integer = -1);
@@ -625,8 +625,8 @@ type
     procedure InsertLine(const ALineNumber: Integer; const AValue: string); overload;
     procedure InsertText(const AText: string);
     procedure LeftMarginChanged(ASender: TObject);
-    procedure LoadFromFile(const AFileName: string; AEncoding: System.SysUtils.TEncoding = nil);
-    procedure LoadFromStream(AStream: TStream; AEncoding: System.SysUtils.TEncoding = nil);
+    procedure LoadFromFile(const AFileName: string; AEncoding: SysUtils.TEncoding = nil);
+    procedure LoadFromStream(AStream: TStream; AEncoding: SysUtils.TEncoding = nil);
     procedure LockUndo;
     procedure MoveCaretToBOF;
     procedure MoveCaretToEOF;
@@ -642,8 +642,8 @@ type
     procedure RemoveMouseUpHandler(AHandler: TMouseEvent);
     procedure ReplaceLine(const ALineNumber: Integer; const AValue: string);
     procedure RescanCodeFoldingRanges;
-    procedure SaveToFile(const AFileName: string; AEncoding: System.SysUtils.TEncoding = nil);
-    procedure SaveToStream(AStream: TStream; AEncoding: System.SysUtils.TEncoding = nil);
+    procedure SaveToFile(const AFileName: string; AEncoding: SysUtils.TEncoding = nil);
+    procedure SaveToStream(AStream: TStream; AEncoding: SysUtils.TEncoding = nil);
     procedure SelectAll;
     procedure SetBookmark(const AIndex: Integer; const ATextPosition: TBCEditorTextPosition);
     procedure SetCaretAndSelection(const ACaretPosition, ABlockBeginPosition, ABlockEndPosition: TBCEditorTextPosition);
@@ -757,7 +757,7 @@ type
     property SelectedText: string read GetSelectedText write SetSelectedText;
 {$if defined(USE_ALPHASKINS)}
     property SkinData: TsScrollWndData read FCommonData write FCommonData;
-{$endif}
+{$ifend}
     property SpecialChars: TBCEditorSpecialChars read FSpecialChars write SetSpecialChars;
     property SyncEdit: TBCEditorSyncEdit read FSyncEdit write SetSyncEdit;
     property Tabs: TBCEditorTabs read FTabs write SetTabs;
@@ -785,12 +785,12 @@ implementation
 {$R BCEditor.res}
 
 uses
-  Winapi.ShellAPI, Winapi.Imm, System.Math, System.Types, Vcl.Clipbrd, System.Character, Vcl.Menus,
+  ShellAPI, Imm, Math, Types, Clipbrd, Character, Menus, StrUtils,
   BCEditor.Editor.LeftMargin.Border, BCEditor.Editor.LeftMargin.LineNumbers, BCEditor.Editor.Scroll.Hint,
   BCEditor.Editor.Search.Map, BCEditor.Editor.Undo.Item, BCEditor.Editor.Utils, BCEditor.Encoding, BCEditor.Language,
-  BCEditor.Highlighter.Rules, BCEditor.Export.HTML, Vcl.Themes, BCEditor.StyleHooks, BCEditor.Search.Normal,
+  BCEditor.Highlighter.Rules, BCEditor.Export.HTML, Themes, BCEditor.Search.Normal,
   BCEditor.Search.RegularExpressions, BCEditor.Search.WildCard, BCEditor.Editor.CompletionProposal.Columns.Items,
-  System.RegularExpressions{$if defined(USE_ALPHASKINS)}, Winapi.CommCtrl, sVCLUtils, sMessages, sConst, sSkinProps{$endif};
+  RegularExpressions{$if defined(USE_ALPHASKINS)}, Winapi.CommCtrl, sVCLUtils, sMessages, sConst, sSkinProps{$ifend};
 
 type
   TBCEditorAccessWinControl = class(TWinControl);
@@ -798,6 +798,9 @@ type
 var
   GScrollHintWindow: THintWindow;
   GRightMarginHintWindow: THintWindow;
+
+{$I BCEditor.RectHelper.inc}
+{$I BCEditor.EncodingHelper.inc}
 
 function GetScrollHint: THintWindow;
 begin
@@ -834,7 +837,7 @@ begin
   FCommonData.COC := COC_TsMemo;
   if FCommonData.SkinSection = '' then
     FCommonData.SkinSection := s_Edit;
-{$endif}
+{$ifend}
   Height := 150;
   Width := 200;
   Cursor := crIBeam;
@@ -1027,7 +1030,7 @@ begin
     FCommonData.Free;
     FCommonData := nil;
   end;
-{$endif}
+{$ifend}
   ClearCodeFolding;
   FCodeFolding.Free;
   FCodeFoldingDelayTimer.Free;
@@ -1335,7 +1338,7 @@ end;
 
 procedure TBCBaseEditor.FillRect(const ARect: TRect);
 begin
-  Winapi.Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, ARect, '', 0, nil);
+  Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, ARect, '', 0, nil);
 end;
 
 function TBCBaseEditor.GetCanPaste: Boolean;
@@ -1915,7 +1918,7 @@ var
 begin
   Result := scNone;
 
-  Winapi.Windows.GetCursorPos(LCursorPoint);
+  Windows.GetCursorPos(LCursorPoint);
   LCursorPoint := ScreenToClient(LCursorPoint);
 
   LLeftX := FMouseMoveScrollingPoint.X - FScroll.Indicator.Width;
@@ -2273,9 +2276,15 @@ var
           begin
             Inc(LPToken);
             if (LPToken^ <> BCEDITOR_NONE_CHAR) and
+            {$IF CompilerVersion < 25}
+              ((TCharacter.GetUnicodeCategory(LPToken^) in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
+              ((LPToken - 1)^ <> BCEDITOR_NONE_CHAR) and
+              (TCharacter.GetUnicodeCategory((LPToken - 1)^) = TUnicodeCategory.ucNonSpacingMark)
+            {$ELSE}
               ((LPToken^.GetUnicodeCategory in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
               ((LPToken - 1)^ <> BCEDITOR_NONE_CHAR) and
               ((LPToken - 1)^.GetUnicodeCategory = TUnicodeCategory.ucNonSpacingMark)
+            {$IFEND}
               and not IsCombiningDiacriticalMark((LPToken - 1)^)) then
               LChar := LChar + LPToken^
             else
@@ -2375,7 +2384,7 @@ begin
   end;
 end;
 
-procedure TBCBaseEditor.CreateShadowBitmap(const AClipRect: TRect; ABitmap: Vcl.Graphics.TBitmap;
+procedure TBCBaseEditor.CreateShadowBitmap(const AClipRect: TRect; ABitmap: Graphics.TBitmap;
   const AShadowAlphaArray: TBCEditorArrayOfSingle; const AShadowAlphaByteArray: PByteArray);
 var
   LRow, LColumn: Integer;
@@ -2545,7 +2554,11 @@ begin
         Dec(LTextPosition.Char);
 
       if soExpandRealNumbers in FSelection.Options then
+      {$IF CompilerVersion < 25}
+        while (LTextPosition.Char > 0) and (TCharacter.IsNumber(LTextLine[LTextPosition.Char - 1]) or
+      {$ELSE}
         while (LTextPosition.Char > 0) and (LTextLine[LTextPosition.Char - 1].IsNumber or
+      {$IFEND}
           CharInSet(LTextLine[LTextPosition.Char - 1], BCEDITOR_REAL_NUMBER_CHARS)) do
           Dec(LTextPosition.Char);
 
@@ -2598,7 +2611,7 @@ begin
     Result := Result * FPaintHelper.FontStock.CharWidth + (ALength - 1) * FPaintHelper.FontStock.CharWidth * FTabs.Width;
   end
   else
-  if FPaintHelper.FixedSizeFont and ((FEncoding = System.SysUtils.TEncoding.ANSI) or (FEncoding = System.SysUtils.TEncoding.ASCII)) then
+  if FPaintHelper.FixedSizeFont and ((FEncoding = SysUtils.TEncoding.ANSI) or (FEncoding = SysUtils.TEncoding.ASCII)) then
     Exit(FPaintHelper.FontStock.CharWidth * ALength)
   else
   begin
@@ -2787,7 +2800,11 @@ var
 
   function IsValidChar(ACharacter: PChar): Boolean;
   begin
+  {$IF CompilerVersion < 25}
+    Result := TCharacter.IsUpper(ACharacter^) or TCharacter.IsNumber(ACharacter^);
+  {$ELSE}
     Result := ACharacter^.IsUpper or ACharacter^.IsNumber;
+  {$IFEND}
   end;
 
   function IsWholeWord(AFirstChar, ALastChar: PChar): Boolean;
@@ -3118,9 +3135,15 @@ begin
           begin
             Inc(LPToken);
             if (LPToken^ <> BCEDITOR_NONE_CHAR) and
+            {$IF CompilerVersion < 25}
+              ((TCharacter.GetUnicodeCategory(LPToken^) in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
+              ((LPToken - 1)^ <> BCEDITOR_NONE_CHAR) and
+              (TCharacter.GetUnicodeCategory((LPToken - 1)^) = TUnicodeCategory.ucNonSpacingMark)
+            {$ELSE}
               ((LPToken^.GetUnicodeCategory in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
               ((LPToken - 1)^ <> BCEDITOR_NONE_CHAR) and
               ((LPToken - 1)^.GetUnicodeCategory = TUnicodeCategory.ucNonSpacingMark)
+            {$IFEND}
               and not IsCombiningDiacriticalMark((LPToken - 1)^)) then
               LChar := LChar + LPToken^
             else
@@ -3857,7 +3880,11 @@ begin
       begin
         LChar := LLineText[LTextCaretPosition.Char - 1];
         LCharPosition := 1;
+      {$IF CompilerVersion < 25}
+        if TCharacter.IsSurrogate(LChar) then
+      {$ELSE}
         if LChar.IsSurrogate then
+      {$IFEND}
           LCharPosition := 2;
         LHelper := Copy(LLineText, LTextCaretPosition.Char - LCharPosition, LCharPosition);
         FUndoList.AddChange(crDelete, LTextCaretPosition, GetTextPosition(LTextCaretPosition.Char - LCharPosition,
@@ -4267,7 +4294,7 @@ procedure TBCBaseEditor.DoTokenInfo;
     LPoint, LPointLeftTop, LPointRightBottom: TPoint;
     LRect: TRect;
   begin
-    Winapi.Windows.GetCursorPos(LPoint);
+    Windows.GetCursorPos(LPoint);
     LRect := FTokenInfoTokenRect;
     Result := PtInRect(LRect, LPoint);
     if not Result then
@@ -5131,7 +5158,7 @@ var
   LPoint: TPoint;
   LCaretStyle: TBCEditorCaretStyle;
   LCaretWidth, LCaretHeight, X, Y: Integer;
-  LTempBitmap: Vcl.Graphics.TBitmap;
+  LTempBitmap: Graphics.TBitmap;
   LBackgroundColor, LForegroundColor: TColor;
 begin
   LPoint := DisplayPositionToPixels(ADisplayCaretPosition);
@@ -5186,7 +5213,7 @@ begin
         X := 1;
       end;
   end;
-  LTempBitmap := Vcl.Graphics.TBitmap.Create;
+  LTempBitmap := Graphics.TBitmap.Create;
   try
     { Background }
     LTempBitmap.Canvas.Pen.Color := LBackgroundColor;
@@ -5551,12 +5578,12 @@ begin
   if FMinimap.Visible then
   begin
     if not Assigned(FMinimapBufferBitmap) then
-      FMinimapBufferBitmap := Vcl.Graphics.TBitmap.Create;
+      FMinimapBufferBitmap := Graphics.TBitmap.Create;
     FMinimapBufferBitmap.Height := 0;
 
     if ioUseBlending in FMinimap.Indicator.Options then
       if not Assigned(FMinimapIndicatorBitmap) then
-        FMinimapIndicatorBitmap := Vcl.Graphics.TBitmap.Create;
+        FMinimapIndicatorBitmap := Graphics.TBitmap.Create;
 
     if FMinimap.Shadow.Visible then
     begin
@@ -5564,7 +5591,7 @@ begin
 
       if not Assigned(FMinimapShadowBitmap) then
       begin
-        FMinimapShadowBitmap := Vcl.Graphics.TBitmap.Create;
+        FMinimapShadowBitmap := Graphics.TBitmap.Create;
         FMinimapShadowBitmap.PixelFormat := pf32Bit;
       end;
 
@@ -5604,7 +5631,7 @@ var
 begin
   IncPaintLock;
   try
-    Winapi.Windows.GetCursorPos(LCursorPoint);
+    Windows.GetCursorPos(LCursorPoint);
     LCursorPoint := ScreenToClient(LCursorPoint);
     if FScrollDeltaX <> 0 then
       SetHorizontalScrollPosition(FHorizontalScrollPosition + FScrollDeltaX);
@@ -5702,9 +5729,15 @@ begin
       LPLine := PChar(FLines[LDestinationPosition.Line]);
       Inc(LPLine, LDestinationPosition.Char - 1);
       while (LPLine^ <> BCEDITOR_NONE_CHAR) and
+      {$IF CompilerVersion < 25}
+        ((TCharacter.GetUnicodeCategory(LPLine^) in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
+        ((LPLine - 1)^ <> BCEDITOR_NONE_CHAR) and
+        (TCharacter.GetUnicodeCategory((LPLine - 1)^) = TUnicodeCategory.ucNonSpacingMark) and
+      {$ELSE}
         ((LPLine^.GetUnicodeCategory in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
         ((LPLine - 1)^ <> BCEDITOR_NONE_CHAR) and
         ((LPLine - 1)^.GetUnicodeCategory = TUnicodeCategory.ucNonSpacingMark) and
+      {$IFEND}
         not IsCombiningDiacriticalMark((LPLine - 1)^)) do
         if X > 0 then
         begin
@@ -5989,7 +6022,11 @@ var
 
   function IsValidChar(Character: PChar): Boolean;
   begin
+  {$IF CompilerVersion < 25}
+    Result := TCharacter.IsLower(Character^) or TCharacter.IsUpper(Character^) or TCharacter.IsNumber(Character^) or
+  {$ELSE}
     Result := Character^.IsLower or Character^.IsUpper or Character^.IsNumber or
+  {$IFEND}
       CharInSet(Character^, BCEDITOR_CODE_FOLDING_VALID_CHARACTERS);
   end;
 
@@ -6152,9 +6189,7 @@ var
       if CharInSet(CaseUpper(LPText^), FHighlighter.FoldCloseKeyChars) then
       begin
         LIndexDecrease := 1;
-        {$if defined(VER250)}
         LCodeFoldingRange := nil;
-        {$endif}
         repeat
           LIndex := LOpenTokenFoldRangeList.Count - LIndexDecrease;
           if LIndex < 0 then
@@ -6597,7 +6632,11 @@ begin
             Inc(LPText);
 
           { Skip rest of the word }
-          while (LPText^ <> BCEDITOR_NONE_CHAR) and (LPText^.IsLower or LPText^.IsUpper or LPText^.IsNumber) do 
+        {$IF CompilerVersion < 25}
+          while (LPText^ <> BCEDITOR_NONE_CHAR) and (TCharacter.IsLower(LPText^) or TCharacter.IsUpper(LPText^) or TCharacter.IsNumber(LPText^)) do
+        {$ELSE}
+          while (LPText^ <> BCEDITOR_NONE_CHAR) and (LPText^.IsLower or LPText^.IsUpper or LPText^.IsNumber) do
+        {$IFEND}
             Inc(LPText);
 
           LBeginningOfLine := False; { Not in the beginning of the line anymore }
@@ -6642,7 +6681,7 @@ begin
 
   if not Assigned(FScrollShadowBitmap) then
   begin
-    FScrollShadowBitmap := Vcl.Graphics.TBitmap.Create;
+    FScrollShadowBitmap := Graphics.TBitmap.Create;
     FScrollShadowBitmap.PixelFormat := pf32Bit;
   end;
 
@@ -6682,7 +6721,7 @@ var
 begin
   IncPaintLock;
   try
-    Winapi.Windows.GetCursorPos(LCursorPoint);
+    Windows.GetCursorPos(LCursorPoint);
     LCursorPoint := ScreenToClient(LCursorPoint);
     LDisplayPosition := PixelsToDisplayPosition(LCursorPoint.X, LCursorPoint.Y);
     LDisplayPosition.Row := MinMax(LDisplayPosition.Row, 1, FLineNumbersCount);
@@ -6813,7 +6852,7 @@ begin
   FKeyCommands.ResetDefaults;
 end;
 
-procedure TBCBaseEditor.SetEncoding(const AValue: System.SysUtils.TEncoding);
+procedure TBCBaseEditor.SetEncoding(const AValue: SysUtils.TEncoding);
 begin
   if AValue <> FEncoding then
   begin
@@ -7144,10 +7183,10 @@ begin
   FUnknownCharHigh := 0;
   if FUnknownChars.Enabled then
   begin
-    if FEncoding = System.SysUtils.TEncoding.ANSI then
+    if FEncoding = SysUtils.TEncoding.ANSI then
       FUnknownCharHigh := 255
     else
-    if FEncoding = System.SysUtils.TEncoding.ASCII then
+    if FEncoding = SysUtils.TEncoding.ASCII then
       FUnknownCharHigh := 127
   end;
 end;
@@ -7184,14 +7223,26 @@ var
         Break;
       end;
     if soExpandRealNumbers in FSelection.Options then
+    {$IF CompilerVersion < 25}
+      if TCharacter.IsNumber(LTempString[LBlockBeginPosition.Char]) then
+    {$ELSE}
       if LTempString[LBlockBeginPosition.Char].IsNumber then
+    {$IFEND}
       begin
         LIndex := LTextPosition.Char;
+      {$IF CompilerVersion < 25}
+        while (LIndex > 0) and (TCharacter.IsNumber(LTempString[LIndex]) or CharInSet(LTempString[LIndex], BCEDITOR_REAL_NUMBER_CHARS)) do
+      {$ELSE}
         while (LIndex > 0) and (LTempString[LIndex].IsNumber or CharInSet(LTempString[LIndex], BCEDITOR_REAL_NUMBER_CHARS)) do
+      {$IFEND}
           Dec(LIndex);
         LBlockBeginPosition.Char := LIndex + 1;
         LIndex := LTextPosition.Char;
+      {$IF CompilerVersion < 25}
+        while (LIndex < LLength) and (TCharacter.IsNumber(LTempString[LIndex]) or CharInSet(LTempString[LIndex], BCEDITOR_REAL_NUMBER_CHARS)) do
+      {$ELSE}
         while (LIndex < LLength) and (LTempString[LIndex].IsNumber or CharInSet(LTempString[LIndex], BCEDITOR_REAL_NUMBER_CHARS)) do
+      {$IFEND}
           Inc(LIndex);
         LBlockEndPosition.Char := LIndex;
       end;
@@ -7531,7 +7582,7 @@ begin
       ShowScrollBar(Handle, SB_BOTH, False);
 {$if defined(USE_VCL_STYLES)}
     Perform(CM_UPDATE_VCLSTYLE_SCROLLBARS, 0, 0);
-{$endif}
+{$ifend}
   end;
 end;
 
@@ -7766,18 +7817,21 @@ begin
   if Focused or FAlwaysShowCaret then
     Exit;
   HideCaret;
-  Winapi.Windows.DestroyCaret;
+  Windows.DestroyCaret;
   if not Selection.Visible and GetSelectionAvailable then
     Invalidate;
 end;
 
 procedure TBCBaseEditor.WMNCPaint(var AMessage: TMessage);
+{$IF CompilerVersion > 22}
 var
   LRect: TRect;
   LExStyle: Integer;
   LTempRgn: HRGN;
   LBorderWidth, LBorderHeight: Integer;
+{$IFEND}
 begin
+{$IF CompilerVersion > 22}
   if StyleServices.Enabled then
   begin
     LExStyle := GetWindowLong(Handle, GWL_EXSTYLE);
@@ -7795,10 +7849,15 @@ begin
       DefaultHandler(AMessage);
   end
   else
+{$IFEND}
     DefaultHandler(AMessage);
 
+{$IF CompilerVersion > 22}
   if StyleServices.Enabled then
     StyleServices.PaintBorder(Self, False);
+{$ELSE}
+  ThemeServices.PaintBorder(Self, False);
+{$IFEND}
 end;
 
 procedure TBCBaseEditor.WMPaint(var AMessage: TWMPaint);
@@ -8164,7 +8223,7 @@ var
   LCursorPoint: TPoint;
   LTextLinesLeft, LTextLinesRight: Integer;
 begin
-  Winapi.Windows.GetCursorPos(LCursorPoint);
+  Windows.GetCursorPos(LCursorPoint);
   LCursorPoint := ScreenToClient(LCursorPoint);
 
   LTextLinesLeft := FLeftMargin.GetWidth + FCodeFolding.GetWidth;
@@ -8813,14 +8872,14 @@ begin
     FTokenInfoPopupWindow := nil; { Prevent WMKillFocus to free it again }
     LTokenInfoPopupWindow.Hide;
     LTokenInfoPopupWindow.Free;
-    FTokenInfoTokenRect.Empty;
+//    FTokenInfoTokenRect.Empty;
   end;
 end;
 
 procedure TBCBaseEditor.HideCaret;
 begin
   if sfCaretVisible in FStateFlags then
-    if Winapi.Windows.HideCaret(Handle) then
+    if Windows.HideCaret(Handle) then
       Exclude(FStateFlags, sfCaretVisible);
 end;
 
@@ -8848,7 +8907,11 @@ var
     Result := False;
 
     if (AShift = LShortCutShift) and (AKey = LShortCutKey) or (AKey <> LShortCutKey) and not (ssAlt in AShift) and
+    {$IF CompilerVersion < 25}
+      not (ssCtrl in AShift) and (cpoAutoInvoke in FCompletionProposal.Options) and TCharacter.IsLetter(Chr(AKey)) then
+    {$ELSE}
       not (ssCtrl in AShift) and (cpoAutoInvoke in FCompletionProposal.Options) and Chr(AKey).IsLetter then
+    {$IFEND}
     begin
       DoExecuteCompletionProposal(LShortCutKey, LShortCutShift);
       if not (cpoAutoInvoke in FCompletionProposal.Options) then
@@ -8901,7 +8964,7 @@ begin
   { URI mouse over }
   if (ssCtrl in AShift) and URIOpener then
   begin
-    Winapi.Windows.GetCursorPos(LCursorPoint);
+    Windows.GetCursorPos(LCursorPoint);
     LCursorPoint := ScreenToClient(LCursorPoint);
     LTextPosition := PixelsToTextPosition(LCursorPoint.X, LCursorPoint.Y);
     GetHighlighterAttributeAtRowColumn(LTextPosition, LToken, LRangeType, LStart, LHighlighterAttribute);
@@ -9169,7 +9232,7 @@ begin
 
   UpdateData(FCommonData);
 end;
-{$endif}
+{$ifend}
 
 procedure TBCBaseEditor.Assign(ASource: TPersistent);
 begin
@@ -9206,7 +9269,7 @@ begin
 
 {$if defined(USE_ALPHASKINS)}
   FCommonData.Loaded;
-{$endif}
+{$ifend}
 end;
 
 procedure TBCBaseEditor.MarkListChange(ASender: TObject);
@@ -9453,7 +9516,7 @@ begin
   if CanFocus then
   begin
     SetFocus;
-    Winapi.Windows.SetFocus(Handle);
+    Windows.SetFocus(Handle);
   end;
 end;
 
@@ -9709,7 +9772,7 @@ begin
 
   if FMouseOverURI and (AButton = mbLeft) and (X > FLeftMarginWidth) then
   begin
-    Winapi.Windows.GetCursorPos(LCursorPoint);
+    Windows.GetCursorPos(LCursorPoint);
     LCursorPoint := ScreenToClient(LCursorPoint);
     LTextPosition := PixelsToTextPosition(LCursorPoint.X, LCursorPoint.Y);
     GetHighlighterAttributeAtRowColumn(LTextPosition, LToken, LRangeType, LStart, LHighlighterAttribute);
@@ -10133,7 +10196,7 @@ begin
           LBrush := TBrush.Create;
           try
             LBrush.Color := FCodeFolding.Hint.Indicator.Colors.Border;
-            Winapi.Windows.FrameRect(Canvas.Handle, LCollapseMarkRect, LBrush.Handle);
+            Windows.FrameRect(Canvas.Handle, LCollapseMarkRect, LBrush.Handle);
           finally
             LBrush.Free;
           end;
@@ -10417,7 +10480,7 @@ var
           LLineNumber := '';
 
         GetTextExtentPoint32(Canvas.Handle, PChar(LLineNumber), Length(LLineNumber), LTextSize);
-        Winapi.Windows.ExtTextOut(Canvas.Handle, LLineRect.Left + (FLeftMargin.GetWidth - FLeftMargin.LineState.Width -
+        Windows.ExtTextOut(Canvas.Handle, LLineRect.Left + (FLeftMargin.GetWidth - FLeftMargin.LineState.Width -
           2) - LTextSize.cx, LLineRect.Top + ((LLineHeight - Integer(LTextSize.cy)) div 2), ETO_OPAQUE, @LLineRect,
           PChar(LLineNumber), Length(LLineNumber), nil);
       end;
@@ -10427,7 +10490,7 @@ var
       begin
         LLineRect.Top := LLineRect.Bottom;
         LLineRect.Bottom := AClipRect.Bottom;
-        Winapi.Windows.ExtTextOut(Canvas.Handle, LLineRect.Left, LLineRect.Top, ETO_OPAQUE, @LLineRect, '', 0, nil);
+        Windows.ExtTextOut(Canvas.Handle, LLineRect.Left, LLineRect.Top, ETO_OPAQUE, @LLineRect, '', 0, nil);
       end;
     finally
       FPaintHelper.SetBaseFont(Font);
@@ -10443,7 +10506,7 @@ var
 
     procedure SetPanelActiveLineRect;
     begin
-      LPanelActiveLineRect := System.Types.Rect(AClipRect.Left, (LIndex - TopLine) * LLineHeight,
+      LPanelActiveLineRect := Types.Rect(AClipRect.Left, (LIndex - TopLine) * LLineHeight,
         AClipRect.Left + FLeftMargin.MarksPanel.Width, (LIndex - TopLine + 1) * LLineHeight);
     end;
 
@@ -10451,7 +10514,7 @@ var
     LOldColor := Canvas.Brush.Color;
     if FLeftMargin.MarksPanel.Visible then
     begin
-      LPanelRect := System.Types.Rect(AClipRect.Left, 0, AClipRect.Left + FLeftMargin.MarksPanel.Width,
+      LPanelRect := Types.Rect(AClipRect.Left, 0, AClipRect.Left + FLeftMargin.MarksPanel.Width,
         ClientHeight);
       if FLeftMargin.Colors.BookmarkPanelBackground <> clNone then
       begin
@@ -10778,7 +10841,7 @@ var
   LHeight: Double;
 {$if defined(USE_VCL_STYLES)}
   LStyles: TCustomStyleServices;
-{$endif}
+{$ifend}
 begin
   if not Assigned(FSearch.Lines) then
     Exit;
@@ -10789,7 +10852,7 @@ begin
 
 {$if defined(USE_VCL_STYLES)}
   LStyles := StyleServices;
-{$endif}
+{$ifend}
   { Background }
   if FSearch.Map.Colors.Background <> clNone then
     Canvas.Brush.Color := FSearch.Map.Colors.Background
@@ -10798,7 +10861,7 @@ begin
   if LStyles.Enabled then
     Canvas.Brush.Color := LStyles.GetStyleColor(scPanel)
   else
-{$endif}
+{$ifend}
       Canvas.Brush.Color := FBackgroundColor;
   FillRect(AClipRect);
   { Lines in window }
@@ -10815,7 +10878,7 @@ begin
   if LStyles.Enabled then
     Canvas.Pen.Color := LStyles.GetSystemColor(clHighlight)
   else
-{$endif}
+{$ifend}
     Canvas.Pen.Color := clHighlight;
   Canvas.Pen.Width := 1;
   Canvas.Pen.Style := psSolid;
@@ -10898,7 +10961,7 @@ begin
           FPaintHelper.SetStyle([]);
           LPilcrow := BCEDITOR_PILCROW_CHAR;
           SetBkMode(Canvas.Handle, TRANSPARENT);
-          Winapi.Windows.ExtTextOut(Canvas.Handle, LCharRect.Left, LCharRect.Top, ETO_OPAQUE or ETO_CLIPPED,
+          Windows.ExtTextOut(Canvas.Handle, LCharRect.Left, LCharRect.Top, ETO_OPAQUE or ETO_CLIPPED,
             @LCharRect, PChar(LPilcrow), 1, nil);
         end
         else
@@ -11217,7 +11280,7 @@ var
             Inc(LSearchRect.Right, FItalicOffset);
 
           if LToken <> '' then
-            Winapi.Windows.ExtTextOut(Canvas.Handle, LSearchRect.Left, LSearchRect.Top, ETO_OPAQUE or ETO_CLIPPED,
+            Windows.ExtTextOut(Canvas.Handle, LSearchRect.Left, LSearchRect.Top, ETO_OPAQUE or ETO_CLIPPED,
               @LSearchRect, PChar(LToken), Length(LToken), nil);
 
           if LBeginTextPositionChar + LSearchTextLength > LCurrentLineLength then
@@ -11411,7 +11474,7 @@ var
       end
       else
       begin
-        Winapi.Windows.ExtTextOut(Canvas.Handle, LTextRect.Left, LTextRect.Top, ETO_OPAQUE or ETO_CLIPPED, @LTextRect,
+        Windows.ExtTextOut(Canvas.Handle, LTextRect.Left, LTextRect.Top, ETO_OPAQUE or ETO_CLIPPED, @LTextRect,
           LPChar, LTokenLength, nil);
 
         if not AMinimap and LTokenHelper.IsItalic and (LPChar^ <> BCEDITOR_SPACE_CHAR) and (ATokenLength = Length(AToken)) then
@@ -11709,7 +11772,11 @@ var
       else
       begin
         LAppendAnsiChars := (LTokenHelper.Length > 0) and (Ord(LTokenHelper.Text[1]) < 256) and (Ord(LPToken^) < 256);
+      {$IF CompilerVersion < 25}
+        LAppendUnicode := TCharacter.GetUnicodeCategory(LPToken^) in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark];
+      {$ELSE}
         LAppendUnicode := LPToken^.GetUnicodeCategory in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark];
+      {$IFEND}
         LAppendTabs := not (toColumns in FTabs.Options) or (toColumns in FTabs.Options) and (LEmptySpace <> esTab);
 
         LCanAppend := LCanAppend and
@@ -12070,8 +12137,13 @@ var
               LElement := FHighlighter.GetCurrentRangeAttribute.Element;
               if (LElement <> BCEDITOR_ATTRIBUTE_ELEMENT_COMMENT) and (LElement <> BCEDITOR_ATTRIBUTE_ELEMENT_STRING) then
                 Break;
+            {$IF CompilerVersion < 24}
+              LOpenTokenEndPos := PosEx(LFoldRange.RegionItem.OpenTokenEnd, AnsiUpperCase(LFromLineText),
+                LOpenTokenEndPos + 1);
+            {$ELSE}
               LOpenTokenEndPos := Pos(LFoldRange.RegionItem.OpenTokenEnd, AnsiUpperCase(LFromLineText),
                 LOpenTokenEndPos + 1);
+            {$IFEND}
             until LOpenTokenEndPos = 0;
           end;
 
@@ -12517,7 +12589,7 @@ begin
       else
       begin
         HideCaret;
-        Winapi.Windows.DestroyCaret;
+        Windows.DestroyCaret;
       end;
     end;
   end;
@@ -12907,7 +12979,7 @@ end;
 procedure TBCBaseEditor.ShowCaret;
 begin
   if FCaret.Visible and not FCaret.NonBlinking.Enabled and not (sfCaretVisible in FStateFlags) then
-    if Winapi.Windows.ShowCaret(Handle) then
+    if Windows.ShowCaret(Handle) then
       Include(FStateFlags, sfCaretVisible);
 end;
 
@@ -13036,7 +13108,7 @@ var
   LMinimapLeft, LMinimapRight: Integer;
   LSelectionAvailable: Boolean;
 begin
-  Winapi.Windows.GetCursorPos(LCursorPoint);
+  Windows.GetCursorPos(LCursorPoint);
   LCursorPoint := ScreenToClient(LCursorPoint);
 
   Inc(LCursorPoint.X, 4);
@@ -13185,9 +13257,15 @@ begin
       Inc(LResultChar);
     end;
     while (LPLine^ <> BCEDITOR_NONE_CHAR) and
+    {$IF CompilerVersion < 25}
+      ((TCharacter.GetUnicodeCategory(LPLine^) in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
+      ((LPLine - 1)^ <> BCEDITOR_NONE_CHAR) and 
+      (TCharacter.GetUnicodeCategory((LPLine - 1)^) = TUnicodeCategory.ucNonSpacingMark)
+    {$ELSE}
       ((LPLine^.GetUnicodeCategory in [TUnicodeCategory.ucCombiningMark, TUnicodeCategory.ucNonSpacingMark]) or
-      ((LPLine - 1)^ <> BCEDITOR_NONE_CHAR) and
+      ((LPLine - 1)^ <> BCEDITOR_NONE_CHAR) and 
       ((LPLine - 1)^.GetUnicodeCategory = TUnicodeCategory.ucNonSpacingMark)
+    {$IFEND}
       and not IsCombiningDiacriticalMark((LPLine - 1)^)) do
     begin
       Inc(LResultChar);
@@ -13329,8 +13407,7 @@ var
   LCursorPoint: TPoint;
 begin
   Result := False;
-
-  Winapi.Windows.GetCursorPos(LCursorPoint);
+  Windows.GetCursorPos(LCursorPoint);
   LCursorPoint := ScreenToClient(LCursorPoint);
   if (LCursorPoint.X < 0) or (LCursorPoint.Y < 0) or (LCursorPoint.X > Self.Width) or (LCursorPoint.Y > Self.Height) then
     Exit;
@@ -13429,7 +13506,7 @@ var
       LOptions := [roMultiLine];
       {$if CompilerVersion > 26}
       Include(LOptions, roNotEmpty);
-      {$endif}
+      {$ifend}
       if not (roCaseSensitive in FReplace.Options) then
         Include(LOptions, roIgnoreCase);
 
@@ -13648,8 +13725,13 @@ begin
 
         if LOpenTokenSkipFoldRangeList.Count = 0 then
         begin
+        {$IF CompilerVersion < 25}
+          if (LWord = '') and (TCharacter.IsLower(LPText^) or TCharacter.IsUpper(LPText^) or (LPText^ = BCEDITOR_UNDERSCORE)) or
+            (LWord <> '') and (TCharacter.IsLower(LPText^) or TCharacter.IsUpper(LPText^) or TCharacter.IsNumber(LPText^) or 
+        {$ELSE}
           if (LWord = '') and (LPText^.IsLower or LPText^.IsUpper or (LPText^ = BCEDITOR_UNDERSCORE)) or
-            (LWord <> '') and (LPText^.IsLower or LPText^.IsUpper or LPText^.IsNumber or
+            (LWord <> '') and (LPText^.IsLower or LPText^.IsUpper or LPText^.IsNumber or 
+        {$IFEND}
             (LPText^ = BCEDITOR_UNDERSCORE)) then
             LWord := LWord + LPText^
           else
@@ -13694,7 +13776,11 @@ begin
       if Length(LWord) > 1 then
       begin
         LChar := LWord[1];
+      {$IF CompilerVersion < 25}
+        if TCharacter.IsLower(LChar) or TCharacter.IsUpper(LChar) or (LChar = BCEDITOR_UNDERSCORE) then
+      {$ELSE}
         if LChar.IsLower or LChar.IsUpper or (LChar = BCEDITOR_UNDERSCORE) then
+      {$IFEND}
           if Pos(LWord + BCEDITOR_CARRIAGE_RETURN + BCEDITOR_LINEFEED, LWordList) = 0 then { No duplicates }
             LWordList := LWordList + LWord + BCEDITOR_CARRIAGE_RETURN + BCEDITOR_LINEFEED;
       end;
@@ -14803,7 +14889,7 @@ begin
 end;
 
 procedure TBCBaseEditor.ExportToHTML(const AFileName: string; const ACharSet: string = '';
-  AEncoding: System.SysUtils.TEncoding = nil);
+  AEncoding: SysUtils.TEncoding = nil);
 var
   LFileStream: TFileStream;
 begin
@@ -14816,7 +14902,7 @@ begin
 end;
 
 procedure TBCBaseEditor.ExportToHTML(AStream: TStream; const ACharSet: string = '';
-  AEncoding: System.SysUtils.TEncoding = nil);
+  AEncoding: SysUtils.TEncoding = nil);
 begin
   with TBCEditorExportHTML.Create(FLines, FHighlighter, Font, ACharSet) do
   try
@@ -14950,7 +15036,7 @@ begin
     DoLeftMarginAutoSize
 end;
 
-procedure TBCBaseEditor.LoadFromFile(const AFileName: string; AEncoding: System.SysUtils.TEncoding = nil);
+procedure TBCBaseEditor.LoadFromFile(const AFileName: string; AEncoding: SysUtils.TEncoding = nil);
 var
   LFileStream: TFileStream;
 begin
@@ -14962,7 +15048,7 @@ begin
   end;
 end;
 
-procedure TBCBaseEditor.LoadFromStream(AStream: TStream; AEncoding: System.SysUtils.TEncoding = nil);
+procedure TBCBaseEditor.LoadFromStream(AStream: TStream; AEncoding: SysUtils.TEncoding = nil);
 var
   LBuffer: TBytes;
   LWithBOM: Boolean;
@@ -15200,7 +15286,7 @@ begin
   Invalidate;
 end;
 
-procedure TBCBaseEditor.SaveToFile(const AFileName: string; AEncoding: System.SysUtils.TEncoding = nil);
+procedure TBCBaseEditor.SaveToFile(const AFileName: string; AEncoding: SysUtils.TEncoding = nil);
 var
   LFileStream: TFileStream;
 begin
@@ -15212,7 +15298,7 @@ begin
   end;
 end;
 
-procedure TBCBaseEditor.SaveToStream(AStream: TStream; AEncoding: System.SysUtils.TEncoding = nil);
+procedure TBCBaseEditor.SaveToStream(AStream: TStream; AEncoding: SysUtils.TEncoding = nil);
 begin
   if Assigned(AEncoding) then
     Encoding := AEncoding;
@@ -15287,7 +15373,7 @@ end;
 
 procedure TBCBaseEditor.SetFocus;
 begin
-  Winapi.Windows.SetFocus(Handle);
+  Windows.SetFocus(Handle);
   inherited;
 end;
 
@@ -15681,19 +15767,19 @@ begin
   end;
 {$else}
   inherited;
-{$endif}
+{$ifend}
 end;
 
 initialization
 
 {$if defined(USE_VCL_STYLES)}
   TCustomStyleEngine.RegisterStyleHook(TBCBaseEditor, TBCEditorStyleHook);
-{$endif}
+{$ifend}
 
 finalization
 
 {$if defined(USE_VCL_STYLES)}
   TCustomStyleEngine.UnregisterStyleHook(TBCBaseEditor, TBCEditorStyleHook);
-{$endif}
+{$ifend}
 
 end.

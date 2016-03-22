@@ -5,7 +5,7 @@ unit BCEditor.Print.Preview;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.Classes, System.SysUtils, Vcl.Controls, Vcl.Graphics, Vcl.Forms,
+  Windows, Messages, Classes, SysUtils, Controls, Graphics, Forms,
   BCEditor.Print;
 
 type
@@ -87,11 +87,13 @@ type
 implementation
 
 uses
-  System.Types, BCEditor.Language;
+  Types, BCEditor.Language;
 
 const
   MARGIN_WIDTH_LEFT_AND_RIGHT = 12;
   MARGIN_HEIGHT_TOP_AND_BOTTOM = 12;
+
+{$I BCEditor.RectHelper.inc}
 
 { TBCEditorPrintPreview }
 
@@ -201,7 +203,7 @@ begin
     Pen.Style := psSolid;
     if (csDesigning in ComponentState) or not Assigned(FEditorPrint) then
     begin
-      Winapi.Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, LClipRect, '', 0, nil);
+      Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, LClipRect, '', 0, nil);
       Brush.Color := FPageBackgroundColor;
       Rectangle(MARGIN_WIDTH_LEFT_AND_RIGHT, MARGIN_HEIGHT_TOP_AND_BOTTOM, MARGIN_WIDTH_LEFT_AND_RIGHT + 30,
         MARGIN_HEIGHT_TOP_AND_BOTTOM + 43);
@@ -216,7 +218,7 @@ begin
     PaperRect.Bottom := PaperRect.Top + FPageSize.Y;
     PaperRGN := CreateRectRgn(PaperRect.Left, PaperRect.Top, PaperRect.Right + 1, PaperRect.Bottom + 1);
     if NULLREGION <> ExtSelectClipRgn(Handle, PaperRGN, RGN_DIFF) then
-      Winapi.Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, LClipRect, '', 0, nil);
+      Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, LClipRect, '', 0, nil);
     SelectClipRgn(Handle, PaperRGN);
     Brush.Color := FPageBackgroundColor;
     Rectangle(PaperRect.Left, PaperRect.Top, PaperRect.Right + 1, PaperRect.Bottom + 1);

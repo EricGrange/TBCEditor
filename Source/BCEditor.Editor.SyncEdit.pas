@@ -3,7 +3,7 @@ unit BCEditor.Editor.SyncEdit;
 interface
 
 uses
-  System.Classes, BCEditor.Editor.SyncEdit.Colors, BCEditor.Editor.Glyph, BCEditor.Types;
+  Classes, BCEditor.Editor.SyncEdit.Colors, BCEditor.Editor.Glyph, BCEditor.Types;
 
 type
   TBCEditorSyncEdit = class(TPersistent)
@@ -58,7 +58,7 @@ type
 implementation
 
 uses
-  Vcl.Menus, Vcl.Graphics, BCEditor.Consts;
+  Menus, Graphics, BCEditor.Consts;
 
 constructor TBCEditorSyncEdit.Create;
 begin
@@ -68,7 +68,7 @@ begin
   FBlockSelected := False;
   FEnabled := True;
   FInEditor := False;
-  FShortCut := Vcl.Menus.ShortCut(Ord('J'), [ssCtrl, ssShift]);
+  FShortCut := Menus.ShortCut(Ord('J'), [ssCtrl, ssShift]);
   FOptions := [seCaseSensitive];
   FSyncItems := TList.Create;
   FColors := TBCEditorSyncEditColors.Create;

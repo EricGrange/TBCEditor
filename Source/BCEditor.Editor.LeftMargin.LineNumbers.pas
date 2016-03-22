@@ -3,7 +3,7 @@ unit BCEditor.Editor.LeftMargin.LineNumbers;
 interface
 
 uses
-  System.Classes, BCEditor.Types;
+  Classes, BCEditor.Types;
 
 type
   TBCEditorLeftMarginLineNumbers = class(TPersistent)

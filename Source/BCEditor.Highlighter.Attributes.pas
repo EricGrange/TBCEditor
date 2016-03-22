@@ -3,7 +3,7 @@ unit BCEditor.Highlighter.Attributes;
 interface
 
 uses
-  Winapi.Windows, System.Classes, Vcl.Graphics, BCEditor.Consts;
+  Windows, Classes, Graphics, BCEditor.Consts;
 
 type
   TBCEditorHighlighterAttribute = class(TPersistent)
@@ -48,7 +48,7 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  SysUtils;
 
 constructor TBCEditorHighlighterAttribute.Create(const AttributeName: string);
 begin

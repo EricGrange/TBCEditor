@@ -3,7 +3,7 @@ unit BCEditor.Editor.Utils;
 interface
 
 uses
-  System.Classes, System.SysUtils, BCEditor.Types;
+  Classes, SysUtils, BCEditor.Types;
 
 function GetTextPosition(const AChar, ALine: Integer): TBCEditorTextPosition;
 function IsUTF8Buffer(const ABuffer: TBytes; out AWithBOM: Boolean): Boolean;
@@ -13,7 +13,7 @@ procedure SetClipboardText(const AText: string);
 implementation
 
 uses
-  System.Math, BCEditor.Consts, Winapi.Windows, vcl.ClipBrd;
+  Math, BCEditor.Consts, Windows, ClipBrd;
 
 function GetTextPosition(const AChar, ALine: Integer): TBCEditorTextPosition;
 begin

@@ -3,7 +3,7 @@ unit BCEditor.Editor.CodeFolding.Hint;
 interface
 
 uses
-  System.Classes, System.UITypes, Vcl.Graphics, BCEditor.Editor.CodeFolding.Hint.Colors,
+  Classes, UITypes, Graphics, BCEditor.Editor.CodeFolding.Hint.Colors,
   BCEditor.Editor.CodeFolding.Hint.Indicator;
 
 type

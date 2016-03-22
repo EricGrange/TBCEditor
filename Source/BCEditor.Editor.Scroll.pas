@@ -3,7 +3,7 @@ unit BCEditor.Editor.Scroll;
 interface
 
 uses
-  System.Classes, System.UITypes, BCEditor.Types, BCEditor.Editor.Glyph, BCEditor.Editor.Scroll.Hint,
+  Classes, UITypes, BCEditor.Types, BCEditor.Editor.Glyph, BCEditor.Editor.Scroll.Hint,
   BCEditor.Editor.Scroll.Shadow;
 
 const
@@ -12,7 +12,7 @@ const
 type
   TBCEditorScroll = class(TPersistent)
   strict private
-    FBars: System.UITypes.TScrollStyle;
+    FBars: UITypes.TScrollStyle;
     FHint: TBCEditorScrollHint;
     FIndicator: TBCEditorGlyph;
     FMaxWidth: Integer;
@@ -20,7 +20,7 @@ type
     FOptions: TBCEditorScrollOptions;
     FShadow: TBCEditorScrollShadow;
     procedure DoChange;
-    procedure SetBars(const AValue: System.UITypes.TScrollStyle);
+    procedure SetBars(const AValue: UITypes.TScrollStyle);
     procedure SetHint(const AValue: TBCEditorScrollHint);
     procedure SetIndicator(const AValue: TBCEditorGlyph);
     procedure SetOnChange(AValue: TNotifyEvent);
@@ -31,7 +31,7 @@ type
     procedure Assign(ASource: TPersistent); override;
     procedure SetOption(const AOption: TBCEditorScrollOption; const AEnabled: Boolean);
   published
-    property Bars: System.UITypes.TScrollStyle read FBars write SetBars default System.UITypes.TScrollStyle.ssBoth;
+    property Bars: UITypes.TScrollStyle read FBars write SetBars default UITypes.TScrollStyle.ssBoth;
     property Hint: TBCEditorScrollHint read FHint write SetHint;
     property Indicator: TBCEditorGlyph read FIndicator write SetIndicator;
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
@@ -42,7 +42,7 @@ type
 implementation
 
 uses
-  BCEditor.Utils, BCEditor.Consts, Vcl.Graphics;
+  BCEditor.Utils, BCEditor.Consts, Graphics;
 
 constructor TBCEditorScroll.Create;
 begin
@@ -50,7 +50,7 @@ begin
 
   FOptions := BCEDITOR_DEFAULT_SCROLL_OPTIONS;
   FMaxWidth := 1024;
-  FBars := System.UITypes.TScrollStyle.ssBoth;
+  FBars := UITypes.TScrollStyle.ssBoth;
   FHint := TBCEditorScrollHint.Create;
   FIndicator := TBCEditorGlyph.Create(HInstance, BCEDITOR_MOUSE_MOVE_SCROLL, clFuchsia);
   FShadow := TBCEditorScrollShadow.Create;
@@ -71,7 +71,7 @@ begin
   FShadow.OnChange := AValue;
 end;
 
-procedure TBCEditorScroll.SetBars(const AValue: System.UITypes.TScrollStyle);
+procedure TBCEditorScroll.SetBars(const AValue: UITypes.TScrollStyle);
 begin
   if FBars <> AValue then
   begin

@@ -3,7 +3,7 @@ unit BCEditor.Editor.RightMargin;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, System.UITypes, BCEditor.Editor.RightMargin.Colors, BCEditor.Types;
+  Classes, Graphics, UITypes, BCEditor.Editor.RightMargin.Colors, BCEditor.Types;
 
 type
   TBCEditorRightMargin = class(TPersistent)

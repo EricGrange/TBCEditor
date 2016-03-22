@@ -3,7 +3,7 @@ unit BCEditor.Print.PrinterInfo;
 interface
 
 uses
-  Winapi.Windows, Vcl.Printers;
+  Windows, Printers;
 
 type
   TBCEditorPrinterInfo = class
@@ -195,8 +195,8 @@ begin
     FillDefault;
     Exit;
   end;
-  FPhysicalWidth := GetDeviceCaps(Printer.Handle, Winapi.Windows.PhysicalWidth);
-  FPhysicalHeight := GetDeviceCaps(Printer.Handle, Winapi.Windows.PhysicalHeight);
+  FPhysicalWidth := GetDeviceCaps(Printer.Handle, Windows.PhysicalWidth);
+  FPhysicalHeight := GetDeviceCaps(Printer.Handle, Windows.PhysicalHeight);
   FPrintableWidth := Printer.PageWidth;
   FPrintableHeight := Printer.PageHeight;
   FLeftMargin := GetDeviceCaps(Printer.Handle, PhysicalOffsetX);

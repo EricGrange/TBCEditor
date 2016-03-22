@@ -3,7 +3,7 @@ unit BCEditor.Editor.Scroll.Hint;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Types;
+  Classes, Graphics, BCEditor.Types;
 
 type
   TBCEditorScrollHint = class(TPersistent)

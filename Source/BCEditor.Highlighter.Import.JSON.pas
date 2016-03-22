@@ -3,7 +3,7 @@ unit BCEditor.Highlighter.Import.JSON;
 interface
 
 uses
-  System.Classes, System.SysUtils, BCEditor.Editor.Base, BCEditor.Highlighter, BCEditor.Highlighter.Colors,
+  Classes, SysUtils, BCEditor.Editor.Base, BCEditor.Highlighter, BCEditor.Highlighter.Colors,
   BCEditor.Highlighter.Info, BCEditor.Highlighter.Attributes, BCEditor.Highlighter.Rules, BCEditor.Editor.SkipRegions,
   BCEditor.Editor.CodeFolding.Regions, BCEditor.JsonDataObjects;
 
@@ -41,8 +41,8 @@ type
 implementation
 
 uses
-  System.TypInfo, Vcl.Graphics, Vcl.Forms, BCEditor.Consts, BCEditor.Types, Vcl.Dialogs,
-  BCEditor.Highlighter.Token, Vcl.GraphUtil, BCEditor.Language;
+  TypInfo, Graphics, Forms, BCEditor.Consts, BCEditor.Types, Dialogs,
+  BCEditor.Highlighter.Token, GraphUtil, BCEditor.Language;
 
 function StringToColorDef(const AString: string; const DefaultColor: TColor): Integer;
 begin

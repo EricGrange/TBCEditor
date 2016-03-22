@@ -3,7 +3,7 @@ unit BCEditor.Export.HTML;
 interface
 
 uses
-  System.Classes, System.SysUtils, Vcl.Graphics, BCEditor.Lines, BCEditor.Highlighter;
+  Classes, SysUtils, Graphics, BCEditor.Lines, BCEditor.Highlighter;
 
 type
   TBCEditorExportHTML = class(TObject)
@@ -22,13 +22,13 @@ type
     constructor Create(ALines: TBCEditorLines; AHighlighter: TBCEditorHighlighter; AFont: TFont; const ACharSet: string); overload;
     destructor Destroy; override;
 
-    procedure SaveToStream(AStream: TStream; AEncoding: System.SysUtils.TEncoding);
+    procedure SaveToStream(AStream: TStream; AEncoding: SysUtils.TEncoding);
   end;
 
 implementation
 
 uses
-  Winapi.Windows, System.UITypes, BCEditor.Highlighter.Attributes, BCEditor.Highlighter.Colors, BCEditor.Consts,
+  Windows, UITypes, BCEditor.Highlighter.Attributes, BCEditor.Highlighter.Colors, BCEditor.Consts,
   BCEditor.Utils;
 
 constructor TBCEditorExportHTML.Create(ALines: TBCEditorLines; AHighlighter: TBCEditorHighlighter; AFont: TFont; const ACharSet: string);
@@ -179,7 +179,7 @@ begin
   FStringList.Add('</html>');
 end;
 
-procedure TBCEditorExportHTML.SaveToStream(AStream: TStream; AEncoding: System.SysUtils.TEncoding);
+procedure TBCEditorExportHTML.SaveToStream(AStream: TStream; AEncoding: SysUtils.TEncoding);
 begin
   CreateHTMLDocument;
   if not Assigned(AEncoding) then

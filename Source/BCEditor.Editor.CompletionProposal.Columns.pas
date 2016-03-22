@@ -3,7 +3,7 @@ unit BCEditor.Editor.CompletionProposal.Columns;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Editor.CompletionProposal.Columns.Items,
+  Classes, Graphics, BCEditor.Editor.CompletionProposal.Columns.Items,
   BCEditor.Editor.CompletionProposal.Columns.Title;
 
 type

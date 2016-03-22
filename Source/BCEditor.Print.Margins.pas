@@ -3,7 +3,7 @@ unit BCEditor.Print.Margins;
 interface
 
 uses
-  System.Classes, System.SysUtils, Vcl.Graphics, BCEditor.Print.Types, BCEditor.Print.PrinterInfo, BCEditor.Utils;
+  Classes, SysUtils, Graphics, BCEditor.Print.Types, BCEditor.Print.PrinterInfo, BCEditor.Utils;
 
 type
   TBCEditorPrintMargins = class(TPersistent)

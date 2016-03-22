@@ -3,7 +3,7 @@ unit BCEditor.Editor.Search.Highlighter.Colors;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Consts, BCEditor.Types;
+  Classes, Graphics, BCEditor.Consts, BCEditor.Types;
 
 type
   TBCEditorSearchColors = class(TPersistent)

@@ -3,7 +3,7 @@ unit BCEditor.Editor.Caret.MultiEdit;
 interface
 
 uses
-  System.Classes, BCEditor.Editor.Caret.MultiEdit.Colors, BCEditor.Types;
+  Classes, BCEditor.Editor.Caret.MultiEdit.Colors, BCEditor.Types;
 
 const
   BCEDITOR_MULTIEDIT_DEFAULT_OPTIONS = [meoShowActiveLine, meoShowGhost];

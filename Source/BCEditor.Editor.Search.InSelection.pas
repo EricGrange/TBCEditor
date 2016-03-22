@@ -3,7 +3,7 @@ unit BCEditor.Editor.Search.InSelection;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Types, BCEditor.Consts;
+  Classes, Graphics, BCEditor.Types, BCEditor.Consts;
 
 type
   TBCEditorSearchInSelection = class(TPersistent)

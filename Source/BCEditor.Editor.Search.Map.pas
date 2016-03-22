@@ -3,7 +3,7 @@ unit BCEditor.Editor.Search.Map;
 interface
 
 uses
-  System.Classes, System.UITypes, BCEditor.Editor.Search.Map.Colors, BCEditor.Types;
+  Classes, UITypes, BCEditor.Editor.Search.Map.Colors, BCEditor.Types;
 
 type
   TBCEditorSearchMap = class(TPersistent)
@@ -40,7 +40,7 @@ type
 implementation
 
 uses
-  System.Math;
+  Math;
 
 constructor TBCEditorSearchMap.Create;
 begin

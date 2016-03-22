@@ -3,7 +3,7 @@ unit BCEditor.Editor.Replace;
 interface
 
 uses
-  System.Classes, BCEditor.Types;
+  Classes, BCEditor.Types;
 
 type
   TBCEditorReplace = class(TPersistent)

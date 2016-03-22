@@ -3,7 +3,7 @@ unit BCEditor.Editor.Minimap.Colors;
 interface
 
 uses
-  System.Classes, Vcl.Graphics, BCEditor.Consts;
+  Classes, Graphics, BCEditor.Consts;
 
 type
   TBCEditorMinimapColors = class(TPersistent)
