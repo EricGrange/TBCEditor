@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "10.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "MsgBox(64, \"Tutorial\", \"Hello World!\")"
             ]
@@ -29,26 +29,6 @@
                   },
                   "TokenRange": {
                      "Open": ";"
-                  }
-               },
-							 {
-                  "Type": "BlockComment",
-                  "Attributes": {
-                     "Element": "Comment"
-                  },
-                  "TokenRange": {
-                     "Open": "#COMMENTS-START",
-										 "Close": "#COMMENTS-END"
-                  }
-               },
-							 {
-                  "Type": "BlockComment",
-                  "Attributes": {
-                     "Element": "Comment"
-                  },
-                  "TokenRange": {
-                     "Open": "#CS",
-										 "Close": "#CE"
                   }
                },
                {
@@ -618,77 +598,6 @@
          }
       }
    },
-   "CodeFolding": {
-      "Ranges": [
-         {
-				    "SkipRegion": [
-               {
-                  "OpenToken": "\"",
-                  "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
-               }
-						],
-            "FoldRegion": [
-						   {
-                  "OpenToken": "#COMMENTS-START",
-                  "CloseToken": "#COMMENTS-END",
-									"Properties": {
-                     "NoSubs": true,
-										 "BeginWithBreakChar": true,
-										 "OpenTokenBreaksLine": true
-									}
-               },
-							 {
-                  "OpenToken": "#CS",
-                  "CloseToken": "#CE",
-									"Properties": {
-                     "NoSubs": true,
-										 "BeginWithBreakChar": true,
-										 "OpenTokenBreaksLine": true
-									}
-               },
-							 {
-                  "OpenToken": "#REGION",
-                  "CloseToken": "#ENDREGION",
-									"Properties": {
-                     "BeginWithBreakChar": true,
-										 "OpenTokenBreaksLine": true
-									}
-               },
-               {
-                  "OpenToken": "FUNC",
-                  "CloseToken": "ENDFUNC"
-               },
-               {
-                  "OpenToken": "IF",
-                  "CloseToken": "ENDIF",
-                  "Properties": {
-                     "SharedClose": true
-                  }
-               },
-               {
-                  "OpenToken": "ELSE",
-                  "CloseToken": "ENDIF",
-                  "Properties": {
-                     "SharedClose": true
-                  }
-               },
-               {
-                  "OpenToken": "FOR",
-                  "CloseToken": "NEXT"
-               },
-               {
-                  "OpenToken": "WHILE",
-                  "CloseToken": "WEND"
-               },
-               {
-                  "OpenToken": "DO",
-                  "CloseToken": "UNTIL"
-               }
-            ]
-         }
-      ]
-   },
    "MatchingPair": {
       "Pairs": [
          {
@@ -710,12 +619,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": ";",

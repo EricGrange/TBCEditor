@@ -10,21 +10,19 @@ type
   strict private
     FAction: TBCEditorReplaceActionOption;
     FEngine: TBCEditorSearchEngine;
-    FOnChange: TBCEditorReplaceChangeEvent;
     FOptions: TBCEditorReplaceOptions;
-    procedure SetEngine(const AValue: TBCEditorSearchEngine);
   public
     constructor Create;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorReplaceOption; const AEnabled: Boolean);
   published
     property Action: TBCEditorReplaceActionOption read FAction write FAction default eraReplace;
-    property Engine: TBCEditorSearchEngine read FEngine write SetEngine default seNormal;
-    property OnChange: TBCEditorReplaceChangeEvent read FOnChange write FOnChange;
+    property Engine: TBCEditorSearchEngine read FEngine write FEngine default seNormal;
     property Options: TBCEditorReplaceOptions read FOptions write FOptions default [roPrompt];
   end;
 
 implementation
+
+{ TBCEditorReplace }
 
 constructor TBCEditorReplace.Create;
 begin
@@ -46,24 +44,6 @@ begin
   end
   else
     inherited Assign(ASource);
-end;
-
-procedure TBCEditorReplace.SetOption(const AOption: TBCEditorReplaceOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
-end;
-
-procedure TBCEditorReplace.SetEngine(const AValue: TBCEditorSearchEngine);
-begin
-  if FEngine <> AValue then
-  begin
-    FEngine := AValue;
-    if Assigned(FOnChange) then
-      FOnChange(rcEngineUpdate);
-  end;
 end;
 
 end.

@@ -3,41 +3,58 @@ unit BCEditor.Editor.LeftMargin.Bookmarks;
 interface
 
 uses
-  Controls, Classes, Graphics, ImgList;
+  Controls, Classes, Graphics, BCEditor.Editor.LeftMargin.Bookmarks.Panel;
 
 type
   TBCEditorLeftMarginBookMarks = class(TPersistent)
   strict private
-    FImages: TCustomImageList;
-    FLeftMargin: Integer;
+    FImages: TImageList;
     FOnChange: TNotifyEvent;
     FOwner: TComponent;
+    FPanel: TBCEditorLeftMarginBookMarkPanel;
     FShortCuts: Boolean;
     FVisible: Boolean;
     procedure DoChange;
-    procedure SetImages(const AValue: TCustomImageList);
+    procedure SetImages(const AValue: TImageList);
+    procedure SetOnChange(AValue: TNotifyEvent);
     procedure SetVisible(AValue: Boolean);
   public
     constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
   published
-    property Images: TCustomImageList read FImages write SetImages;
-    property LeftMargin: Integer read FLeftMargin write FLeftMargin default 2;
-    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property Images: TImageList read FImages write SetImages;
+    property OnChange: TNotifyEvent read FOnChange write SetOnChange;
+    property Panel: TBCEditorLeftMarginBookMarkPanel read FPanel write FPanel;
     property ShortCuts: Boolean read FShortCuts write FShortCuts default True;
     property Visible: Boolean read FVisible write SetVisible default True;
   end;
 
 implementation
 
+{ TBCEditorBookMarkOptions }
+
 constructor TBCEditorLeftMarginBookMarks.Create(AOwner: TComponent);
 begin
   inherited Create;
 
   FOwner := AOwner;
-  FLeftMargin := 2;
+  FPanel := TBCEditorLeftMarginBookMarkPanel.Create;
   FShortCuts := True;
   FVisible := True;
+end;
+
+destructor TBCEditorLeftMarginBookMarks.Destroy;
+begin
+  FPanel.Free;
+
+  inherited;
+end;
+
+procedure TBCEditorLeftMarginBookMarks.SetOnChange(AValue: TNotifyEvent);
+begin
+  FOnChange := AValue;
+  FPanel.OnChange := AValue;
 end;
 
 procedure TBCEditorLeftMarginBookMarks.Assign(ASource: TPersistent);
@@ -46,7 +63,6 @@ begin
   with ASource as TBCEditorLeftMarginBookMarks do
   begin
     Self.FImages := FImages;
-    Self.FLeftMargin := FLeftMargin;
     Self.FShortCuts := FShortCuts;
     Self.FVisible := FVisible;
     if Assigned(Self.FOnChange) then
@@ -62,7 +78,7 @@ begin
     FOnChange(Self);
 end;
 
-procedure TBCEditorLeftMarginBookMarks.SetImages(const AValue: TCustomImageList);
+procedure TBCEditorLeftMarginBookMarks.SetImages(const AValue: TImageList);
 begin
   if FImages <> AValue then
   begin

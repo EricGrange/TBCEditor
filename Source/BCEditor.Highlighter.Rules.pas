@@ -3,7 +3,8 @@ unit BCEditor.Highlighter.Rules;
 interface
 
 uses
-  Graphics, Classes, SysUtils, BCEditor.Highlighter.Token, BCEditor.Highlighter.Attributes,
+  Graphics, Classes, SysUtils,
+  BCEditor.Highlighter.Token, BCEditor.Highlighter.Attributes,
   BCEditor.Consts, BCEditor.Types;
 
 type
@@ -89,7 +90,7 @@ type
 
   TBCEditorAbstractParserArray = array [AnsiChar] of TBCEditorAbstractParser;
 
-  TBCEditorCaseFunction = function(const AChar: Char): Char;
+  TBCEditorCaseFunction = function(AChar: Char): Char;
   TBCEditorStringCaseFunction = function(const AString: string): string;
 
   TBCEditorRange = class(TBCEditorRule)
@@ -117,14 +118,13 @@ type
     FStringCaseFunct: TBCEditorStringCaseFunction;
     FSymbolList: TBCEditorAbstractParserArray;
     FTokens: TList;
-    FUseDelimitersForText: Boolean;
-    function GetKeyList(const AIndex: Integer): TBCEditorKeyList;
+    function GetKeyList(AIndex: Integer): TBCEditorKeyList;
     function GetKeyListCount: Integer;
-    function GetRange(const AIndex: Integer): TBCEditorRange;
+    function GetRange(AIndex: Integer): TBCEditorRange;
     function GetRangeCount: Integer;
-    function GetSet(const AIndex: Integer): TBCEditorSet;
+    function GetSet(AIndex: Integer): TBCEditorSet;
     function GetSetCount: Integer;
-    function GetToken(const AIndex: Integer): TBCEditorToken;
+    function GetToken(AIndex: Integer): TBCEditorToken;
     procedure SetAlternativeCloseArrayCount(const AValue: Integer);
     procedure SetCaseSensitive(const AValue: Boolean);
   public
@@ -135,13 +135,13 @@ type
     procedure AddKeyList(NewKeyList: TBCEditorKeyList);
     procedure AddRange(NewRange: TBCEditorRange);
     procedure AddSet(NewSet: TBCEditorSet);
-    procedure AddToken(const AToken: TBCEditorToken);
+    procedure AddToken(AToken: TBCEditorToken);
     procedure AddTokenRange(const AOpenToken: string; AOpenTokenBreakType: TBCEditorBreakType; const ACloseToken: string;
       ACloseTokenBreakType: TBCEditorBreakType);
     procedure Clear;
     procedure Prepare(AParent: TBCEditorRange);
     procedure Reset;
-    procedure SetDelimiters(const ADelimiters: TBCEditorCharSet);
+    procedure SetDelimiters(ADelimiters: TBCEditorCharSet);
     property AlternativeCloseArray: TBCEditorArrayOfString read FAlternativeCloseArray write FAlternativeCloseArray;
     property AlternativeCloseArrayCount: Integer read FAlternativeCloseArrayCount write SetAlternativeCloseArrayCount;
     property OpenBeginningOfLine: Boolean read FOpenBeginningOfLine write FOpenBeginningOfLine;
@@ -156,23 +156,32 @@ type
     property DefaultToken: TBCEditorToken read FDefaultToken;
     property Delimiters: TBCEditorCharSet read FDelimiters write FDelimiters;
     property KeyListCount: Integer read GetKeyListCount;
-    property KeyList[const AIndex: Integer]: TBCEditorKeyList read GetKeyList;
+    property KeyList[AIndex: Integer]: TBCEditorKeyList read GetKeyList;
     property OpenToken: TBCEditorMultiToken read FOpenToken write FOpenToken;
     property Prepared: Boolean read FPrepared;
     property RangeCount: Integer read GetRangeCount;
-    property Ranges[const AIndex: Integer]: TBCEditorRange read GetRange;
+    property Ranges[AIndex: Integer]: TBCEditorRange read GetRange;
     property SetCount: Integer read GetSetCount;
-    property Sets[const AIndex: Integer]: TBCEditorSet read GetSet;
+    property Sets[AIndex: Integer]: TBCEditorSet read GetSet;
     property StringCaseFunct: TBCEditorStringCaseFunction read FStringCaseFunct;
     property SymbolList: TBCEditorAbstractParserArray read FSymbolList;
-    property Tokens[const AIndex: Integer]: TBCEditorToken read GetToken;
-    property UseDelimitersForText: Boolean read FUseDelimitersForText write FUseDelimitersForText;
+    property Tokens[AIndex: Integer]: TBCEditorToken read GetToken;
   end;
 
 implementation
 
 uses
   BCEditor.Utils, Types;
+
+function CaseNone(AChar: Char): Char;
+begin
+  Result := AChar;
+end;
+
+function StringCaseNone(const AString: string): string;
+begin
+  Result := AString;
+end;
 
 { TBCEditorParser }
 
@@ -207,28 +216,26 @@ end;
 
 procedure TBCEditorParser.AddTokenNode(const AString: string; AToken: TBCEditorToken; ABreakType: TBCEditorBreakType);
 var
-  LIndex: Integer;
+  i: Integer;
   LLength: Integer;
-  LTokenNode: TBCEditorTokenNode;
-  LTokenNodeList: TBCEditorTokenNodeList;
-  LChar: Char;
+  TokenNode: TBCEditorTokenNode;
+  TokenNodeList: TBCEditorTokenNodeList;
 begin
-  LTokenNodeList := HeadNode.NextNodes;
-  LTokenNode := nil;
+  TokenNodeList := HeadNode.NextNodes;
+  TokenNode := nil;
   LLength := Length(AString);
-  for LIndex := 1 to LLength do
+  for i := 1 to LLength do
   begin
-    LChar := AString[LIndex];
-    LTokenNode := LTokenNodeList.FindNode(LChar);
-    if not Assigned(LTokenNode) then
+    TokenNode := TokenNodeList.FindNode(AString[i]);
+    if not Assigned(TokenNode) then
     begin
-      LTokenNode := TBCEditorTokenNode.Create(LChar);
-      LTokenNodeList.AddNode(LTokenNode);
+      TokenNode := TBCEditorTokenNode.Create(AString[i]);
+      TokenNodeList.AddNode(TokenNode);
     end;
-    LTokenNodeList := LTokenNode.NextNodes;
+    TokenNodeList := TokenNode.NextNodes;
   end;
-  LTokenNode.BreakType := ABreakType;
-  LTokenNode.Token := AToken;
+  TokenNode.BreakType := ABreakType;
+  TokenNode.Token := AToken;
 end;
 
 procedure TBCEditorParser.AddSet(ASet: TBCEditorSet);
@@ -239,95 +246,103 @@ end;
 function TBCEditorParser.GetToken(ACurrentRange: TBCEditorRange; APLine: PChar; var ARun: Integer;
   var AToken: TBCEditorToken): Boolean;
 var
-  LCurrentTokenNode, LStartTokenNode, LFindTokenNode: TBCEditorTokenNode;
-  LIndex, LStartPosition, LNextPosition, LPreviousPosition: Integer;
-  LAllowedDelimiters: TBCEditorCharSet;
-  LSet: TBCEditorSet;
-  LChar: Char;
+  CurrentTokenNode, StartTokenNode, FindTokenNode: TBCEditorTokenNode;
+  i, StartPosition, NextPosition, PreviousPosition: Integer;
+  AllowedDelimiters: TBCEditorCharSet;
 begin
   Result := False;
-
-  LStartPosition := ARun;
+  StartPosition := ARun;
   if Assigned(HeadNode) then
   begin
-    LCurrentTokenNode := HeadNode;
-    LNextPosition := LStartPosition;
-    LStartTokenNode := nil;
+    CurrentTokenNode := HeadNode;
+    NextPosition := StartPosition;
+    StartTokenNode := nil;
     repeat
-      if Assigned(LStartTokenNode) then
+      if Assigned(StartTokenNode) then
       begin
-        LCurrentTokenNode := LStartTokenNode;
-        ARun := LNextPosition;
-        LStartTokenNode := nil;
+        CurrentTokenNode := StartTokenNode;
+        ARun := NextPosition;
+        StartTokenNode := nil;
       end;
-      if Assigned(LCurrentTokenNode.Token) then
-        LFindTokenNode := LCurrentTokenNode
+      if Assigned(CurrentTokenNode.Token) then
+        FindTokenNode := CurrentTokenNode
       else
-        LFindTokenNode := nil;
-      LPreviousPosition := ARun;
-      while (LCurrentTokenNode.NextNodes.Count > 0) and (APLine[ARun] <> BCEDITOR_NONE_CHAR) do
+        FindTokenNode := nil;
+      PreviousPosition := ARun;
+      while (CurrentTokenNode.NextNodes.Count > 0) and (APLine[ARun] <> BCEDITOR_NONE_CHAR) do
       begin
         Inc(ARun);
-        LCurrentTokenNode := LCurrentTokenNode.NextNodes.FindNode(ACurrentRange.CaseFunct(APLine[ARun]));
-        if not Assigned(LCurrentTokenNode) then
+        CurrentTokenNode := CurrentTokenNode.NextNodes.FindNode(ACurrentRange.CaseFunct(APLine[ARun]));
+        if not Assigned(CurrentTokenNode) then
         begin
           Dec(ARun);
           Break;
         end;
 
-        if Assigned(LCurrentTokenNode.Token) then
+        if Assigned(CurrentTokenNode.Token) then
         begin
-          LFindTokenNode := LCurrentTokenNode;
-          LPreviousPosition := ARun;
+          FindTokenNode := CurrentTokenNode;
+          PreviousPosition := ARun;
         end;
 
-        if not Assigned(LStartTokenNode) then
-          if CharInSet(LCurrentTokenNode.Char, ACurrentRange.Delimiters) then
+        if not Assigned(StartTokenNode) then
+          if CharInSet(CurrentTokenNode.Char, ACurrentRange.Delimiters) then
           begin
-            LStartTokenNode := LCurrentTokenNode;
-            lNextPosition := ARun;
+            StartTokenNode := CurrentTokenNode;
+            NextPosition := ARun;
           end;
       end;
 
-      ARun := LPreviousPosition;
+      ARun := PreviousPosition;
 
-      if not Assigned(LFindTokenNode) or not Assigned(LFindTokenNode.Token) or
-        ((LFindTokenNode.Token.Attribute.EscapeChar <> BCEDITOR_NONE_CHAR) and
-        (LStartPosition > 0) and (APLine[LStartPosition - 1] = LFindTokenNode.Token.Attribute.EscapeChar)) then
+      if not Assigned(FindTokenNode) then
         Continue;
+      if not Assigned(FindTokenNode.Token) then
+        Continue;
+      if FindTokenNode.Token.Attribute.EscapeChar <> BCEDITOR_NONE_CHAR then
+        if (StartPosition > 0) and (APLine[StartPosition - 1] = FindTokenNode.Token.Attribute.EscapeChar) then
+          Continue;
 
       if APLine[ARun] <> BCEDITOR_NONE_CHAR then
         Inc(ARun);
 
-      if (LFindTokenNode.BreakType = btAny) or (CharInSet(APLine[ARun], ACurrentRange.Delimiters)) then
+      if FindTokenNode.BreakType = btAny then
       begin
-        AToken := LFindTokenNode.Token;
-        Exit(True);
+        Result := True;
+        AToken := FindTokenNode.Token;
+        Exit;
       end;
-    until not Assigned(LStartTokenNode);
+
+      if CharInSet(APLine[ARun], ACurrentRange.Delimiters) then
+      begin
+        Result := True;
+        AToken := FindTokenNode.Token;
+        Exit;
+      end;
+    until not Assigned(StartTokenNode);
   end;
+  ARun := StartPosition;
 
-  LAllowedDelimiters := ACurrentRange.Delimiters;
-  for LIndex := 0 to Sets.Count - 1 do
-    LAllowedDelimiters := LAllowedDelimiters - TBCEditorSet(Sets.List[LIndex]).CharSet;
+  AllowedDelimiters := ACurrentRange.Delimiters;
+  for i := 0 to Sets.Count - 1 do
+    AllowedDelimiters := AllowedDelimiters - TBCEditorSet(Sets[i]).CharSet;
 
-  for LIndex := 0 to Sets.Count - 1 do
+  for i := 0 to Sets.Count - 1 do
   begin
-    ARun := LStartPosition;
-    LSet := TBCEditorSet(Sets.List[LIndex]);
+    ARun := StartPosition;
     repeat
       Inc(ARun);
-      LChar := APLine[ARun];
-    until not CharInSet(LChar, LSet.CharSet) or (LChar = BCEDITOR_NONE_CHAR);
+    until not CharInSet(APLine[ARun], TBCEditorSet(Sets[i]).CharSet) or (APLine[ARun] = BCEDITOR_NONE_CHAR);
 
-    if CharInSet(LChar, LAllowedDelimiters) then
+    if CharInSet(APLine[ARun], AllowedDelimiters) then
     begin
-      AToken := TBCEditorToken.Create(LSet.Attribute);
+      Result := True;
+      AToken := TBCEditorToken.Create(TBCEditorSet(Sets[i]).Attribute);
       AToken.Temporary := True;
-      Exit(True);
+      Exit;
     end;
   end;
-  ARun := LStartPosition + 1;
+  ARun := StartPosition + 1;
 end;
 
 constructor TBCEditorDefaultParser.Create(AToken: TBCEditorToken);
@@ -346,6 +361,8 @@ function TBCEditorDefaultParser.GetToken(ACurrentRange: TBCEditorRange; APLine: 
   var AToken: TBCEditorToken): Boolean;
 begin
   Inc(ARun);
+  while APLine[ARun] = BCEDITOR_FILLER_CHAR do
+    Inc(ARun);
   Result := False;
 end;
 
@@ -365,6 +382,8 @@ end;
 function TDelimitersParser.GetToken(ACurrentRange: TBCEditorRange; APLine: PChar; var ARun: Integer; var AToken: TBCEditorToken): Boolean;
 begin
   if APLine[ARun] <> BCEDITOR_NONE_CHAR then
+    Inc(ARun);
+  while APLine[ARun] = BCEDITOR_FILLER_CHAR do
     Inc(ARun);
   AToken := Self.Token;
   Result := True;
@@ -433,57 +452,27 @@ begin
   inherited;
 end;
 
-procedure TBCEditorRange.AddToken(const AToken: TBCEditorToken);
+procedure TBCEditorRange.AddToken(AToken: TBCEditorToken);
 var
-  LToken: TBCEditorToken;
-  LLow, LHigh, LMiddle, LCompare: Integer;
+  Token: TBCEditorToken;
 begin
-  LLow := 0;
-  LHigh := FTokens.Count - 1;
-
-  while LLow <= LHigh do
-  begin
-    LMiddle := LLow + (LHigh - LLow) shr 1;
-    LToken := TBCEditorToken(FTokens.Items[LMiddle]);
-    LCompare := CompareStr(LToken.Symbol, AToken.Symbol);
-
-    if LCompare < 0 then
-      LLow := LMiddle + 1
-    else
-    if LCompare > 0 then
-      LHigh := LMiddle - 1
-    else
-      Exit;
-  end;
-
-  FTokens.Insert(LLow, AToken);
+  Token := FindToken(AToken.Symbol);
+  if not Assigned(Token) then
+    FTokens.Add(AToken);
 end;
 
 function TBCEditorRange.FindToken(const AString: string): TBCEditorToken;
 var
-  LToken: TBCEditorToken;
-  LLow, LHigh, LMiddle, LCompare: Integer;
+  i: Integer;
 begin
   Result := nil;
 
-  LLow := 0;
-  LHigh := FTokens.Count - 1;
-
-  while LLow <= LHigh do
-  begin
-    LMiddle := LLow + (LHigh - LLow) shr 1;
-
-    LToken := TBCEditorToken(FTokens.Items[LMiddle]);
-    LCompare := CompareStr(LToken.Symbol, AString);
-
-    if LCompare = 0 then
-      Exit(LToken)
-    else
-    if LCompare < 0 then
-      LLow := LMiddle + 1
-    else
-      LHigh := LMiddle - 1;
-  end;
+  for i := 0 to FTokens.Count - 1 do
+    if TBCEditorToken(FTokens.Items[i]).Symbol = AString then
+    begin
+      Result := TBCEditorToken(FTokens.Items[i]);
+      Break;
+    end;
 end;
 
 procedure TBCEditorRange.AddRange(NewRange: TBCEditorRange);
@@ -519,24 +508,24 @@ begin
   Result := FSets.Count;
 end;
 
-function TBCEditorRange.GetToken(const AIndex: Integer): TBCEditorToken;
+function TBCEditorRange.GetToken(AIndex: Integer): TBCEditorToken;
 begin
   Result := TBCEditorToken(FTokens[AIndex]);
 end;
 
-function TBCEditorRange.GetRange(const AIndex: Integer): TBCEditorRange;
+function TBCEditorRange.GetRange(AIndex: Integer): TBCEditorRange;
 begin
   Result := TBCEditorRange(FRanges[AIndex]);
 end;
 
-function TBCEditorRange.GetKeyList(const AIndex: Integer): TBCEditorKeyList;
+function TBCEditorRange.GetKeyList(AIndex: Integer): TBCEditorKeyList;
 begin
   Result := TBCEditorKeyList(FKeyList[AIndex]);
 end;
 
-function TBCEditorRange.GetSet(const AIndex: Integer): TBCEditorSet;
+function TBCEditorRange.GetSet(AIndex: Integer): TBCEditorSet;
 begin
-  Result := TBCEditorSet(FSets.List[AIndex]);
+  Result := TBCEditorSet(FSets[AIndex]);
 end;
 
 procedure TBCEditorRange.AddTokenRange(const AOpenToken: string; AOpenTokenBreakType: TBCEditorBreakType; const ACloseToken: string;
@@ -548,13 +537,13 @@ begin
   FCloseToken.BreakType := ACloseTokenBreakType;
 end;
 
-procedure TBCEditorRange.SetDelimiters(const ADelimiters: TBCEditorCharSet);
+procedure TBCEditorRange.SetDelimiters(ADelimiters: TBCEditorCharSet);
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   Delimiters := ADelimiters;
-  for LIndex := 0 to RangeCount - 1 do
-    Ranges[LIndex].SetDelimiters(ADelimiters);
+  for i := 0 to RangeCount - 1 do
+    Ranges[i].SetDelimiters(ADelimiters);
 end;
 
 procedure TBCEditorRange.SetAlternativeCloseArrayCount(const AValue: Integer);
@@ -568,20 +557,44 @@ begin
   FCaseSensitive := AValue;
   if not AValue then
   begin
-    FCaseFunct := CaseUpper;
+    FCaseFunct := UpCase;
     FStringCaseFunct := AnsiUpperCase;
   end
   else
   begin
     FCaseFunct := CaseNone;
-    FStringCaseFunct := CaseStringNone;
+    FStringCaseFunct := StringCaseNone;
+  end;
+end;
+
+procedure QuickSortTokenList(AList: TList; const ALowerPosition, AUpperPosition: Integer);
+var
+  i, LMiddlePosition: Integer;
+  LPivotValue: string;
+begin
+  if ALowerPosition < AUpperPosition then
+  begin
+    LPivotValue := TBCEditorToken(AList[ALowerPosition]).Symbol;
+    LMiddlePosition := ALowerPosition;
+
+    for i := ALowerPosition + 1 to AUpperPosition do
+    begin
+      if TBCEditorToken(AList[i]).Symbol < LPivotValue then
+      begin
+        Inc(LMiddlePosition);
+        AList.Exchange(i, LMiddlePosition);
+      end;
+    end;
+    AList.Exchange(ALowerPosition, LMiddlePosition);
+
+    QuickSortTokenList(AList, ALowerPosition, LMiddlePosition - 1);
+    QuickSortTokenList(AList, LMiddlePosition + 1, AUpperPosition);
   end;
 end;
 
 procedure TBCEditorRange.Prepare(AParent: TBCEditorRange);
 var
-  LIndex, LIndex2: Integer;
-  LLength: Integer;
+  i, j, LLength: Integer;
   LSymbol: string;
   LFirstChar: Char;
   LBreakType: TBCEditorBreakType;
@@ -618,7 +631,6 @@ var
   LToken, LTempToken: TBCEditorToken;
   LAnsiChar: AnsiChar;
   LChar: Char;
-  LSet: TBCEditorSet;
 begin
   Reset;
   FDefaultToken := TBCEditorToken.Create(Attribute);
@@ -633,39 +645,41 @@ begin
   FDelimiters := FDelimiters + BCEDITOR_ABSOLUTE_DELIMITERS;
 
   if Assigned(FRanges) then
-  for LIndex := 0 to FRanges.Count - 1 do
+  for i := 0 to FRanges.Count - 1 do
   begin
-    LRange := TBCEditorRange(FRanges[LIndex]);
+    LRange := TBCEditorRange(FRanges[i]);
 
-    for LIndex2 := 0 to LRange.FOpenToken.SymbolCount - 1 do
+    for j := 0 to LRange.FOpenToken.SymbolCount - 1 do
     begin
-      LTempToken := TBCEditorToken.Create(LRange.OpenToken, LIndex2);
+      LTempToken := TBCEditorToken.Create(LRange.OpenToken, j);
       LToken := InsertTokenDefault(LTempToken, Self, LRange.Attribute);
       LToken.OpenRule := LRange;
 
-      LTempToken := TBCEditorToken.Create(LRange.CloseToken, LIndex2);
+      LTempToken := TBCEditorToken.Create(LRange.CloseToken, j);
       LToken.ClosingToken := InsertTokenDefault(LTempToken, LRange, LRange.Attribute);
     end;
     LRange.Prepare(Self);
   end;
 
   if Assigned(FKeyList) then
-  for LIndex := 0 to FKeyList.Count - 1 do
+  for i := 0 to FKeyList.Count - 1 do
   begin
-    LKeyList := TBCEditorKeyList(FKeyList[LIndex]);
+    LKeyList := TBCEditorKeyList(FKeyList[i]);
 
-    for LIndex2 := 0 to LKeyList.KeyList.Count - 1 do
+    for j := 0 to LKeyList.KeyList.Count - 1 do
     begin
       LTempToken := TBCEditorToken.Create(LKeyList.Attribute);
-      LTempToken.Symbol := LKeyList.KeyList[LIndex2];
+      LTempToken.Symbol := LKeyList.KeyList[j];
       InsertToken(LTempToken, Self);
     end;
   end;
 
+  QuickSortTokenList(FTokens, 0, FTokens.Count - 1);
+
   if Assigned(FTokens) then
-  for LIndex := 0 to FTokens.Count - 1 do
+  for i := 0 to FTokens.Count - 1 do
   begin
-    LTempToken := TBCEditorToken(FTokens[LIndex]);
+    LTempToken := TBCEditorToken(FTokens[i]);
     LLength := Length(LTempToken.Symbol);
     if LLength < 1 then
       Continue;
@@ -702,23 +716,22 @@ begin
 
   if Assigned(FSets) then
     if FSets.Count > 0 then
-    for LIndex := 0 to 255 do
+    for i := 0 to 255 do
     begin
-      LAnsiChar := AnsiChar(CaseFunct(Char(LIndex)));
-      for LIndex2 := 0 to FSets.Count - 1 do
+      LAnsiChar := AnsiChar(CaseFunct(Char(i)));
+      for j := 0 to FSets.Count - 1 do
       begin
-        LSet := TBCEditorSet(FSets.List[LIndex2]);
-        if CharInSet(LAnsiChar, LSet.CharSet) then
+        if CharInSet(LAnsiChar, TBCEditorSet(FSets[j]).CharSet) then
           if not Assigned(SymbolList[LAnsiChar]) then
-            FSymbolList[LAnsiChar] := TBCEditorParser.Create(LSet)
+            FSymbolList[LAnsiChar] := TBCEditorParser.Create(TBCEditorSet(FSets[j]))
           else
-            TBCEditorParser(SymbolList[LAnsiChar]).AddSet(LSet);
+            TBCEditorParser(SymbolList[LAnsiChar]).AddSet(TBCEditorSet(FSets[j]));
       end;
     end;
 
-  for LIndex := 0 to 255 do
+  for i := 0 to 255 do
   begin
-    LAnsiChar := AnsiChar(LIndex);
+    LAnsiChar := AnsiChar(i);
     if not Assigned(SymbolList[LAnsiChar]) then
     begin
       if CharInSet(LAnsiChar, FDelimiters) then
@@ -733,38 +746,38 @@ end;
 
 procedure TBCEditorRange.Reset;
 var
-  LIndex: Integer;
+  i: Integer;
   LAnsiChar: AnsiChar;
 begin
   if not FPrepared then
     Exit;
-
-  for LIndex := 0 to 255 do
+  for i := 0 to 255 do
   begin
-    LAnsiChar := AnsiChar(LIndex);
+    LAnsiChar := AnsiChar(i);
     if Assigned(SymbolList[LAnsiChar]) and (SymbolList[LAnsiChar] <> FDefaultTermSymbol) and (SymbolList[LAnsiChar] <> FDefaultSymbols) then
+    begin
       FSymbolList[LAnsiChar].Free;
-    FSymbolList[LAnsiChar] := nil;
+      FSymbolList[LAnsiChar] := nil;
+    end
+    else
+      FSymbolList[LAnsiChar] := nil;
   end;
-
   FDefaultToken.Free;
   FDefaultToken := nil;
   FDefaultTermSymbol.Free;
   FDefaultTermSymbol := nil;
   FDefaultSymbols.Free;
   FDefaultSymbols := nil;
-
   if Assigned(FRanges) then
-  for LIndex := 0 to FRanges.Count - 1 do
-    TBCEditorRange(FRanges[LIndex]).Reset;
-
+  for i := 0 to FRanges.Count - 1 do
+    TBCEditorRange(FRanges[i]).Reset;
   ClearList(FTokens);
   FPrepared := False;
 end;
 
 procedure TBCEditorRange.Clear;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   OpenToken.Clear;
   CloseToken.Clear;
@@ -772,11 +785,9 @@ begin
   CloseOnEndOfLine := False;
   CloseParent := False;
   Reset;
-
   if Assigned(FRanges) then
-  for LIndex := 0 to FRanges.Count - 1 do
-    TBCEditorRange(FRanges[LIndex]).Clear;
-
+  for i := 0 to FRanges.Count - 1 do
+    TBCEditorRange(FRanges[i]).Clear;
   ClearList(FRanges);
   ClearList(FTokens);
   ClearList(FKeyList);

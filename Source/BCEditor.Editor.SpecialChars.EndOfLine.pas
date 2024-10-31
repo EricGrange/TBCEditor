@@ -28,6 +28,8 @@ type
 
 implementation
 
+{ TBCEditorSpecialCharsEndOfLine }
+
 constructor TBCEditorSpecialCharsEndOfLine.Create;
 begin
   inherited;

@@ -35,10 +35,10 @@ type
     function GetYPixPermm: Single;
     procedure FillDefault;
   public
-    function PixFromBottom(const AValue: Double): Integer;
-    function PixFromLeft(const AValue: Double): Integer;
-    function PixFromRight(const AValue: Double): Integer;
-    function PixFromTop(const AValue: Double): Integer;
+    function PixFromBottom(mmValue: Double): Integer;
+    function PixFromLeft(mmValue: Double): Integer;
+    function PixFromRight(mmValue: Double): Integer;
+    function PixFromTop(mmValue: Double): Integer;
     procedure UpdatePrinter;
     property BottomMargin: Integer read GetBottomMargin;
     property LeftMargin: Integer read GetLeftMargin;
@@ -58,32 +58,32 @@ implementation
 
 { TBCEditorPrinterInfo }
 
-function TBCEditorPrinterInfo.PixFromBottom(const AValue: Double): Integer;
+function TBCEditorPrinterInfo.PixFromBottom(mmValue: Double): Integer;
 begin
   if not FIsUpdated then
     UpdatePrinter;
-  Result := Round(AValue * FYPixPermm - FBottomMargin);
+  Result := Round(mmValue * FYPixPermm - FBottomMargin);
 end;
 
-function TBCEditorPrinterInfo.PixFromLeft(const AValue: Double): Integer;
+function TBCEditorPrinterInfo.PixFromLeft(mmValue: Double): Integer;
 begin
   if not FIsUpdated then
     UpdatePrinter;
-  Result := Round(AValue * FXPixPermm - FLeftMargin);
+  Result := Round(mmValue * FXPixPermm - FLeftMargin);
 end;
 
-function TBCEditorPrinterInfo.PixFromRight(const AValue: Double): Integer;
+function TBCEditorPrinterInfo.PixFromRight(mmValue: Double): Integer;
 begin
   if not FIsUpdated then
     UpdatePrinter;
-  Result := Round(AValue * FXPixPermm - FRightMargin);
+  Result := Round(mmValue * FXPixPermm - FRightMargin);
 end;
 
-function TBCEditorPrinterInfo.PixFromTop(const AValue: Double): Integer;
+function TBCEditorPrinterInfo.PixFromTop(mmValue: Double): Integer;
 begin
   if not FIsUpdated then
     UpdatePrinter;
-  Result := Round(AValue * FYPixPermm - FTopMargin);
+  Result := Round(mmValue * FYPixPermm - FTopMargin);
 end;
 
 procedure TBCEditorPrinterInfo.FillDefault;

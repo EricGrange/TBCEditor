@@ -28,10 +28,10 @@ type
 
   TBCEditor = class(TBCCustomEditor)
   published
-    property About;
     property ActiveLine;
     property Align;
     property Anchors;
+    property BackgroundColor;
     property BorderStyle;
     property Caret;
     property CodeFolding;
@@ -44,6 +44,7 @@ type
     property Height;
     property ImeMode;
     property ImeName;
+    property InsertMode;
     property KeyCommands;
     property LeftMargin;
     property Lines;
@@ -51,26 +52,19 @@ type
     property MatchingPair;
     property Minimap;
     property Name;
+    property OnAfterBookmarkPanelPaint;
     property OnAfterBookmarkPlaced;
-    property OnAfterDeleteBookmark;
-    property OnAfterMarkPanelPaint;
-    property OnAfterMarkPlaced;
-    property OnAfterDeleteMark;
+    property OnAfterClearBookmark;
     property OnAfterLinePaint;
-    property OnBeforeCompletionProposalExecute;
-    property OnBeforeDeleteMark;
-    property OnBeforeMarkPanelPaint;
-    property OnBeforeMarkPlaced;
-    property OnBeforeTokenInfoExecute;
-    property OnMarkPanelLinePaint;
+    property OnBeforeBookmarkPlaced;
+    property OnBeforeClearBookmark;
+    property OnBeforeBookmarkPanelPaint;
+    property OnBookmarkPanelLinePaint;
     property OnCaretChanged;
     property OnChange;
     property OnClick;
     property OnCommandProcessed;
-    property OnCompletionProposalCanceled;
-    property OnCompletionProposalSelected;
     property OnContextHelp;
-    property OnCreateFileStream;
     property OnCustomLineColors;
     property OnCustomTokenAttribute;
     property OnDblClick;
@@ -85,7 +79,6 @@ type
     property OnKeyPress;
     property OnKeyUp;
     property OnLeftMarginClick;
-    property OnModified;
     property OnMouseDown;
     property OnMouseMove;
     property OnMouseUp;
@@ -114,19 +107,16 @@ type
     property Search;
     property Selection;
     property ShowHint;
-    {$if defined(USE_ALPHASKINS)}
+    {$IFDEF USE_ALPHASKINS}
     property SkinData;
-    {$ifend}
+    {$ENDIF}
     property SpecialChars;
     property SyncEdit;
     property TabOrder;
     property Tabs;
     property TabStop;
     property Tag;
-    property TextEntryMode;
-    property TokenInfo;
     property Undo;
-    property UnknownChars;
     property WantReturns;
     property Width;
     property Visible;
@@ -138,7 +128,7 @@ implementation
 uses
   Windows, Classes, SysUtils;
 
-procedure TBCCustomEditor.DoOnProcessCommand(var Command: TBCEditorCommand; var AChar: Char; Data: Pointer);
+procedure TBCCustomEditor.DoOnProcessCommand(var Command: TBCEditorCommand; var AChar: Char; Data: Pointer);
 begin
   inherited;
   if Assigned(FMacroRecorder) then

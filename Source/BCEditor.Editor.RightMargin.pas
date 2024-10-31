@@ -3,7 +3,7 @@ unit BCEditor.Editor.RightMargin;
 interface
 
 uses
-  Classes, Graphics, UITypes, BCEditor.Editor.RightMargin.Colors, BCEditor.Types;
+  Classes, Graphics, Controls, BCEditor.Editor.RightMargin.Colors, BCEditor.Types;
 
 type
   TBCEditorRightMargin = class(TPersistent)
@@ -25,7 +25,6 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorRightMarginOption; const AEnabled: Boolean);
     property Moving: Boolean read FMoving write FMoving;
     property MouseOver: Boolean read FMouseOver write FMouseOver;
   published
@@ -33,11 +32,13 @@ type
     property Cursor: TCursor read FCursor write FCursor default crHSplit;
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property Options: TBCEditorRightMarginOptions read FOptions write FOptions default [rmoMouseMove, rmoShowMovingHint];
-    property Position: Integer read FPosition write SetPosition default 80;
-    property Visible: Boolean read FVisible write SetVisible default True;
+    property Position: Integer read FPosition write SetPosition;
+    property Visible: Boolean read FVisible write SetVisible;
   end;
 
 implementation
+
+{ TBCEditorRightMargin }
 
 constructor TBCEditorRightMargin.Create;
 begin
@@ -78,14 +79,6 @@ begin
   end
   else
     inherited Assign(ASource);
-end;
-
-procedure TBCEditorRightMargin.SetOption(const AOption: TBCEditorRightMarginOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
 end;
 
 procedure TBCEditorRightMargin.DoChange;

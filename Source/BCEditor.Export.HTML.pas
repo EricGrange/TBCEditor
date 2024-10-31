@@ -28,8 +28,7 @@ type
 implementation
 
 uses
-  Windows, UITypes, BCEditor.Highlighter.Attributes, BCEditor.Highlighter.Colors, BCEditor.Consts,
-  BCEditor.Utils;
+  Windows, Controls, BCEditor.Highlighter.Attributes, BCEditor.Highlighter.Colors, BCEditor.Consts;
 
 constructor TBCEditorExportHTML.Create(ALines: TBCEditorLines; AHighlighter: TBCEditorHighlighter; AFont: TFont; const ACharSet: string);
 begin
@@ -79,9 +78,14 @@ begin
   FStringList.Add('<body class="Editor">');
 end;
 
+function ColorToHex(AColor: TColor): string;
+begin
+  Result := IntToHex(GetRValue(AColor), 2) + IntToHex(GetGValue(AColor), 2) + IntToHex(GetBValue(AColor), 2);
+end;
+
 procedure TBCEditorExportHTML.CreateInternalCSS;
 var
-  LIndex: Integer;
+  i: Integer;
   LStyles: TList;
   LElement: PBCEditorHighlighterElement;
 begin
@@ -93,24 +97,24 @@ begin
   FStringList.Add('    }');
 
   LStyles := FHighlighter.Colors.Styles;
-  for LIndex := 0 to LStyles.Count - 1 do
+  for i := 0 to LStyles.Count - 1 do
   begin
-    LElement := LStyles.Items[LIndex];
+    LElement := LStyles.Items[i];
 
     FStringList.Add('    .' + LElement^.Name + ' { ');
     FStringList.Add('      color: #' + ColorToHex(LElement^.Foreground) + ';');
     FStringList.Add('      background-color: #' + ColorToHex(LElement^.Background) + ';');
 
-    if TFontStyle.fsBold in LElement^.FontStyles then
+    if TFontStyle.fsBold in LElement^.Style then
       FStringList.Add('      font-weight: bold;');
 
-    if TFontStyle.fsItalic in LElement^.FontStyles then
+    if TFontStyle.fsItalic in LElement^.Style then
       FStringList.Add('      font-style: italic;');
 
-    if TFontStyle.fsUnderline in LElement^.FontStyles then
+    if TFontStyle.fsUnderline in LElement^.Style then
       FStringList.Add('      text-decoration: underline;');
 
-    if TFontStyle.fsStrikeOut in LElement^.FontStyles then
+    if TFontStyle.fsStrikeOut in LElement^.Style then
       FStringList.Add('      text-decoration: line-through;');
 
     FStringList.Add('    }');
@@ -121,19 +125,19 @@ end;
 
 procedure TBCEditorExportHTML.CreateLines;
 var
-  LIndex: Integer;
+  i: Integer;
   LTextLine, LToken: string;
   LHighlighterAttribute: TBCEditorHighlighterAttribute;
   LPreviousElement: string;
 begin
   LPreviousElement := '';
-  for LIndex := 0 to FLines.Count - 1 do
+  for i := 0 to FLines.Count - 1 do
   begin
-    if LIndex = 0 then
+    if i = 0 then
       FHighlighter.ResetCurrentRange
     else
-      FHighlighter.SetCurrentRange(FLines.Ranges[LIndex - 1]);
-    FHighlighter.SetCurrentLine(FLines.ExpandedStrings[LIndex]);
+      FHighlighter.SetCurrentRange(FLines.Ranges[i]);
+    FHighlighter.SetCurrentLine(FLines.ExpandedStrings[i]);
     LTextLine := '';
     while not FHighlighter.GetEndOfLine do
     begin

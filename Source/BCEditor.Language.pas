@@ -3,12 +3,15 @@ unit BCEditor.Language;
 interface
 
 resourcestring
+  { BCEditor.CompletionProposal }
+  SBCEditorCannotInsertItemAtPosition = 'Cannot insert item at position %d.';
+
   { BCEditor.Editor.Base }
-  SBCEditorVersion = 'Version';
   SBCEditorScrollInfoTopLine = 'Top line: %d';
   SBCEditorScrollInfo = '%d - %d';
   SBCEditorSearchStringNotFound = 'Search string ''%s'' not found';
-  SBCEditorSearchMatchNotFound = 'Search match not found.%sRestart search from the beginning of the file?';
+  SBCEditorSearchMatchNotFoundBegin = 'Search match not found.%sRestart search from the beginning of the file?';
+  SBCEditorSearchMatchNotFoundEnd = 'Search match not found.%sRestart search from the end of the file?';
   SBCEditorRightMarginPosition = 'Position: %d';
   SBCEditorSearchEngineNotAssigned = 'Search engine has not been assigned';
 
@@ -30,13 +33,15 @@ resourcestring
   SBCEditorInvalidCapacity = 'Stringlist capacity cannot be smaller than count';
 
   { BCEditor.Highlighter.Import.JSON }
+  SBCEditorImporterFileNotFound = 'File ''%s'' not found';
   SBCEditorErrorInHighlighterParse = 'JSON parse error on line %d column %d: %s';
   SBCEditorErrorInHighlighterImport = 'Error in highlighter import: %s';
+  SBCEditorErrorInHighlighterColorImport = 'Error in highlighter color import: ';
 
   { BCEditor.Search }
   SBCEditorPatternIsEmpty = 'Pattern is empty';
 
-  { BCEditor.PaintHelper }
+  { BCEditor.TextDrawer }
   SBCEditorValueMustBeSpecified = 'SetBaseFont: ''Value'' must be specified.';
 
 implementation

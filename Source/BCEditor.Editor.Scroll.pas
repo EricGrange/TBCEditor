@@ -3,40 +3,37 @@ unit BCEditor.Editor.Scroll;
 interface
 
 uses
-  Classes, UITypes, BCEditor.Types, BCEditor.Editor.Glyph, BCEditor.Editor.Scroll.Hint,
-  BCEditor.Editor.Scroll.Shadow;
+  Classes, Forms, StdCtrls, BCEditor.Types, BCEditor.Editor.Glyph, BCEditor.Editor.Scroll.Hint;
 
 const
-  BCEDITOR_DEFAULT_SCROLL_OPTIONS = [{soAutosizeMaxWidth,} soPastEndOfLine, soShowVerticalScrollHint, soWheelClickMove];
+  BCEDITOR_DEFAULT_SCROLL_OPTIONS = [soAutosizeMaxWidth, soPastEndOfLine, soShowHint, soWheelClickMove];
 
 type
   TBCEditorScroll = class(TPersistent)
   strict private
-    FBars: UITypes.TScrollStyle;
+    FBars: TScrollStyle;
     FHint: TBCEditorScrollHint;
     FIndicator: TBCEditorGlyph;
     FMaxWidth: Integer;
     FOnChange: TNotifyEvent;
     FOptions: TBCEditorScrollOptions;
-    FShadow: TBCEditorScrollShadow;
     procedure DoChange;
-    procedure SetBars(const AValue: UITypes.TScrollStyle);
+    procedure SetBars(const AValue: TScrollStyle);
     procedure SetHint(const AValue: TBCEditorScrollHint);
     procedure SetIndicator(const AValue: TBCEditorGlyph);
-    procedure SetOnChange(AValue: TNotifyEvent);
     procedure SetOptions(const AValue: TBCEditorScrollOptions);
+    procedure SetMaxWidth(AValue: Integer);
   public
     constructor Create;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorScrollOption; const AEnabled: Boolean);
   published
-    property Bars: UITypes.TScrollStyle read FBars write SetBars default UITypes.TScrollStyle.ssBoth;
+    property Bars: TScrollStyle read FBars write SetBars default TScrollStyle.ssBoth;
     property Hint: TBCEditorScrollHint read FHint write SetHint;
     property Indicator: TBCEditorGlyph read FIndicator write SetIndicator;
-    property OnChange: TNotifyEvent read FOnChange write SetOnChange;
+    property MaxWidth: Integer read FMaxWidth write SetMaxWidth default 1024;
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property Options: TBCEditorScrollOptions read FOptions write SetOptions default BCEDITOR_DEFAULT_SCROLL_OPTIONS;
-    property Shadow: TBCEditorScrollShadow read FShadow write FShadow;
   end;
 
 implementation
@@ -44,34 +41,28 @@ implementation
 uses
   BCEditor.Utils, BCEditor.Consts, Graphics;
 
+{ TBCEditorScroll }
+
 constructor TBCEditorScroll.Create;
 begin
   inherited;
 
   FOptions := BCEDITOR_DEFAULT_SCROLL_OPTIONS;
   FMaxWidth := 1024;
-  FBars := UITypes.TScrollStyle.ssBoth;
+  FBars := TScrollStyle.ssBoth;
   FHint := TBCEditorScrollHint.Create;
-  FIndicator := TBCEditorGlyph.Create(HInstance, BCEDITOR_MOUSE_MOVE_SCROLL, clFuchsia);
-  FShadow := TBCEditorScrollShadow.Create;
+  FIndicator := TBCEditorGlyph.Create(HINSTANCE, BCEDITOR_MOUSE_MOVE_SCROLL, clFuchsia);
 end;
 
 destructor TBCEditorScroll.Destroy;
 begin
   FHint.Free;
   FIndicator.Free;
-  FShadow.Free;
 
   inherited;
 end;
 
-procedure TBCEditorScroll.SetOnChange(AValue: TNotifyEvent);
-begin
-  FOnChange := AValue;
-  FShadow.OnChange := AValue;
-end;
-
-procedure TBCEditorScroll.SetBars(const AValue: UITypes.TScrollStyle);
+procedure TBCEditorScroll.SetBars(const AValue: TScrollStyle);
 begin
   if FBars <> AValue then
   begin
@@ -94,7 +85,6 @@ begin
     Self.FBars := FBars;
     Self.FHint.Assign(FHint);
     Self.FIndicator.Assign(FIndicator);
-    Self.FShadow.Assign(FShadow);
     Self.FOptions := FOptions;
     Self.FMaxWidth := FMaxWidth;
     Self.DoChange;
@@ -103,19 +93,21 @@ begin
     inherited Assign(ASource);
 end;
 
-procedure TBCEditorScroll.SetOption(const AOption: TBCEditorScrollOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
-end;
-
 procedure TBCEditorScroll.SetOptions(const AValue: TBCEditorScrollOptions);
 begin
   if FOptions <> AValue then
   begin
     FOptions := AValue;
+    DoChange;
+  end;
+end;
+
+procedure TBCEditorScroll.SetMaxWidth(AValue: Integer);
+begin
+  AValue := MinMax(AValue, 1, MaxInt - 1);
+  if FMaxWidth <> AValue then
+  begin
+    FMaxWidth := AValue;
     DoChange;
   end;
 end;

@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "28.01.2016",
             "Sample": [
                "select \"Hello world!\" from RDB$DATABASE;"
             ]
@@ -430,14 +430,14 @@
                {
                   "Type": "Method",
                   "Words": [
-                     "avg",
-                     "count",
-                     "first",
-                     "last",
-                     "max",
-                     "min",
-                     "sum",
-                     "trim"
+									   "avg",
+									   "count",
+									   "first",
+									   "last",
+									   "max",
+									   "min",
+									   "sum",
+									   "trim"
                   ],
                   "Attributes": {
                      "Element": "Method"
@@ -496,12 +496,12 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "\"",
                   "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "--",
@@ -539,12 +539,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "--",

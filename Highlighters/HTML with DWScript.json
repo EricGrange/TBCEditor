@@ -1,0 +1,504 @@
+{
+    "Highlighter": {
+        "Info": {
+            "General": {
+                "MultiHighlighter": true,
+                "Version": "1.0",
+                "Date": "3.6.2015",
+                "Sample": [
+                    "<!DOCTYPE HTML>\r\n",
+                    "<!-- Hello World in HTML -->\r\n",
+                    "<html>\r\n",
+                    "    <head>\r\n",
+                    "        <title>Hello world example</title>\r\n",
+                    "    </head>\r\n",
+                    "    <body>\r\n",
+                    "        <span>Hello, world!</span>\r\n",
+                    "    </body>\r\n",
+                    "</html>"
+                ]
+            },
+            "Author": {
+                "Name": "Eric Grange",
+                "Mail": "eric@delphitools.info"
+            }
+        },
+        "MainRules": {
+            "Attributes": {
+                "Element": "EditorGray",
+				"ParentBackground": false
+            },
+            "SubRules": {
+                "Range": [
+                    {
+                        "Type": "Comment",
+                        "Attributes": {
+                            "Element": "Comment",
+                            "ParentBackground": true
+                        },
+                        "TokenRange": {
+                            "Open": "<!--",
+                            "Close": "-->"
+                        }
+                    },
+                    {
+                        "Type": "Directive",
+                        "Attributes": {
+                            "Element": "Directive"
+                        },
+                        "TokenRange": {
+                            "Open": "<!",
+                            "Close": ">"
+                        }
+                    },
+					{
+						"Type": "Tag",
+						"Attributes": {
+							"Element": "EditorWhite",
+							"ParentBackground": false
+						},
+						"TokenRange": {
+							"Open": "<?pas",
+							"Close": "?>"
+						},
+						"SubRules": {
+							"Range": [
+								{
+									"File": "DWScript.json",
+									"IncludeRange": "DWScript"
+								}
+							]
+						}
+					},
+					{
+						"Type": "Tag",
+						"Attributes": {
+							"Element": "EditorWhite",
+							"ParentBackground": false
+						},
+						"TokenRange": {
+							"Open": "<script type=\"pascal\"",
+							"Close": "/script>"
+						},
+						"SubRules": {
+							"Range": [
+								{
+									"File": "DWScript.json",
+									"IncludeRange": "DWScript"
+								}
+							]
+						}
+					},
+					{
+						"Type": "Tag",
+						"Attributes": {
+							"Element": "EditorGreen",
+							"ParentBackground": false
+						},
+						"Properties": {
+							"AlternativeClose": ["/>"]
+						},
+						"TokenRange": {
+							"Open": "<script",
+							"Close": "/script>"
+						},
+						"SubRules": {
+							"Range": [
+								{
+									"File": "JavaScript.json",
+									"IncludeRange": "JavaScript"
+								}
+							]
+						}
+					},
+					{
+						"Name": "Style",
+						"Type": "Tag",
+						"Attributes": {
+							"Element": "EditorBlue"
+						},
+						"TokenRange": {
+							"Open": "<style",
+							"Close": "/style>"
+						},
+						"SubRules": {
+							"Range": [
+								{
+									"File": "CSS.json",
+									"IncludeRange": "CSS"
+								}
+							]
+						}
+					},
+                    {
+                        "Name": "HTML",
+                        "Type": "Tag",
+                        "Attributes": {
+                            "Element": "EditorGray"
+                        },
+                        "TokenRange": {
+                            "Open": "<",
+                            "Close": ">"
+                        },
+                        "SubRules": {
+                            "Range": [
+                                {
+                                    "Type": "BlockComment",
+                                    "Attributes": {
+                                        "Element": "Comment"
+                                    },
+                                    "TokenRange": {
+                                        "Open": "<!--",
+                                        "Close": "-->"
+                                    }
+                                },
+                                {
+                                    "Type": "String",
+                                    "Attributes": {
+                                        "Element": "String"
+                                    },
+                                    "Properties": {
+                                        "CloseOnEndOfLine": true
+                                    },
+                                    "TokenRange": {
+                                        "Open": "'",
+                                        "Close": "'"
+                                    }
+                                },
+                                {
+                                    "Type": "String",
+                                    "Attributes": {
+                                        "Element": "String"
+                                    },
+                                    "Properties": {
+                                        "CloseOnEndOfLine": true
+                                    },
+                                    "TokenRange": {
+                                        "Open": "\"",
+                                        "Close": "\""
+                                    }
+                                },
+                                {
+                                    "Type": "Character",
+                                    "Attributes": {
+                                        "Element": "Character"
+                                    },
+                                    "Properties": {
+                                        "CloseOnTerm": true,
+                                        "CloseOnEndOfLine": true
+                                    },
+                                    "TokenRange": {
+                                        "Open": "$",
+                                        "Close": " "
+                                    }
+                                }
+                            ],
+                            "KeyList": [
+                                {
+                                    "Name": "HTML Keywords",
+                                    "Type": "ReservedWord",
+                                    "Words": [
+                                        "!doctype",
+                                        "a",
+                                        "abbr",
+                                        "address",
+                                        "area",
+                                        "article",
+                                        "aside",
+                                        "audio",
+                                        "b",
+                                        "base",
+                                        "bdi",
+                                        "bdo",
+                                        "blockquote",
+                                        "body",
+                                        "br",
+                                        "button",
+                                        "canvas",
+                                        "caption",
+										"center",
+                                        "cite",
+                                        "code",
+                                        "col",
+                                        "colgroup",
+                                        "command",
+                                        "datalist",
+                                        "dd",
+                                        "del",
+                                        "details",
+                                        "dfn",
+                                        "dir",
+                                        "div",
+                                        "dl",
+                                        "dt",
+                                        "em",
+                                        "embed",
+                                        "fieldset",
+                                        "figcaption",
+                                        "figure",
+                                        "footer",
+                                        "form",
+                                        "h1",
+                                        "h2",
+                                        "h3",
+                                        "h4",
+                                        "h5",
+                                        "h6",
+                                        "head",
+                                        "header",
+                                        "hgroup",
+                                        "hr",
+                                        "html",
+                                        "i",
+                                        "iframe",
+                                        "img",
+                                        "input",
+                                        "ins",
+                                        "kbd",
+                                        "keygen",
+                                        "label",
+                                        "legend",
+                                        "li",
+                                        "link",
+                                        "map",
+                                        "mark",
+                                        "menu",
+                                        "meta",
+                                        "meter",
+                                        "nav",
+                                        "noscript",
+                                        "object",
+                                        "ol",
+                                        "optgroup",
+                                        "option",
+                                        "output",
+                                        "p",
+                                        "param",
+                                        "pre",
+                                        "progress",
+                                        "q",
+                                        "rp",
+                                        "rt",
+                                        "ruby",
+                                        "s",
+                                        "samp",
+                                        "script",
+                                        "section",
+                                        "select",
+                                        "small",
+                                        "source",
+                                        "span",
+                                        "strong",
+                                        "style",
+                                        "sub",
+                                        "summary",
+                                        "sup",
+                                        "table",
+                                        "tbody",
+                                        "td",
+                                        "textarea",
+                                        "tfoot",
+                                        "th",
+                                        "thead",
+                                        "time",
+                                        "title",
+                                        "tr",
+                                        "track",
+                                        "u",
+                                        "ul",
+                                        "var",
+                                        "video",
+                                        "wbr"
+                                    ],
+                                    "Attributes": {
+                                        "Element": "ReservedWord",
+                                        "ParentBackground": true
+                                    }
+                                },
+                                {
+                                    "Name": "HTML Attributes",
+                                    "Type": "Attribute",
+                                    "Words": [
+                                        "abbr",
+                                        "accept",
+                                        "accept-charset",
+                                        "accesskey",
+                                        "action",
+                                        "async",
+                                        "autocomplete",
+                                        "alt",
+                                        "autofocus",
+                                        "autoplay",
+                                        "challenge",
+                                        "charset",
+                                        "checked",
+                                        "cite=",
+                                        "class",
+                                        "cols",
+                                        "colspan",
+                                        "command",
+                                        "content",
+                                        "contenteditable",
+                                        "contextmenu",
+                                        "controls",
+                                        "coords",
+                                        "crossorigin",
+                                        "data-",
+                                        "datetime",
+                                        "default",
+                                        "defer",
+                                        "dir=",
+                                        "disabled",
+                                        "download",
+                                        "draggable",
+                                        "dropzone",
+                                        "enctype",
+                                        "for",
+                                        "form=",
+                                        "formaction",
+                                        "formenctype",
+                                        "formmethod",
+                                        "formnovalidate",
+                                        "formtarget",
+                                        "headers",
+                                        "height",
+                                        "hidden",
+                                        "high",
+                                        "href",
+                                        "hreflang",
+                                        "http-equiv",
+                                        "icon",
+                                        "id",
+                                        "ismap",
+                                        "keytype",
+                                        "kind",
+                                        "label=",
+                                        "lang",
+                                        "list",
+                                        "loop",
+                                        "low",
+                                        "manifest",
+                                        "max",
+                                        "maxlength",
+                                        "media",
+                                        "method",
+                                        "min",
+                                        "muted",
+                                        "multiple",
+                                        "name",
+                                        "novalidate",
+                                        "open",
+                                        "optimum",
+                                        "pattern",
+                                        "placeholder",
+                                        "poster",
+                                        "preload",
+                                        "radiogroup",
+                                        "readonly",
+                                        "rel",
+                                        "required",
+                                        "reversed",
+                                        "rows",
+                                        "sandbox",
+                                        "scope",
+                                        "scoped",
+                                        "seamless",
+                                        "selected",
+                                        "shape",
+                                        "size",
+                                        "sizes",
+                                        "sortable",
+                                        "sorted",
+                                        "span=",
+                                        "spellcheck",
+                                        "src",
+                                        "srcdoc",
+                                        "start",
+                                        "step",
+                                        "style=",
+                                        "tabindex",
+                                        "target",
+                                        "title=",
+                                        "translate",
+                                        "type",
+                                        "usemap",
+                                        "value",
+                                        "width",
+                                        "wrap",
+                                        "xmlns"
+                                    ],
+                                    "Attributes": {
+                                        "Element": "Attribute",
+                                        "ParentBackground": true
+                                    }
+                                },
+                                {
+                                    "Type": "Symbol",
+                                    "Words": [
+                                        "/"
+                                    ],
+                                    "Attributes": {
+                                        "Element": "ReservedWord",
+                                        "ParentBackground": true
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "CodeFolding": {
+        "Options": {
+            "StringEscapeChar": "\\"
+        },
+        "SkipRegion": [
+            {
+                "File": "JavaScript.json"
+            },
+            {
+                "File": "DWScript.json"
+            }
+        ],
+        "FoldRegion": [
+            {
+                "OpenToken": "<?pas",
+                "CloseToken": "?>"
+            },
+            {
+                "File": "DWScript.json"
+            },
+            {
+                "File": "JavaScript.json"
+            }
+        ]
+
+    },
+    "MatchingPair": {
+        "Pairs": [
+            {
+                "File": "DWScript.json"
+            },
+            {
+                "File": "JavaScript.json"
+            },
+            {
+                "OpenToken": "<",
+                "CloseToken": ">"
+            }
+        ]
+    },
+    "CompletionProposal": {
+        "SkipRegion": [
+            {
+                "File": "DWScript.json"
+            },
+            {
+                "OpenToken": "<!--",
+                "CloseToken": "-->",
+                "RegionType": "MultiLine"
+            }
+        ]
+    }
+}

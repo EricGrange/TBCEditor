@@ -23,7 +23,7 @@ type
     FShortCut: TShortCut;
     FSyncItems: TList;
     FOptions: TBCEditorSyncEditOptions;
-    procedure DoChange(ASender: TObject);
+    procedure DoChange(Sender: TObject);
     procedure SetActive(AValue: Boolean);
     procedure SetActivator(const AValue: TBCEditorGlyph);
   public
@@ -36,7 +36,6 @@ type
     procedure ClearSyncItems;
     procedure MoveBeginPositionChar(ACount: Integer);
     procedure MoveEndPositionChar(ACount: Integer);
-    procedure SetOption(const AOption: TBCEditorSyncEditOption; const AEnabled: Boolean);
     property Active: Boolean read FActive write SetActive default False;
     property BlockBeginPosition: TBCEditorTextPosition read FBlockBeginPosition write FBlockBeginPosition;
     property BlockEndPosition: TBCEditorTextPosition read FBlockEndPosition write FBlockEndPosition;
@@ -60,6 +59,8 @@ implementation
 uses
   Menus, Graphics, BCEditor.Consts;
 
+{ TBCEditorSyncEdit }
+
 constructor TBCEditorSyncEdit.Create;
 begin
   inherited Create;
@@ -72,7 +73,7 @@ begin
   FOptions := [seCaseSensitive];
   FSyncItems := TList.Create;
   FColors := TBCEditorSyncEditColors.Create;
-  FActivator := TBCEditorGlyph.Create(HInstance, BCEDITOR_SYNCEDIT, clFuchsia);
+  FActivator := TBCEditorGlyph.Create(HINSTANCE, BCEDITOR_SYNCEDIT, clFuchsia);
 end;
 
 destructor TBCEditorSyncEdit.Destroy;
@@ -86,10 +87,10 @@ end;
 
 procedure TBCEditorSyncEdit.ClearSyncItems;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
-  for LIndex := FSyncItems.Count - 1 downto 0 do
-    Dispose(PBCEditorTextPosition(FSyncItems.Items[LIndex]));
+  for i := FSyncItems.Count - 1 downto 0 do
+    Dispose(PBCEditorTextPosition(FSyncItems.Items[i]));
   FSyncItems.Clear;
 end;
 
@@ -107,10 +108,10 @@ begin
     inherited Assign(ASource);
 end;
 
-procedure TBCEditorSyncEdit.DoChange(ASender: TObject);
+procedure TBCEditorSyncEdit.DoChange(Sender: TObject);
 begin
   if Assigned(FOnChange) then
-    FOnChange(ASender);
+    FOnChange(Sender);
 end;
 
 procedure TBCEditorSyncEdit.SetActive(AValue: Boolean);
@@ -140,14 +141,6 @@ begin
     and
     ((ATextPosition.Line < FBlockEndPosition.Line) or
     (ATextPosition.Line = FBlockEndPosition.Line) and (ATextPosition.Char < FBlockEndPosition.Char));
-end;
-
-procedure TBCEditorSyncEdit.SetOption(const AOption: TBCEditorSyncEditOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
 end;
 
 procedure TBCEditorSyncEdit.MoveBeginPositionChar(ACount: Integer);

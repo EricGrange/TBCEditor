@@ -10,8 +10,6 @@ type
 
   TBCEditorCodeFoldingRegionItem = class(TCollectionItem)
   strict private
-    FBeginWithBreakChar: Boolean;
-    FBreakCharFollows: Boolean;
     FBreakIfNotFoundBeforeNextRegion: string;
     FCloseAtNextToken: Boolean;
     FCloseToken: string;
@@ -21,7 +19,6 @@ type
     FOpenIsClose: Boolean;
     FOpenToken: string;
     FOpenTokenBeginningOfLine: Boolean;
-    FOpenTokenBreaksLine: Boolean;
     FOpenTokenCanBeFollowedBy: string;
     FOpenTokenEnd: string;
     FOpenTokenLength: Integer;
@@ -34,8 +31,6 @@ type
     procedure SetSkipIfFoundAfterOpenTokenArrayCount(const AValue: Integer);
   public
     constructor Create(ACollection: TCollection); override;
-    property BeginWithBreakChar: Boolean read FBeginWithBreakChar write FBeginWithBreakChar;
-    property BreakCharFollows: Boolean read FBreakCharFollows write FBreakCharFollows default True;
     property BreakIfNotFoundBeforeNextRegion: string read FBreakIfNotFoundBeforeNextRegion write FBreakIfNotFoundBeforeNextRegion;
     property CloseAtNextToken: Boolean read FCloseAtNextToken write FCloseAtNextToken;
     property CloseToken: string read FCloseToken write FCloseToken;
@@ -45,7 +40,6 @@ type
     property OpenIsClose: Boolean read FOpenIsClose write FOpenIsClose default False;
     property OpenToken: string read FOpenToken write FOpenToken;
     property OpenTokenBeginningOfLine: Boolean read FOpenTokenBeginningOfLine write FOpenTokenBeginningOfLine default False;
-    property OpenTokenBreaksLine: Boolean read FOpenTokenBreaksLine write FOpenTokenBreaksLine default False;
     property OpenTokenCanBeFollowedBy: string read FOpenTokenCanBeFollowedBy write FOpenTokenCanBeFollowedBy;
     property OpenTokenEnd: string read FOpenTokenEnd write FOpenTokenEnd;
     property OpenTokenLength: Integer read FOpenTokenLength write FOpenTokenLength;
@@ -54,16 +48,15 @@ type
     property ShowGuideLine: Boolean read FShowGuideLine write FShowGuideLine default True;
     property SkipIfFoundAfterOpenTokenArray: TBCEditorArrayOfString read FSkipIfFoundAfterOpenTokenArray write FSkipIfFoundAfterOpenTokenArray;
     property SkipIfFoundAfterOpenTokenArrayCount: Integer read FSkipIfFoundAfterOpenTokenArrayCount write SetSkipIfFoundAfterOpenTokenArrayCount;
-    property TokenEndIsPreviousLine: Boolean read FTokenEndIsPreviousLine write FTokenEndIsPreviousLine default False;
+    property TokenEndIsPreviousLine: Boolean read FTokenEndIsPreviousLine write FTokenEndIsPreviousLine;
   end;
 
   TBCEditorCodeFoldingRegion = class(TCollection)
   strict private
     FCloseToken: string;
-    FEscapeChar: Char;
-    FFoldTags: Boolean;
     FOpenToken: string;
     FSkipRegions: TBCEditorSkipRegions;
+    FEscapeChar: Char;
     FStringEscapeChar: Char;
     function GetItem(AIndex: Integer): TBCEditorCodeFoldingRegionItem;
   public
@@ -71,9 +64,8 @@ type
     destructor Destroy; override;
     function Add(const AOpenToken: string; const ACloseToken: string): TBCEditorCodeFoldingRegionItem;
     property CloseToken: string read FCloseToken write FCloseToken;
-    function Contains(const AOpenToken: string; const ACloseToken: string): Boolean;
+    function Contains(const AOpenToken, ACloseToken: string): Boolean;
     property EscapeChar: Char read FEscapeChar write FEscapeChar default BCEDITOR_NONE_CHAR;
-    property FoldTags: Boolean read FFoldTags write FFoldTags default False;
     property Items[AIndex: Integer]: TBCEditorCodeFoldingRegionItem read GetItem; default;
     property OpenToken: string read FOpenToken write FOpenToken;
     property SkipRegions: TBCEditorSkipRegions read FSkipRegions;
@@ -91,14 +83,6 @@ begin
   inherited Create(ACollection);
 
   FSkipIfFoundAfterOpenTokenArrayCount := 0;
-  FBreakIfNotFoundBeforeNextRegion := '';
-  FCloseTokenBeginningOfLine := False;
-  FNoSubs := False;
-  FOpenIsClose := False;
-  FOpenTokenBeginningOfLine := False;
-  FOpenTokenBreaksLine := False;
-  FSharedClose := False;
-  FBreakCharFollows := True;
 end;
 
 procedure TBCEditorCodeFoldingRegionItem.SetSkipIfFoundAfterOpenTokenArrayCount(const AValue: Integer);
@@ -114,21 +98,25 @@ begin
   Result := TBCEditorCodeFoldingRegionItem(inherited Add);
   with Result do
   begin
-    OpenToken := AOpenToken;
-    OpenTokenLength := Length(AOpenToken);
+    BreakIfNotFoundBeforeNextRegion := '';
     CloseToken := ACloseToken;
+    CloseTokenBeginningOfLine := False;
     CloseTokenLength := Length(ACloseToken);
+    NoSubs := False;
+    OpenIsClose := False;
+    OpenToken := AOpenToken;
+    OpenTokenBeginningOfLine := False;
+    OpenTokenLength := Length(AOpenToken);
+    SharedClose := False;
   end;
 end;
 
 constructor TBCEditorCodeFoldingRegion.Create(AItemClass: TCollectionItemClass);
 begin
   inherited Create(AItemClass);
-
   FSkipRegions := TBCEditorSkipRegions.Create(TBCEditorSkipRegionItem);
   FEscapeChar := BCEDITOR_NONE_CHAR;
   FStringEscapeChar := BCEDITOR_NONE_CHAR;
-  FFoldTags := False;
 end;
 
 destructor TBCEditorCodeFoldingRegion.Destroy;
@@ -138,18 +126,14 @@ begin
   inherited;
 end;
 
-function TBCEditorCodeFoldingRegion.Contains(const AOpenToken: string; const ACloseToken: string): Boolean;
+function TBCEditorCodeFoldingRegion.Contains(const AOpenToken, ACloseToken: string): Boolean;
 var
-  LIndex: Integer;
-  LItem: TBCEditorCodeFoldingRegionItem;
+  i: Integer;
 begin
   Result := False;
-  for LIndex := 0 to Count - 1 do
-  begin
-    LItem := Items[LIndex];
-    if (LItem.OpenToken = AOpenToken) and (LItem.CloseToken = ACloseToken) then
+  for i := 0 to Count - 1 do
+    if (Items[i].OpenToken = AOpenToken) and (Items[i].CloseToken = ACloseToken) then
       Exit(True);
-  end;
 end;
 
 function TBCEditorCodeFoldingRegion.GetItem(AIndex: Integer): TBCEditorCodeFoldingRegionItem;

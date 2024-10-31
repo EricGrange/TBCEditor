@@ -25,17 +25,18 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorSelectionOption; const AEnabled: Boolean);
     property ActiveMode: TBCEditorSelectionMode read FActiveMode write SetActiveMode stored False;
   published
     property Colors: TBCEditorSelectionColors read FColors write SetColors;
     property Mode: TBCEditorSelectionMode read FMode write SetMode default smNormal;
-    property Options: TBCEditorSelectionOptions read FOptions write SetOptions default [soHighlightSimilarTerms, soTermsCaseSensitive];
+    property Options: TBCEditorSelectionOptions read FOptions write SetOptions default [soHighlightSimilarTerms];
     property Visible: Boolean read FVisible write SetVisible default True;
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
   end;
 
 implementation
+
+{ TBCEditorSelection }
 
 constructor TBCEditorSelection.Create;
 begin
@@ -44,7 +45,7 @@ begin
   FColors := TBCEditorSelectionColors.Create;
   FActiveMode := smNormal;
   FMode := smNormal;
-  FOptions := [soHighlightSimilarTerms, soTermsCaseSensitive];
+  FOptions := [soHighlightSimilarTerms];
   FVisible := True;
 end;
 
@@ -75,14 +76,6 @@ begin
   end
   else
     inherited Assign(ASource);
-end;
-
-procedure TBCEditorSelection.SetOption(const AOption: TBCEditorSelectionOption; const AEnabled: Boolean);
-begin
-   if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
 end;
 
 procedure TBCEditorSelection.DoChange;
@@ -128,6 +121,10 @@ procedure TBCEditorSelection.SetOptions(AValue: TBCEditorSelectionOptions);
 begin
   if FOptions <> AValue then
   begin
+    if soToEndOfLastLine in AValue then
+      AValue := AValue - [soToEndOfLine];
+    if soToEndOfLine in AValue then
+      AValue := AValue - [soToEndOfLastLine];
     FOptions := AValue;
     DoChange;
   end;

@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "# Hello World in AWK\r\n",
                "BEGIN { print \"Hello, world!\" }"
@@ -246,12 +246,12 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "\"",
                   "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "#",
@@ -261,10 +261,7 @@
             "FoldRegion": [
                {
                   "OpenToken": "{",
-                  "CloseToken": "}",
-                  "Properties": {
-                     "BreakCharFollows": false
-                  }
+                  "CloseToken": "}"
                }
             ]
          }
@@ -291,12 +288,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "#",

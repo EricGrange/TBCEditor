@@ -3,41 +3,39 @@ unit BCEditor.Search.RegularExpressions;
 interface
 
 uses
-  Classes, RegularExpressions, BCEditor.Search, BCEditor.Lines;
+  Classes, RegularExpressions, BCEditor.Search;
 
 type
-  TBCEditorRegexSearch = class(TBCEditorSearchBase)
+  TBCEditorRegexSearch = class(TBCEditorSearchCustom)
   strict private
     FLengths: TList;
     FOptions: TRegexOptions;
     FPattern: string;
     FPositions: TList;
   protected
-    function GetLength(const AIndex: Integer): Integer; override;
+    function GetLength(AIndex: Integer): Integer; override;
     function GetPattern: string; override;
-    function GetResult(const AIndex: Integer): Integer; override;
+    function GetResult(AIndex: Integer): Integer; override;
     function GetResultCount: Integer; override;
-    procedure CaseSensitiveChanged; override;
     procedure SetPattern(const AValue: string); override;
   public
     constructor Create;
     destructor Destroy; override;
-    function SearchAll(const ALines: TBCEditorLines): Integer; override;
+
+    function FindAll(const AInput: string): Integer; override;
+    function Replace(const AInput, AReplacement: string): string; override;
     procedure Clear; override;
   end;
 
 implementation
 
-uses
-  SysUtils;
+{ TBCEditorRegexSearch }
 
 constructor TBCEditorRegexSearch.Create;
 begin
   inherited Create;
-
-  FOptions := [roMultiLine];
   {$if CompilerVersion > 26}
-  Include(FOptions, roNotEmpty);
+  FOptions := [roNotEmpty];
   {$ifend}
   FPositions := TList.Create;
   FLengths := TList.Create;
@@ -50,42 +48,37 @@ begin
   FLengths.Free;
 end;
 
-procedure TBCEditorRegexSearch.CaseSensitiveChanged;
-begin
-  if CaseSensitive then
-    Exclude(FOptions, roIgnoreCase)
-  else
-    Include(FOptions, roIgnoreCase);
-end;
+function TBCEditorRegexSearch.FindAll(const AInput: string): Integer;
 
-function TBCEditorRegexSearch.SearchAll(const ALines: TBCEditorLines): Integer;
-
-  procedure AddResult(const APos, ALength: Integer);
+  procedure AddResult(const aPos, aLength: Integer);
   begin
-    FPositions.Add(Pointer(APos));
-    FLengths.Add(Pointer(ALength));
+    FPositions.Add(Pointer(aPos));
+    FLengths.Add(Pointer(aLength));
   end;
 
 var
-  LRegex: TRegEx;
-  LMatch: TMatch;
+  Regex: TRegEx;
+  Match: TMatch;
 begin
   Result := 0;
   Clear;
-  Status := '';
-  try
-    LRegex := TRegEx.Create(FPattern, FOptions);
-    LMatch := LRegex.Match(ALines.Text);
-    while LMatch.Success do
-    begin
-      AddResult(LMatch.Index, LMatch.Length);
-      LMatch := LMatch.NextMatch;
-      Inc(Result);
-    end;
-  except
-    on E: Exception do
-      Status := E.Message;
+  Regex := TRegEx.Create(FPattern, FOptions);
+  Match := Regex.Match(AInput);
+  while Match.Success do
+  begin
+    AddResult(Match.Index, Match.Length);
+    Match := Match.NextMatch;
+    Inc(Result);
   end;
+end;
+
+function TBCEditorRegexSearch.Replace(const AInput, AReplacement: string): string;
+var
+  Regex: TRegEx;
+begin
+  Regex := TRegEx.Create(FPattern, FOptions);
+  Regex.Replace(AInput, AReplacement);
+  Result := AReplacement;
 end;
 
 procedure TBCEditorRegexSearch.Clear;
@@ -94,7 +87,7 @@ begin
   FLengths.Clear;
 end;
 
-function TBCEditorRegexSearch.GetLength(const AIndex: Integer): Integer;
+function TBCEditorRegexSearch.GetLength(AIndex: Integer): Integer;
 begin
   Result := Integer(FLengths[AIndex]);
 end;
@@ -104,7 +97,7 @@ begin
   Result := FPattern;
 end;
 
-function TBCEditorRegexSearch.GetResult(const AIndex: Integer): Integer;
+function TBCEditorRegexSearch.GetResult(AIndex: Integer): Integer;
 begin
   Result := Integer(FPositions[AIndex]);
 end;

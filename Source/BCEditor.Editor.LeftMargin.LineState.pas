@@ -26,6 +26,8 @@ type
 
 implementation
 
+{ TBCEditorLeftMarginLineState }
+
 constructor TBCEditorLeftMarginLineState.Create;
 begin
   inherited;

@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "<?php\r\n",
                "  echo \"Hello World!\";\r\n",
@@ -401,12 +401,12 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "MultiLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "\"",
                   "CloseToken": "\"",
-                  "RegionType": "MultiLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "//",
@@ -432,10 +432,7 @@
                },
                {
                   "OpenToken": "{",
-                  "CloseToken": "}",
-                  "Properties": {
-                     "BreakCharFollows": false
-                  }
+                  "CloseToken": "}"
                },
                {
                   "OpenToken": "IF",
@@ -469,12 +466,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "MultiLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "MultiLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "//",

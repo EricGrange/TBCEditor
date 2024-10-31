@@ -5,7 +5,7 @@ interface
 uses
   Classes, Graphics, BCEditor.Types;
 
-type
+type
   TBCEditorScrollHint = class(TPersistent)
   strict private
     FFormat: TBCEditorScrollHintFormat;

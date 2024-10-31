@@ -3,7 +3,7 @@ unit BCEditor.Encoding;
 interface
 
 uses
-  SysUtils;
+  SysUtils, Windows;
 
 type
   TUTF8WithoutBOM = class(TUTF8Encoding)
@@ -22,9 +22,6 @@ type
 
 implementation
 
-uses
-  SyncObjs, Windows;
-
 { TUTF8WithoutBOM }
 
 function TUTF8WithoutBOM.GetPreamble: TBytes;
@@ -40,8 +37,8 @@ var
 begin
   if not Assigned(FUTF8WithoutBOM) then
   begin
-    LEncoding := TUTF8WithoutBOM.Create(CP_UTF8, 0, 0);
-    if Assigned(TInterlocked.CompareExchange(Pointer(FUTF8WithoutBOM), Pointer(LEncoding), nil)) then
+    LEncoding := TUTF8WithoutBOM.Create;
+    if Assigned(InterlockedCompareExchangePointer(Pointer(FUTF8WithoutBOM), Pointer(LEncoding), nil)) then
       LEncoding.Free;
   end;
   Result := FUTF8WithoutBOM;

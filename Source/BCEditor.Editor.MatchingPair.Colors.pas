@@ -5,7 +5,7 @@ interface
 uses
   Classes, Graphics, BCEditor.Consts;
 
-type
+type
   TBCEditorMatchingPairColors = class(TPersistent)
   strict private
     FMatched: TColor;
@@ -21,6 +21,8 @@ type
   end;
 
 implementation
+
+{ TBCEditorMatchingPairColors }
 
 constructor TBCEditorMatchingPairColors.Create;
 begin

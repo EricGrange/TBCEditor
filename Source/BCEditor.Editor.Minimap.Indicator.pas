@@ -10,20 +10,21 @@ type
   strict private
     FAlphaBlending: Byte;
     FOnChange: TNotifyEvent;
-    FOptions: TBCEditorMinimapIndicatorOptions;
+    FOptions: TBCEditorIndicatorOptions;
     procedure DoChange;
     procedure SetAlphaBlending(const AValue: Byte);
   public
     constructor Create;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorMinimapIndicatorOption; const AEnabled: Boolean);
   published
     property AlphaBlending: Byte read FAlphaBlending write SetAlphaBlending default 96;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    property Options: TBCEditorMinimapIndicatorOptions read FOptions write FOptions default [];
+    property Options: TBCEditorIndicatorOptions read FOptions write FOptions default [];
   end;
 
 implementation
+
+{ TBCEditorSearchHighlighter }
 
 constructor TBCEditorMinimapIndicator.Create;
 begin
@@ -45,15 +46,6 @@ begin
   else
     inherited Assign(ASource);
 end;
-
-procedure TBCEditorMinimapIndicator.SetOption(const AOption: TBCEditorMinimapIndicatorOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
-end;
-
 
 procedure TBCEditorMinimapIndicator.DoChange;
 begin

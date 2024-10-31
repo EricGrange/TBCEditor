@@ -25,6 +25,8 @@ type
 
 implementation
 
+{ TBCEditorCaretStyle }
+
 constructor TBCEditorCaretStyles.Create;
 begin
   inherited;

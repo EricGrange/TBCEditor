@@ -22,9 +22,9 @@ type
   TBCEditorFrameTypes = set of TBCEditorFrameType;
   TBCEditorUnitSystem = (usMM, usCm, usInch, muThousandthsOfInches);
   TBCEditorPrintStatus = (psBegin, psNewPage, psEnd);
-  TBCEditorPrintStatusEvent = procedure(ASender: TObject; const AStatus: TBCEditorPrintStatus; const APageNumber: Integer;
-    var AAbort: Boolean) of object;
-  TBCEditorPrintLineEvent = procedure(ASender: TObject; const ALineNumber: Integer; const APageNumber: Integer) of object;
+  TBCEditorPrintStatusEvent = procedure(Sender: TObject; Status: TBCEditorPrintStatus; PageNumber: Integer;
+    var Abort: Boolean) of object;
+  TBCEditorPrintLineEvent = procedure(Sender: TObject; LineNumber, PageNumber: Integer) of object;
 
 type
   TBCEditorWrapPosition = class
@@ -39,9 +39,9 @@ implementation
 
 function WrapTextEx(const ALine: string; ABreakChars: TSysCharSet; AMaxColumn: Integer; AList: TList): Boolean;
 var
-  LWrapPosition: TBCEditorWrapPosition;
-  LPosition, LPreviousPosition: Integer;
-  LFound: Boolean;
+  WrapPosition: TBCEditorWrapPosition;
+  Position, PreviousPosition: Integer;
+  Found: Boolean;
 begin
   if Length(ALine) <= AMaxColumn then
   begin
@@ -50,31 +50,31 @@ begin
   end;
 
   Result := False;
-  LPosition := 1;
-  LPreviousPosition := 0;
-  LWrapPosition := TBCEditorWrapPosition.Create;
-  while LPosition <= Length(ALine) do
+  Position := 1;
+  PreviousPosition := 0;
+  WrapPosition := TBCEditorWrapPosition.Create;
+  while Position <= Length(ALine) do
   begin
-    LFound := (LPosition - LPreviousPosition > AMaxColumn) and (LWrapPosition.Index <> 0);
-    if not LFound and (ALine[LPosition] <= High(Char)) and CharInSet(Char(ALine[LPosition]), ABreakChars) then
-      LWrapPosition.Index := LPosition;
+    Found := (Position - PreviousPosition > AMaxColumn) and (WrapPosition.Index <> 0);
+    if not Found and (ALine[Position] <= High(Char)) and CharInSet(Char(ALine[Position]), ABreakChars) then
+      WrapPosition.Index := Position;
 
-    if LFound then
+    if Found then
     begin
       Result := True;
-      AList.Add(LWrapPosition);
-      LPreviousPosition := LWrapPosition.Index;
+      AList.Add(WrapPosition);
+      PreviousPosition := WrapPosition.Index;
 
-      if ((Length(ALine) - LPreviousPosition) > AMaxColumn) and (LPosition < Length(ALine)) then
-        LWrapPosition := TBCEditorWrapPosition.Create
+      if ((Length(ALine) - PreviousPosition) > AMaxColumn) and (Position < Length(ALine)) then
+        WrapPosition := TBCEditorWrapPosition.Create
       else
         Break;
     end;
-    Inc(LPosition);
+    Inc(Position);
   end;
 
-  if (AList.Count = 0) or (AList.Last <> LWrapPosition) then
-    LWrapPosition.Free;
+  if (AList.Count = 0) or (AList.Last <> WrapPosition) then
+    WrapPosition.Free;
 end;
 
 function IntToRoman(AValue: Integer): string;

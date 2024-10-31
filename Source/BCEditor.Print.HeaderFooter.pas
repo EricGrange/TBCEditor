@@ -104,7 +104,7 @@ type
 implementation
 
 uses
-  Math, UITypes, BCEditor.Consts;
+  Math, BCEditor.Consts;
 
 { TBCEditorSectionItem }
 
@@ -349,7 +349,7 @@ end;
 
 destructor TBCEditorSection.Destroy;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   Clear;
   FItems.Free;
@@ -357,8 +357,8 @@ begin
   FOldPen.Free;
   FOldBrush.Free;
   FOldFont.Free;
-  for LIndex := 0 to FLineInfo.Count - 1 do
-    TBCEditorLineInfo(FLineInfo[LIndex]).Free;
+  for i := 0 to FLineInfo.Count - 1 do
+    TBCEditorLineInfo(FLineInfo[i]).Free;
   FLineInfo.Free;
   inherited;
 end;
@@ -381,22 +381,22 @@ end;
 
 procedure TBCEditorSection.Delete(AIndex: Integer);
 var
-  LIndex: Integer;
+  i: Integer;
 begin
-  for LIndex := 0 to FItems.Count - 1 do
-  if TBCEditorSectionItem(FItems[LIndex]).Index = AIndex then
+  for i := 0 to FItems.Count - 1 do
+  if TBCEditorSectionItem(FItems[i]).Index = AIndex then
   begin
-    FItems.Delete(LIndex);
-    Break;
+    FItems.Delete(i);
+    break;
   end;
 end;
 
 procedure TBCEditorSection.Clear;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
-  for LIndex := 0 to FItems.Count - 1 do
-    TBCEditorSectionItem(FItems[LIndex]).Free;
+  for i := 0 to FItems.Count - 1 do
+    TBCEditorSectionItem(FItems[i]).Free;
   FItems.Clear;
 end;
 
@@ -611,7 +611,7 @@ end;
 
 procedure TBCEditorSection.Assign(ASource: TPersistent);
 var
-  LIndex: Integer;
+  i: Integer;
   LSectionItem: TBCEditorSectionItem;
 begin
   if Assigned(ASource) and (ASource is TBCEditorSection) then
@@ -622,9 +622,9 @@ begin
     Self.FFrameTypes := FFrameTypes;
     Self.FShadedColor := FShadedColor;
     Self.FLineColor := FLineColor;
-    for LIndex := 0 to FItems.Count - 1 do
+    for i := 0 to FItems.Count - 1 do
     begin
-      LSectionItem := TBCEditorSectionItem(FItems[LIndex]);
+      LSectionItem := TBCEditorSectionItem(FItems[i]);
       Self.Add(LSectionItem.Text, LSectionItem.Font, LSectionItem.Alignment, LSectionItem.LineNumber);
     end;
     Self.FDefaultFont.Assign(FDefaultFont);
@@ -647,7 +647,7 @@ end;
 
 procedure TBCEditorSection.LoadFromStream(AStream: TStream);
 var
-  LCount, LIndex: Integer;
+  LCount, i: Integer;
   LCharset: TFontCharset;
   LColor: TColor;
   LHeight: Integer;
@@ -690,8 +690,8 @@ begin
     Read(LCount, SizeOf(LCount));
     while LCount > 0 do
     begin
-      LIndex := Add('', nil, taLeftJustify, 1);
-      Get(LIndex).LoadFromStream(AStream);
+      i := Add('', nil, taLeftJustify, 1);
+      Get(i).LoadFromStream(AStream);
       Dec(LCount);
     end;
   end;
@@ -699,7 +699,7 @@ end;
 
 procedure TBCEditorSection.SaveToStream(AStream: TStream);
 var
-  LIndex, LCount: Integer;
+  i, LCount: Integer;
   LCharset: TFontCharset;
   LColor: TColor;
   LHeight: Integer;
@@ -734,8 +734,8 @@ begin
     Write(LStyle, SizeOf(LStyle));
     LCount := Count;
     Write(LCount, SizeOf(LCount));
-    for LIndex := 0 to LCount - 1 do
-      Get(LIndex).SaveToStream(AStream);
+    for i := 0 to LCount - 1 do
+      Get(i).SaveToStream(AStream);
   end;
 end;
 

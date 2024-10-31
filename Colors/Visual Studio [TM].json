@@ -2,8 +2,8 @@
    "Colors": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017"
+            "Version": "1.4.2",
+            "Date": "13.03.2016"
          },
          "Author": {
             "Name": "Lasse Rautiainen",
@@ -24,9 +24,6 @@
             "CodeFoldingHintBackground": "clWhite",
             "CodeFoldingHintBorder": "clGray",
             "CodeFoldingHintText": "clNone",
-            "CodeFoldingHintIndicatorBackground": "clWhite",
-            "CodeFoldingHintIndicatorBorder": "clGray",
-            "CodeFoldingHintIndicatorMark": "clGray",
             "CompletionProposalBackground": "clWhite",
             "CompletionProposalForeground": "clBlack",
             "CompletionProposalSelectedBackground": "clHighlight",
@@ -42,23 +39,20 @@
             "MatchingPairMatched": "clAqua",
             "MatchingPairUnderline": "clGray",
             "MatchingPairUnmatched": "clYellow",
-            "MinimapBackground": "clNone",
             "MinimapBookmark": "clGreen",
             "MinimapVisibleLines": "$00F0FFFF",
             "RightMargin": "clSilver",
             "RightMovingEdge": "clSilver",
             "SearchHighlighterBackground": "clBlack",
-            "SearchHighlighterBorder": "clNone",
             "SearchHighlighterForeground": "clWhite",
-            "SearchInSelectionBackground": "$00FCFDCD",
-            "SearchMapActiveLine": "$00FF9933",
+            "SearchMapActiveLine": "clHighlight",
             "SearchMapBackground": "$00F4F4F4",
             "SearchMapForeground": "clBlack",
-            "SelectionBackground": "$00FF9933",
-            "SelectionForeground": "clWhite",
+            "SelectionBackground": "clHighlight",
+            "SelectionForeground": "clHighlightText",
             "SyncEditBackground": "$00FCFDCD",
             "SyncEditEditBorder": "clBlack",
-            "SyncEditWordBorder": "$00FF9933",
+            "SyncEditWordBorder": "clHighlight",
             "WordWrapIndicatorArrow": "clBlack",
             "WordWrapIndicatorLines": "clBlue"
          },

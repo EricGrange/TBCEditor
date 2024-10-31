@@ -6,7 +6,7 @@ uses
   Classes, SysUtils, BCEditor.Consts;
 
 type
-  TBCEditorSkipRegionItemType = (ritUnspecified, ritMultiLineString, ritSingleLineString, ritMultiLineComment, ritSingleLineComment);
+  TBCEditorSkipRegionItemType = (ritUnspecified, ritString, ritMultiLineComment, ritSingleLineComment);
 
   TBCEditorSkipRegionItem = class(TCollectionItem)
   strict private
@@ -51,16 +51,12 @@ end;
 
 function TBCEditorSkipRegions.Contains(const AOpenToken, ACloseToken: string): Boolean;
 var
-  LIndex: Integer;
-  LSkipRegion: TBCEditorSkipRegionItem;
+  i: Integer;
 begin
   Result := False;
-  for LIndex := 0 to Count - 1 do
-  begin
-    LSkipRegion := SkipRegionItems[LIndex];
-    if (LSkipRegion.OpenToken = AOpenToken) and (LSkipRegion.CloseToken = ACloseToken) then
+  for i := 0 to Count - 1 do
+    if (SkipRegionItems[i].OpenToken = AOpenToken) and (SkipRegionItems[i].CloseToken = ACloseToken) then
       Exit(True);
-  end;
 end;
 
 function TBCEditorSkipRegions.GetSkipRegionItem(AIndex: Integer): TBCEditorSkipRegionItem;

@@ -2,8 +2,8 @@
    "Colors": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017"
+            "Version": "1.4.2",
+            "Date": "13.03.2016"
          },
          "Author": {
             "Name": "Lasse Rautiainen",
@@ -24,9 +24,6 @@
             "CodeFoldingHintBackground": "clWhite",
             "CodeFoldingHintBorder": "$00CC9999",
             "CodeFoldingHintText": "clNone",
-            "CodeFoldingHintIndicatorBackground": "clWhite",
-            "CodeFoldingHintIndicatorBorder": "$00CC9999",
-            "CodeFoldingHintIndicatorMark": "$00CC9999",
             "CompletionProposalBackground": "clWhite",
             "CompletionProposalForeground": "clBlack",
             "CompletionProposalSelectedBackground": "clHighlight",
@@ -42,20 +39,17 @@
             "MatchingPairMatched": "clAqua",
             "MatchingPairUnderline": "$00CC9999",
             "MatchingPairUnmatched": "clYellow",
-            "MinimapBackground": "clNone",
             "MinimapBookmark": "$00999999",
             "MinimapVisibleLines": "$00E6FAFF",
             "RightMargin": "clSilver",
             "RightMovingEdge": "clSilver",
             "SearchHighlighterBackground": "$0078AAFF",
-            "SearchHighlighterBorder": "clNone",
             "SearchHighlighterForeground": "clBlack",
-            "SearchInSelectionBackground": "$00FCFDCD",
             "SearchMapActiveLine": "$00F0F0F0",
             "SearchMapBackground": "$00F4F4F4",
             "SearchMapForeground": "$0078AAFF",
             "SelectionBackground": "$00A56D53",
-            "SelectionForeground": "clWhite",
+            "SelectionForeground": "clHighlightText",
             "SyncEditBackground": "$00FCFDCD",
             "SyncEditEditBorder": "$00333333",
             "SyncEditWordBorder": "$00A56D53",

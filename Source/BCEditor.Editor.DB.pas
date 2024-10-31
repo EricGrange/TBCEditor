@@ -3,8 +3,8 @@ unit BCEditor.Editor.DB;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Controls, DbCtrls, DB, BCEditor.Editor,
-  BCEditor.Editor.KeyCommands;
+  Messages, SysUtils, Classes, Controls, DbCtrls, BCEditor.Editor,
+  BCEditor.Editor.KeyCommands, DB;
 
 type
   TBCCustomDBEditor = class(TBCCustomEditor)
@@ -19,12 +19,12 @@ type
     procedure CMEnter(var AMessage: TCMEnter); message CM_ENTER;
     procedure CMExit(var AMessage: TCMExit); message CM_EXIT;
     procedure CMGetDataLink(var AMessage: TMessage); message CM_GETDATALINK;
-    procedure DataChange(ASender: TObject);
-    procedure EditingChange(ASender: TObject);
+    procedure DataChange(Sender: TObject);
+    procedure EditingChange(Sender: TObject);
     procedure SetDataField(const AValue: string);
     procedure SetDataSource(AValue: TDataSource);
     procedure SetEditing(AValue: Boolean);
-    procedure UpdateData(ASender: TObject);
+    procedure UpdateData(Sender: TObject);
   protected
     function GetReadOnly: Boolean; override;
     procedure DoChange; override;
@@ -45,10 +45,10 @@ type
 
   TBCDBEditor = class(TBCCustomDBEditor)
   published
-    property About;
     property ActiveLine;
     property Align;
     property Anchors;
+    property BackgroundColor;
     property BorderStyle;
     property Caret;
     property CodeFolding;
@@ -71,25 +71,12 @@ type
     property Minimap;
     property Name;
     property OnAfterBookmarkPlaced;
-    property OnAfterDeleteBookmark;
-    property OnAfterMarkPanelPaint;
-    property OnAfterMarkPlaced;
-    property OnAfterDeleteMark;
     property OnAfterLinePaint;
-    property OnBeforeCompletionProposalExecute;
-    property OnBeforeDeleteMark;
-    property OnBeforeMarkPanelPaint;
-    property OnBeforeMarkPlaced;
-    property OnBeforeTokenInfoExecute;
-    property OnMarkPanelLinePaint;
     property OnCaretChanged;
     property OnChange;
     property OnClick;
     property OnCommandProcessed;
-    property OnCompletionProposalCanceled;
-    property OnCompletionProposalSelected;
     property OnContextHelp;
-    property OnCreateFileStream;
     property OnCustomLineColors;
     property OnCustomTokenAttribute;
     property OnDblClick;
@@ -105,7 +92,6 @@ type
     property OnKeyUp;
     property OnLeftMarginClick;
     property OnLoadData;
-    property OnModified;
     property OnMouseDown;
     property OnMouseMove;
     property OnMouseUp;
@@ -134,19 +120,16 @@ type
     property Search;
     property Selection;
     property ShowHint;
-    {$if defined(USE_ALPHASKINS)}
+    {$IFDEF USE_ALPHASKINS}
     property SkinData;
-    {$ifend}
+    {$ENDIF}
     property SpecialChars;
     property SyncEdit;
     property TabOrder;
     property Tabs;
     property TabStop;
     property Tag;
-    property TextEntryMode;
-    property TokenInfo;
-    property Undo;
-    property UnknownChars;
+//    property Undo;
     property WantReturns;
     property Width;
     property Visible;
@@ -199,10 +182,10 @@ end;
 
 procedure TBCCustomDBEditor.CMGetDataLink(var AMessage: TMessage);
 begin
-  AMessage.Result := LRESULT(FDataLink);
+  AMessage.Result := Integer(FDataLink);
 end;
 
-procedure TBCCustomDBEditor.DataChange(ASender: TObject);
+procedure TBCCustomDBEditor.DataChange(Sender: TObject);
 begin
   if Assigned(FDataLink.Field) then
   begin
@@ -233,7 +216,7 @@ begin
   inherited;
 end;
 
-procedure TBCCustomDBEditor.EditingChange(ASender: TObject);
+procedure TBCCustomDBEditor.EditingChange(Sender: TObject);
 begin
   if FDataLink.Editing then
     if Assigned(FDataLink.DataSource) and (FDataLink.DataSource.State <> dsInsert) then
@@ -342,7 +325,7 @@ begin
   FDataLink.ReadOnly := AValue;
 end;
 
-procedure TBCCustomDBEditor.UpdateData(ASender: TObject);
+procedure TBCCustomDBEditor.UpdateData(Sender: TObject);
 var
   LBlobStream: TStream;
 begin

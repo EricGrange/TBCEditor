@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "10.01.2017",
+            "Version": "1.4.2",
+            "Date": "17.03.2016",
             "Sample": [
                "// Hello World in Pascal\r\n",
                "\r\n",
@@ -389,7 +389,6 @@
                               "default",
                               "index",
                               "read",
-                              "stored",
                               "write"
                            ],
                            "Attributes": {
@@ -489,6 +488,7 @@
                      "shr",
                      "static",
                      "stdcall",
+                     "stored",
                      "strict",
                      "string",
                      "stringresource",
@@ -569,7 +569,7 @@
                },
                {
                   "Type": "Float",
-                  "Symbols": ".0123456789E",
+                  "Symbols": ".0123456789",
                   "Attributes": {
                      "Element": "Number"
                   }
@@ -588,7 +588,7 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "//",
@@ -657,8 +657,7 @@
                   "CloseToken": "IMPLEMENTATION",
                   "Properties": {
                      "OpenTokenBeginningOfLine": true,
-                     "TokenEndIsPreviousLine": true,
-                     "ShowGuideLine": false
+                     "TokenEndIsPreviousLine": true
                   }
                },
                {
@@ -677,8 +676,7 @@
                   "Properties": {
                      "OpenTokenBeginningOfLine": true,
                      "OpenIsClose": true,
-                     "SharedClose": true,
-                     "ShowGuideLine": false
+                     "SharedClose": true
                   }
                },
                {
@@ -702,8 +700,7 @@
                   "CloseToken": "$ENDREGION",
                   "Properties": {
                      "OpenTokenEnd": "}",
-                     "ShowGuideLine": false,
-										 "BeginWithBreakChar": true
+                     "ShowGuideLine": false
                   }
                }
             ]
@@ -759,7 +756,7 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "//",

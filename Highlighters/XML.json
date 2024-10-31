@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "<!-- Hello World in XML -->\r\n",
                "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n",
@@ -166,32 +166,6 @@
          }
       }
    },
-   "CodeFolding": {
-      "Ranges": [
-         {
-            "Options": {
-               "FoldTags": "true"
-            },
-            "SkipRegion": [
-               {
-                  "OpenToken": "'",
-                  "CloseToken": "'",
-                  "RegionType": "SingleLineString"
-               },
-               {
-                  "OpenToken": "\"",
-                  "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
-               },
-               {
-                  "OpenToken": "<!--",
-                  "CloseToken": "-->",
-                  "RegionType": "MultiLine"
-               }
-            ]
-         }
-      ]
-   },
    "MatchingPair": {
       "Pairs": [
          {
@@ -205,12 +179,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "<!--",

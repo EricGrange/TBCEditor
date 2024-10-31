@@ -6,15 +6,10 @@ uses
   Classes, SysUtils, Graphics, BCEditor.Types, BCEditor.Editor.CodeFolding.Colors,
   BCEditor.Editor.CodeFolding.Hint;
 
-const
-  BCEDITOR_CODE_FOLDING_DEFAULT_OPTIONS = [cfoAutoPadding, cfoAutoWidth, cfoHighlightIndentGuides, cfoHighlightMatchingPair, cfoShowIndentGuides,
-    cfoShowTreeLine, cfoUncollapseByHintClick];
-
 type
   TBCEditorCodeFolding = class(TPersistent)
   strict private
     FColors: TBCEditorCodeFoldingColors;
-    FDelayInterval: Cardinal;
     FHint: TBCEditorCodeFoldingHint;
     FMarkStyle: TBCEditorCodeFoldingMarkStyle;
     FMouseOverHint: Boolean;
@@ -37,15 +32,13 @@ type
     destructor Destroy; override;
     function GetWidth: Integer;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorCodeFoldingOption; const AEnabled: Boolean);
     property MouseOverHint: Boolean read FMouseOverHint write FMouseOverHint;
   published
     property Colors: TBCEditorCodeFoldingColors read FColors write SetColors;
-    property DelayInterval: Cardinal read FDelayInterval write FDelayInterval default 300;
     property Hint: TBCEditorCodeFoldingHint read FHint write SetHint;
     property MarkStyle: TBCEditorCodeFoldingMarkStyle read FMarkStyle write SetMarkStyle default msSquare;
     property OnChange: TBCEditorCodeFoldingChangeEvent read FOnChange write SetOnChange;
-    property Options: TBCEditorCodeFoldingOptions read FOptions write SetOptions default BCEDITOR_CODE_FOLDING_DEFAULT_OPTIONS;
+    property Options: TBCEditorCodeFoldingOptions read FOptions write SetOptions default [cfoShowCollapsedCodeHint, cfoHighlightIndentGuides, cfoHighlightMatchingPair, cfoShowIndentGuides, cfoUncollapseByHintClick];
     property Padding: Integer read FPadding write SetPadding default 2;
     property Width: Integer read FWidth write SetWidth default 14;
     property Visible: Boolean read FVisible write SetVisible default False;
@@ -56,18 +49,19 @@ implementation
 uses
   Math;
 
+{ TBCEditorCodeFolding }
+
 constructor TBCEditorCodeFolding.Create;
 begin
   inherited;
 
   FVisible := False;
-  FOptions := BCEDITOR_CODE_FOLDING_DEFAULT_OPTIONS;
+  FOptions := [cfoShowCollapsedCodeHint, cfoHighlightIndentGuides, cfoHighlightMatchingPair, cfoShowIndentGuides, cfoUncollapseByHintClick];
   FMarkStyle := msSquare;
   FColors := TBCEditorCodeFoldingColors.Create;
   FHint := TBCEditorCodeFoldingHint.Create;
   FPadding := 2;
   FWidth := 14;
-  FDelayInterval := 300;
 
   FMouseOverHint := False;
 end;
@@ -140,14 +134,6 @@ begin
     FOnChange(fcRescan)
   else
     DoChange;
-end;
-
-procedure TBCEditorCodeFolding.SetOption(const AOption: TBCEditorCodeFoldingOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
 end;
 
 procedure TBCEditorCodeFolding.SetColors(const AValue: TBCEditorCodeFoldingColors);

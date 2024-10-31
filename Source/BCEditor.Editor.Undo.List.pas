@@ -21,8 +21,8 @@ type
     FOnAddedUndo: TNotifyEvent;
     function GetCanUndo: Boolean;
     function GetItemCount: Integer;
-    function GetItems(const AIndex: Integer): TBCEditorUndoItem;
-    procedure SetItems(const AIndex: Integer; const AValue: TBCEditorUndoItem);
+    function GetItems(AIndex: Integer): TBCEditorUndoItem;
+    procedure SetItems(AIndex: Integer; const AValue: TBCEditorUndoItem);
   public
     constructor Create;
     destructor Destroy; override;
@@ -51,11 +51,13 @@ type
     property InsideRedo: Boolean read FInsideRedo write FInsideRedo default False;
     property InsideUndoBlock: Boolean read FInsideUndoBlock write FInsideUndoBlock default False;
     property ItemCount: Integer read GetItemCount;
-    property Items[const AIndex: Integer]: TBCEditorUndoItem read GetItems write SetItems;
+    property Items[AIndex: Integer]: TBCEditorUndoItem read GetItems write SetItems;
     property OnAddedUndo: TNotifyEvent read FOnAddedUndo write FOnAddedUndo;
   end;
 
 implementation
+
+{ TBCEditorUndoList }
 
 const
   BCEDITOR_MODIFYING_CHANGE_REASONS = [crInsert, crPaste, crDragDropInsert, crDelete, crLineBreak, crIndent, crUnindent];
@@ -81,17 +83,17 @@ end;
 
 procedure TBCEditorUndoList.Assign(ASource: TPersistent);
 var
-  LIndex: Integer;
+  i: Integer;
   LUndoItem: TBCEditorUndoItem;
 begin
   if Assigned(ASource) and (ASource is TBCEditorUndoList) then
   with ASource as TBCEditorUndoList do
   begin
     Self.Clear;
-    for LIndex := 0 to (ASource as TBCEditorUndoList).FItems.Count - 1 do
+    for i := 0 to (ASource as TBCEditorUndoList).FItems.Count - 1 do
     begin
       LUndoItem := TBCEditorUndoItem.Create;
-      LUndoItem.Assign(FItems[LIndex]);
+      LUndoItem.Assign(FItems[i]);
       Self.FItems.Add(LUndoItem);
     end;
     Self.FInsideUndoBlock := FInsideUndoBlock;
@@ -113,10 +115,8 @@ begin
   if FLockCount = 0 then
   begin
     FChanged := AReason in BCEDITOR_MODIFYING_CHANGE_REASONS;
-
     if FChanged then
       Inc(FChangeCount);
-
     LNewItem := TBCEditorUndoItem.Create;
     with LNewItem do
     begin
@@ -159,11 +159,11 @@ end;
 
 procedure TBCEditorUndoList.Clear;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   FBlockCount := 0;
-  for LIndex := 0 to FItems.Count - 1 do
-    TBCEditorUndoItem(FItems[LIndex]).Free;
+  for i := 0 to FItems.Count - 1 do
+    TBCEditorUndoItem(FItems[i]).Free;
   FItems.Clear;
   FChangeCount := 0;
 end;
@@ -193,26 +193,25 @@ end;
 
 function TBCEditorUndoList.PeekItem: TBCEditorUndoItem;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   Result := nil;
-  LIndex := FItems.Count - 1;
-  if LIndex >= 0 then
-    Result := FItems[LIndex];
+  i := FItems.Count - 1;
+  if i >= 0 then
+    Result := FItems[i];
 end;
 
 function TBCEditorUndoList.PopItem: TBCEditorUndoItem;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   Result := nil;
-  LIndex := FItems.Count - 1;
-  if LIndex >= 0 then
+  i := FItems.Count - 1;
+  if i >= 0 then
   begin
-    Result := FItems[LIndex];
-    FItems.Delete(LIndex);
-    FChanged := Result.ChangeReason in BCEDITOR_MODIFYING_CHANGE_REASONS;
-    if FChanged then
+    Result := FItems[i];
+    FItems.Delete(i);
+    if Result.ChangeReason in BCEDITOR_MODIFYING_CHANGE_REASONS then
       Dec(FChangeCount);
   end;
 end;
@@ -259,18 +258,18 @@ end;
 
 procedure TBCEditorUndoList.AddGroupBreak;
 var
-  LTextPosition: TBCEditorTextPosition;
+  vDummy: TBCEditorTextPosition;
 begin
-  if (LastChangeBlockNumber = 0) and (LastChangeReason <> crGroupBreak) then
-    AddChange(crGroupBreak, LTextPosition, LTextPosition, LTextPosition, '', smNormal);
+  if LastChangeReason <> crGroupBreak then
+    AddChange(crGroupBreak, vDummy, vDummy, vDummy, '', smNormal);
 end;
 
-function TBCEditorUndoList.GetItems(const AIndex: Integer): TBCEditorUndoItem;
+function TBCEditorUndoList.GetItems(AIndex: Integer): TBCEditorUndoItem;
 begin
   Result := TBCEditorUndoItem(FItems[AIndex]);
 end;
 
-procedure TBCEditorUndoList.SetItems(const AIndex: Integer; const AValue: TBCEditorUndoItem);
+procedure TBCEditorUndoList.SetItems(AIndex: Integer; const AValue: TBCEditorUndoItem);
 begin
   FItems[AIndex] := AValue;
 end;

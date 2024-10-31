@@ -24,6 +24,8 @@ type
 
 implementation
 
+{ TBCEditorHighlighterInfo }
+
 procedure TBCEditorHighlighterInfo.Clear;
 begin
   General.Version := '';

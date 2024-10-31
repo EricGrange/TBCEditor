@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "# Filename: Hello.ps1\r\n",
                "Write-Host\r\n",
@@ -124,7 +124,7 @@
                      "Element": "Attribute"
                   },
                   "Properties": {
-                     "CloseOnTerm": true,
+                     "CloseOnTerm": true, 
                      "CloseOnEndOfLine": true
                   },
                   "TokenRange": {
@@ -197,23 +197,23 @@
                      ",",
                      "=",
                      "+",
-                     "-",
-                     "*",
-                     "/",
-                     "%",
-                     "(",
-                     ")",
-                     "[",
-                     "]",
-                     "{",
-                     "}",
-                     "<",
-                     ">",
-                     ":",
-                     ";",
-                     "@",
-                     "-shl",
-                     "-shr"
+										 "-",
+										 "*",
+										 "/",
+										 "%",
+										 "(",
+										 ")",
+										 "[",
+										 "]",
+										 "{",
+										 "}",
+										 "<",
+										 ">",
+										 ":",
+										 ";",
+										 "@",
+										 "-shl",
+										 "-shr"
                   ],
                   "Attributes": {
                      "Element": "Symbol"
@@ -249,12 +249,12 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "\"",
                   "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "//",
@@ -269,10 +269,7 @@
             "FoldRegion": [
                {
                   "OpenToken": "{",
-                  "CloseToken": "}",
-                  "Properties": {
-                     "BreakCharFollows": false
-                  }
+                  "CloseToken": "}"
                }
             ]
          }
@@ -299,12 +296,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "//",

@@ -10,7 +10,7 @@ type
     Background: TColor;
     Foreground: TColor;
     Name: string;
-    FontStyles: TFontStyles;
+    Style: TFontStyles;
   end;
   PBCEditorHighlighterElement = ^TBCEditorHighlighterElement;
 
@@ -40,10 +40,11 @@ implementation
 uses
   SysUtils, BCEditor.Editor.Base, BCEditor.Highlighter, BCEditor.Highlighter.Import.JSON, IOUtils;
 
+{ TBCEditorHighlighterColors }
+
 constructor TBCEditorHighlighterColors.Create(AOwner: TObject);
 begin
   inherited Create;
-
   FOwner := AOwner;
   FElements := TList.Create;
   FInfo := TBCEditorHighlighterInfo.Create;
@@ -60,25 +61,24 @@ end;
 
 procedure TBCEditorHighlighterColors.Clear;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
-  for LIndex := FElements.Count - 1 downto 0 do
-    Dispose(PBCEditorHighlighterElement(FElements.Items[LIndex]));
+  for i := FElements.Count - 1 downto 0 do
+    Dispose(PBCEditorHighlighterElement(FElements.Items[i]));
   FElements.Clear;
 end;
 
 function TBCEditorHighlighterColors.GetElement(const Name: string): PBCEditorHighlighterElement;
 var
-  LIndex: Integer;
-  LElement: PBCEditorHighlighterElement;
+  i: Integer;
 begin
   Result := nil;
-  for LIndex := 0 to FElements.Count - 1 do
-  begin
-    LElement := PBCEditorHighlighterElement(FElements.Items[LIndex]);
-    if LElement^.Name = Name then
-      Exit(LElement);
-  end;
+  for i := 0 to FElements.Count - 1 do
+    if PBCEditorHighlighterElement(FElements.Items[i])^.Name = Name then
+    begin
+      Result := FElements.Items[i];
+      Break;
+    end;
 end;
 
 procedure TBCEditorHighlighterColors.LoadFromFile(const AFileName: string);

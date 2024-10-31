@@ -3,7 +3,7 @@ unit BCEditor.Editor.Minimap;
 interface
 
 uses
-  Classes, UITypes, Graphics, BCEditor.Types, BCEditor.Editor.Minimap.Indicator,
+  Classes, Controls, Types, Graphics, BCEditor.Types, BCEditor.Editor.Minimap.Indicator,
   BCEditor.Editor.Minimap.Colors, BCEditor.Editor.Minimap.Shadow;
 
 type
@@ -37,7 +37,6 @@ type
 
     function GetWidth: Integer;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorMinimapOption; const AEnabled: Boolean);
     property CharHeight: Integer read FCharHeight write FCharHeight;
     property Clicked: Boolean read FClicked write FClicked;
     property Dragging: Boolean read FDragging write FDragging;
@@ -53,13 +52,15 @@ type
     property Options: TBCEditorMinimapOptions read FOptions write FOptions default [];
     property Shadow: TBCEditorMinimapShadow read FShadow write FShadow;
     property Visible: Boolean read FVisible write SetVisible default False;
-    property Width: Integer read FWidth write SetWidth default 140;
+    property Width: Integer read FWidth write SetWidth default 100;
   end;
 
 implementation
 
 uses
   Math;
+
+{ TBCEditorMinimap }
 
 constructor TBCEditorMinimap.Create;
 begin
@@ -110,7 +111,6 @@ begin
     Self.FVisible := FVisible;
     Self.FWidth := FWidth;
     Self.FCursor := FCursor;
-    Self.DoChange;
   end
   else
     inherited Assign(ASource);
@@ -129,14 +129,6 @@ procedure TBCEditorMinimap.DoChange;
 begin
   if Assigned(FOnChange) then
     FOnChange(Self);
-end;
-
-procedure TBCEditorMinimap.SetOption(const AOption: TBCEditorMinimapOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
 end;
 
 procedure TBCEditorMinimap.SetAlign(const AValue: TBCEditorMinimapAlign);

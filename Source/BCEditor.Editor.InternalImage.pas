@@ -15,7 +15,7 @@ type
     function CreateBitmapFromInternalList(AModule: THandle; const AName: string): Graphics.TBitmap;
     procedure FreeBitmapFromInternalList;
   public
-    constructor Create(AModule: THandle; const AName: string; const ACount: Integer = 1);
+    constructor Create(AModule: THandle; const AName: string; const ACount: Integer);
     destructor Destroy; override;
 
     procedure Draw(ACanvas: TCanvas; const ANumber: Integer; const X: Integer; const Y: Integer;
@@ -38,10 +38,11 @@ type
 var
   GInternalResources: TList;
 
-constructor TBCEditorInternalImage.Create(AModule: THandle; const AName: string; const ACount: Integer = 1);
+{ TBCEditorInternalImage }
+
+constructor TBCEditorInternalImage.Create(AModule: THandle; const AName: string; const ACount: Integer);
 begin
   inherited Create;
-
   FImages := CreateBitmapFromInternalList(AModule, AName);
   FWidth := (FImages.Width + ACount shr 1) div ACount;
   FHeight := FImages.Height;
@@ -57,25 +58,22 @@ end;
 
 function TBCEditorInternalImage.CreateBitmapFromInternalList(AModule: THandle; const AName: string): Graphics.TBitmap;
 var
-  LIndex: Integer;
+  i: Integer;
   LInternalResource: TInternalResource;
 begin
-  for LIndex := 0 to GInternalResources.Count - 1 do
-  begin
-    LInternalResource := TInternalResource(GInternalResources[LIndex]);
-    if LInternalResource.Name = UpperCase(AName) then
-    with LInternalResource do
-    begin
-      UsageCount := UsageCount + 1;
-      Result := Bitmap;
-      Exit;
-    end;
-  end;
+  for i := 0 to GInternalResources.Count - 1 do
+    if TInternalResource(GInternalResources[i]).Name = UpperCase(AName) then
+      with TInternalResource(GInternalResources[i]) do
+      begin
+        UsageCount := UsageCount + 1;
+        Result := Bitmap;
+        Exit;
+      end;
 
   Result := Graphics.TBitmap.Create;
   Result.Handle := LoadBitmap(AModule, PChar(AName));
 
-  LInternalResource := TInternalResource.Create;
+  LInternalResource := TInternalResource.Create;
   with LInternalResource do
   begin
     UsageCount := 1;
@@ -87,7 +85,7 @@ end;
 
 procedure TBCEditorInternalImage.FreeBitmapFromInternalList;
 var
-  LIndex: Integer;
+  i: Integer;
   LInternalResource: TInternalResource;
 
   function FindImageIndex: Integer;
@@ -99,11 +97,11 @@ var
   end;
 
 begin
-  LIndex := FindImageIndex;
-  if LIndex = -1 then
+  i := FindImageIndex;
+  if i = -1 then
     Exit;
 
-  LInternalResource := TInternalResource(GInternalResources[LIndex]);
+  LInternalResource := TInternalResource(GInternalResources[i]);
   with LInternalResource do
   begin
     UsageCount := UsageCount - 1;
@@ -111,7 +109,7 @@ begin
     begin
       Bitmap.Free;
       Bitmap := nil;
-      GInternalResources.Delete(LIndex);
+      GInternalResources.Delete(i);
       LInternalResource.Free;
     end;
   end;

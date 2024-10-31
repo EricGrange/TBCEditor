@@ -25,6 +25,8 @@ type
 
 implementation
 
+{ TBCEditorSpecialCharsSelection }
+
 constructor TBCEditorSpecialCharsSelection.Create;
 begin
   inherited;

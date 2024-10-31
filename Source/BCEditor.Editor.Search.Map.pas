@@ -3,7 +3,7 @@ unit BCEditor.Editor.Search.Map;
 interface
 
 uses
-  Classes, UITypes, BCEditor.Editor.Search.Map.Colors, BCEditor.Types;
+  Classes, Controls, BCEditor.Editor.Search.Map.Colors, BCEditor.Types;
 
 type
   TBCEditorSearchMap = class(TPersistent)
@@ -42,6 +42,8 @@ implementation
 uses
   Math;
 
+{ TBCEditorSearchMap }
+
 constructor TBCEditorSearchMap.Create;
 begin
   inherited;
@@ -69,7 +71,7 @@ begin
     Self.FVisible := FVisible;
     Self.FOptions := Options;
     Self.FWidth := FWidth;
-    Self.FColors.Assign(FColors);
+    Self.FColors := FColors;
     Self.FCursor := FCursor;
     Self.DoChange;
   end

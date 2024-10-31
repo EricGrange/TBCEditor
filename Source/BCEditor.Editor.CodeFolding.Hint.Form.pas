@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, Classes, Types, Forms, Controls, Graphics;
 
-type
+type
   TBCEditorCodeFoldingHintForm = class(TCustomForm)
   strict private
     FBackgroundColor: TColor;
@@ -21,8 +21,8 @@ type
     FMargin: Integer;
     FVisibleLines: Integer;
     procedure AdjustMetrics;
-    procedure FontChange(ASender: TObject);
-    procedure RecalculateItemHeight;
+    procedure FontChange(Sender: TObject);
+    procedure RecalcItemHeight;
     procedure SetFont(const AValue: TFont);
     procedure SetItemHeight(const AValue: Integer);
     procedure SetItemList(const AValue: TStrings);
@@ -55,16 +55,16 @@ type
 implementation
 
 uses
-  SysUtils, UITypes, BCEditor.Editor.Base, BCEditor.Editor.KeyCommands, BCEditor.Utils,
-  BCEditor.Consts{$if defined(USE_ALPHASKINS)}, sSkinProvider, sMessages{$ifend};
+  SysUtils, BCEditor.Editor.Base, BCEditor.Editor.KeyCommands, BCEditor.Utils,
+  BCEditor.Consts{$IFDEF USE_ALPHASKINS}, sSkinProvider, sMessages{$ENDIF};
 
-{$I BCEditor.RectHelper.inc}
+{ TBCEditorCodeFoldingHintForm }
 
 constructor TBCEditorCodeFoldingHintForm.Create(AOwner: TComponent);
-{$if defined(USE_ALPHASKINS)}
+{$IFDEF USE_ALPHASKINS}
 var
   LSkinProvider: TsSkinProvider;
-{$ifend}
+{$ENDIF}
 begin
   CreateNew(AOwner);
 
@@ -92,12 +92,12 @@ begin
   FItemHeight := 0;
   FMargin := 2;
   FEffectiveItemHeight := 0;
-  RecalculateItemHeight;
+  RecalcItemHeight;
 
   FHeightBuffer := 0;
   FFont.OnChange := FontChange;
 
-{$if defined(USE_ALPHASKINS)}
+{$IFDEF USE_ALPHASKINS}
   LSkinProvider := TsSkinProvider(SendMessage(Handle, SM_ALPHACMD, MakeWParam(0, AC_GETPROVIDER), 0));
   if Assigned(LSkinProvider) then
   begin
@@ -105,7 +105,7 @@ begin
     LSkinProvider.DrawNonClientArea := False;
     LSkinProvider.DrawClientArea := False;
   end;
-{$ifend}
+{$ENDIF}
 end;
 
 destructor TBCEditorCodeFoldingHintForm.Destroy;
@@ -177,18 +177,20 @@ procedure TBCEditorCodeFoldingHintForm.Paint;
     end;
   end;
 
+const
+  TitleMargin = 2;
 var
-  LRect: TRect;
-  LIndex: Integer;
+  TmpRect: TRect;
+  i: Integer;
 begin
   ResetCanvas;
-  LRect := ClientRect;
-  Windows.ExtTextOut(FBufferBitmap.Canvas.Handle, 0, 0, ETO_OPAQUE, LRect, '', 0, nil);
+  TmpRect := ClientRect;
+  PatBlt(FBufferBitmap.Canvas.Handle, TmpRect.Left, TmpRect.Top, TmpRect.Right-TmpRect.Left, TmpRect.Bottom-TmpRect.Top, PATCOPY);
   FBufferBitmap.Canvas.Pen.Color := FBorderColor;
-  FBufferBitmap.Canvas.Rectangle(LRect);
+  FBufferBitmap.Canvas.Rectangle(TmpRect);
 
-  for LIndex := 0 to FItemList.Count - 1 do
-    FBufferBitmap.Canvas.TextOut(FMargin + 1, FEffectiveItemHeight * LIndex + FMargin, FItemList[LIndex]);
+  for i := 0 to FItemList.Count - 1 do
+    FBufferBitmap.Canvas.TextOut(FMargin + 1, FEffectiveItemHeight * i + FMargin, FItemList[i]);
 
   Canvas.Draw(0, 0, FBufferBitmap);
 end;
@@ -203,11 +205,11 @@ begin
   if FItemHeight <> AValue then
   begin
     FItemHeight := AValue;
-    RecalculateItemHeight;
+    RecalcItemHeight;
   end;
 end;
 
-procedure TBCEditorCodeFoldingHintForm.RecalculateItemHeight;
+procedure TBCEditorCodeFoldingHintForm.RecalcItemHeight;
 begin
   Canvas.Font.Assign(FFont);
   FFontHeight := TextHeight(Canvas, 'X');
@@ -231,13 +233,13 @@ end;
 procedure TBCEditorCodeFoldingHintForm.SetFont(const AValue: TFont);
 begin
   FFont.Assign(AValue);
-  RecalculateItemHeight;
+  RecalcItemHeight;
   AdjustMetrics;
 end;
 
-procedure TBCEditorCodeFoldingHintForm.FontChange(ASender: TObject);
+procedure TBCEditorCodeFoldingHintForm.FontChange(Sender: TObject);
 begin
-  RecalculateItemHeight;
+  RecalcItemHeight;
   AdjustMetrics;
 end;
 
@@ -253,12 +255,14 @@ procedure TBCEditorCodeFoldingHintForm.Execute(const ACurrentString: string; X, 
     Result := Screen.DesktopHeight;
   end;
 
-  procedure RecalculateFormPlacement;
+  procedure RecalcFormPlacement;
   var
-    LIndex: Integer;
+    i: Integer;
     LWidth: Integer;
     LHeight: Integer;
-    LX, LY: Integer;
+    LX: Integer;
+    LY: Integer;
+    LStr: string;
     LBorderWidth: Integer;
     LNewWidth: Integer;
   begin
@@ -270,9 +274,10 @@ procedure TBCEditorCodeFoldingHintForm.Execute(const ACurrentString: string; X, 
     LHeight := FEffectiveItemHeight * ItemList.Count + LBorderWidth + 2 * Margin;
 
     Canvas.Font.Assign(Font);
-    for LIndex := 0 to ItemList.Count - 1 do
+    for i := 0 to ItemList.Count - 1 do
     begin
-      LNewWidth := Canvas.TextWidth(ItemList[LIndex]);
+      LStr := ItemList[i];
+      LNewWidth := Canvas.TextWidth(LStr);
       if LNewWidth > LWidth then
         LWidth := LNewWidth;
     end;
@@ -300,9 +305,8 @@ procedure TBCEditorCodeFoldingHintForm.Execute(const ACurrentString: string; X, 
   end;
 
 begin
-  RecalculateFormPlacement;
+  RecalcFormPlacement;
   AdjustMetrics;
-
   Visible := True;
 end;
 

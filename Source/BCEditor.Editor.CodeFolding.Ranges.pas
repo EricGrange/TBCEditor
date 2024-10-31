@@ -115,14 +115,14 @@ end;
 
 procedure TBCEditorAllCodeFoldingRanges.Delete(FoldRange: TBCEditorCodeFoldingRange);
 var
-  LIndex: Integer;
+  i: Integer;
 begin
-  for LIndex := 0 to FList.Count - 1 do
-  if FList[LIndex] = FoldRange then
+  for i := 0 to FList.Count - 1 do
+  if FList[i] = FoldRange then
   begin
-    TBCEditorCodeFoldingRange(FList[LIndex]).Free;
-    FList[LIndex] := nil;
-    FList.Delete(LIndex);
+    TBCEditorCodeFoldingRange(FList[i]).Free;
+    FList[i] := nil;
+    FList.Delete(i);
     Break;
   end;
 end;
@@ -152,37 +152,36 @@ end;
 
 procedure TBCEditorAllCodeFoldingRanges.SetParentCollapsedOfSubCodeFoldingRanges(AFoldRange: TBCEditorCodeFoldingRange);
 var
-	LIndex: Integer;
-  LFoldRange: TBCEditorCodeFoldingRange;
+	i: Integer;
+  FoldRange: TBCEditorCodeFoldingRange;
 begin
-  for LIndex := 0 to AllCount - 1 do
+  for i := 0 to AllCount - 1 do
   begin
-    LFoldRange := GetItem(LIndex);
-    if LFoldRange = AFoldRange then
+    FoldRange := GetItem(i);
+    if FoldRange = AFoldRange then
       Continue;
-    if LFoldRange.FromLine > AFoldRange.ToLine then
+    if FoldRange.FromLine > AFoldRange.ToLine then
       Break;
-    if (LFoldRange.FromLine > AFoldRange.FromLine) and (LFoldRange.FromLine <> AFoldRange.ToLine) then
-      LFoldRange.ParentCollapsed := True;
+    if (FoldRange.FromLine > AFoldRange.FromLine) and (FoldRange.FromLine <> AFoldRange.ToLine) then
+      FoldRange.ParentCollapsed := True;
   end;
 end;
 
 procedure TBCEditorAllCodeFoldingRanges.UpdateFoldRanges;
 var
-  LIndex: Integer;
-  LFoldRange: TBCEditorCodeFoldingRange;
+  i: Integer;
+  FoldRange: TBCEditorCodeFoldingRange;
 begin
-  for LIndex := 0 to AllCount - 1 do
+  for i := 0 to AllCount - 1 do
   begin
-    LFoldRange := GetItem(LIndex);
-    if Assigned(LFoldRange) then
-      LFoldRange.ParentCollapsed := False;
+    FoldRange := GetItem(i);
+    FoldRange.ParentCollapsed := False;
   end;
-  for LIndex := 0 to AllCount - 1 do
+  for i := 0 to AllCount - 1 do
   begin
-    LFoldRange := GetItem(LIndex);
-    if Assigned(LFoldRange) and not LFoldRange.ParentCollapsed then
-      SetParentCollapsedOfSubCodeFoldingRanges(LFoldRange);
+    FoldRange := GetItem(i);
+    if not FoldRange.ParentCollapsed then
+      SetParentCollapsedOfSubCodeFoldingRanges(FoldRange);
   end;
 end;
 
@@ -240,7 +239,7 @@ end;
 
 function TBCEditorCodeFoldingRange.Collapsable: Boolean;
 begin
-  Result := (FFromLine < FToLine) or RegionItem.TokenEndIsPreviousLine and (FFromLine = FToLine);
+  Result := FFromLine <> FToLine;
 end;
 
 constructor TBCEditorCodeFoldingRange.Create;
@@ -271,12 +270,12 @@ end;
 
 procedure TBCEditorCodeFoldingRange.MoveChildren(By: Integer);
 var
-  LIndex: Integer;
+  i: Integer;
   LCodeFoldingRange: TBCEditorCodeFoldingRange;
 begin
-  for LIndex := 0 to FSubCodeFoldingRanges.Count - 1 do
+  for i := 0 to FSubCodeFoldingRanges.Count - 1 do
   begin
-    LCodeFoldingRange := FSubCodeFoldingRanges[LIndex];
+    LCodeFoldingRange := FSubCodeFoldingRanges[i];
     if Assigned(LCodeFoldingRange) then
     begin
       LCodeFoldingRange.MoveChildren(By);
@@ -290,13 +289,12 @@ end;
 
 procedure TBCEditorCodeFoldingRange.SetParentCollapsedOfSubCodeFoldingRanges(AParentCollapsed: Boolean; ACollapsedBy: Integer);
 var
-  LIndex: Integer;
+  i: Integer;
   LCodeFoldingRange: TBCEditorCodeFoldingRange;
 begin
-  if Assigned(FSubCodeFoldingRanges) then
-  for LIndex := 0 to FSubCodeFoldingRanges.Count - 1 do
+  for i := 0 to FSubCodeFoldingRanges.Count - 1 do
   begin
-    LCodeFoldingRange := FSubCodeFoldingRanges[LIndex];
+    LCodeFoldingRange := FSubCodeFoldingRanges[i];
     LCodeFoldingRange.SetParentCollapsedOfSubCodeFoldingRanges(AParentCollapsed, ACollapsedBy);
 
     if (LCodeFoldingRange.FCollapsedBy = -1) or (LCodeFoldingRange.FCollapsedBy = ACollapsedBy) then

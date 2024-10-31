@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "#!/usr/bin/ruby -w\r\n",
                "\r\n",
@@ -262,12 +262,12 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "\"",
                   "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "#",
@@ -282,10 +282,7 @@
             "FoldRegion": [
                {
                   "OpenToken": "{",
-                  "CloseToken": "}",
-                  "Properties": {
-                     "BreakCharFollows": false
-                  }
+                  "CloseToken": "}"
                },
                {
                   "OpenToken": "DEF",
@@ -316,12 +313,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "#",

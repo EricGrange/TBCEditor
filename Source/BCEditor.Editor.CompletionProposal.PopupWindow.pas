@@ -4,118 +4,124 @@ interface
 
 uses
   Messages, Classes, Types, Forms, Controls, Graphics, BCEditor.Utils,
-  BCEditor.Types, BCEditor.Editor.CompletionProposal.Columns.Items, BCEditor.Editor.PopupWindow,
-  BCEditor.Editor.CompletionProposal;
+  BCEditor.Types, BCEditor.Editor.CompletionProposal.Columns, BCEditor.Editor.PopupWindow,
+  BCEditor.Editor.CompletionProposal{$IFDEF USE_ALPHASKINS}, sCommonData, acSBUtils{$ENDIF};
 
-{$if defined(USE_VCL_STYLES)}
+{$IFDEF USE_VCL_STYLES}
 const
-  CM_UPDATE_VCLSTYLE_SCROLLBARS = CM_BASE + 2050;
-{$ifend}
+  CM_UPDATE_VCLSTYLE_SCROLLBARS= CM_BASE + 2050;
+{$ENDIF}
 
-type
+type
+  TBCEditorValidateEvent = procedure(Sender: TObject; Shift: TShiftState; EndToken: Char) of object;
+
   TBCEditorCompletionProposalPopupWindow = class(TBCEditorPopupWindow)
   strict private
     FAdjustCompletionStart: Boolean;
-    FBitmapBuffer: Graphics.TBitmap;
-    FCanFree: Boolean;
+    FItemIndexArray: array of Integer;
+    FBitmapBuffer: TBitmap;
     FCaseSensitive: Boolean;
+{$IFDEF USE_ALPHASKINS}
+    FCommonData: TsScrollWndData;
+{$ENDIF}
     FCompletionProposal: TBCEditorCompletionProposal;
     FCompletionStart: Integer;
+    FSelectedLine: Integer;
     FCurrentString: string;
     FFiltered: Boolean;
     FFormWidth: Integer;
     FItemHeight: Integer;
-    FItemIndexArray: array of Integer;
-    FItems: TStrings;
     FMargin: Integer;
-    FOnCanceled: TNotifyEvent;
-    FOnSelected: TBCEditorCompletionProposalSelectedEvent;
-    FOnValidate: TBCEditorCompletionProposalValidateEvent;
-    FSelectedLine: Integer;
-    FTitleHeight: Integer;
-    FTitleVisible: Boolean;
+    FMouseWheelAccumulator: Integer;
+    FOnValidate: TBCEditorValidateEvent;
+{$IFDEF USE_ALPHASKINS}
+    FScrollWnd: TacScrollWnd;
+{$ENDIF}
     FTopLine: Integer;
-    FValueSet: Boolean;
-    function GetItems: TBCEditorCompletionProposalColumnItems;
-    function GetItemHeight: Integer;
-    function GetTitleHeight: Integer;
-    function GetVisibleLines: Integer;
+    function GetItemList: TStrings;
     procedure AddKeyHandlers;
-    procedure EditorKeyDown(ASender: TObject; var AKey: Word; AShift: TShiftState);
-    procedure EditorKeyPress(ASender: TObject; var AKey: Char);
-    procedure HandleDblClick(ASender: TObject);
-    procedure HandleOnValidate(ASender: TObject; AShift: TShiftState; AEndToken: Char);
+    procedure EditorKeyDown(Sender: TObject; var AKey: Word; AShift: TShiftState);
+    procedure EditorKeyPress(Sender: TObject; var AKey: Char);
+    procedure HandleDblClick(Sender: TObject);
+    procedure HandleOnValidate(Sender: TObject; AShift: TShiftState; AEndToken: Char);
+    procedure MoveLine(ALineCount: Integer);
     procedure MoveSelectedLine(ALineCount: Integer);
     procedure RemoveKeyHandlers;
     procedure SetCurrentString(const AValue: string);
     procedure SetTopLine(const AValue: Integer);
     procedure UpdateScrollBar;
+    procedure WMMouseWheel(var AMessage: TMessage); message WM_MOUSEWHEEL;
     procedure WMVScroll(var AMessage: TWMScroll); message WM_VSCROLL;
   protected
+    function CanResize(var AWidth, AHeight: Integer): Boolean; override;
     procedure Paint; override;
+    procedure Resize; override;
     procedure Hide; override;
     procedure MouseDown(AButton: TMouseButton; AShift: TShiftState; X, Y: Integer); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
+{$IFDEF USE_ALPHASKINS}
+    procedure AfterConstruction; override;
+{$ENDIF}
     function GetCurrentInput: string;
     procedure Assign(ASource: TPersistent); override;
-    procedure MouseWheel(AShift: TShiftState; AWheelDelta: Integer; AMousePos: TPoint);
-    procedure Execute(const ACurrentString: string; const APoint: TPoint);
-    property CanFree: Boolean read FCanFree;
+    procedure Execute(const ACurrentString: string; X, Y: Integer);
+    procedure WndProc(var AMessage: TMessage); override;
     property CurrentString: string read FCurrentString write SetCurrentString;
-    property Items: TBCEditorCompletionProposalColumnItems read GetItems;
+    property ItemList: TStrings read GetItemList;
     property TopLine: Integer read FTopLine write SetTopLine;
-    property OnCanceled: TNotifyEvent read FOnCanceled write FOnCanceled;
-    property OnSelected: TBCEditorCompletionProposalSelectedEvent read FOnSelected write FOnSelected;
+    property OnValidate: TBCEditorValidateEvent read FOnValidate write FOnValidate;
+{$IFDEF USE_ALPHASKINS}
+    property SkinData: TsScrollWndData read FCommonData write FCommonData;
+{$ENDIF}
   end;
 
 implementation
 
 uses
-  Windows, SysUtils, UITypes, BCEditor.Editor.Base, BCEditor.Editor.KeyCommands,
-  BCEditor.Editor.Utils, BCEditor.Consts, Math, Dialogs, BCEditor.Editor.CompletionProposal.Columns
-  {$if defined(USE_VCL_STYLES) or not defined(USE_VCL_STYLES) and not defined(USE_ALPHASKINS)}, Themes{$ifend};
+  Windows, SysUtils, BCEditor.Editor.Base, BCEditor.Editor.KeyCommands,
+  BCEditor.Editor.Utils, BCEditor.Consts, Math, Dialogs{$IFDEF USE_VCL_STYLES}, Vcl.Themes{$ENDIF}
+  {$IFDEF USE_ALPHASKINS}, CommCtrl, sVCLUtils, sMessages, sConst, sSkinProps{$ENDIF};
 
-{$I BCEditor.RectHelper.inc}
+{ TBCEditorCompletionProposalPopupWindow }
 
 constructor TBCEditorCompletionProposalPopupWindow.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
-  FCanFree := True;
-  FCaseSensitive := False;
-  FFiltered := False;
-  FItemHeight := 0;
-  FMargin := 2;
-  FValueSet := False;
-  Visible := False;
-
+{$IFDEF USE_ALPHASKINS}
+  FCommonData := TsScrollWndData.Create(Self, True);
+  FCommonData.COC := COC_TsListBox;
+  if FCommonData.SkinSection = '' then
+    FCommonData.SkinSection := s_Edit;
+{$ENDIF}
   AddKeyHandlers;
 
-  FItems := TStringList.Create;
-  FBitmapBuffer := Graphics.TBitmap.Create;
+  Visible := False;
 
-  FOnValidate := HandleOnValidate;
+  FBitmapBuffer := Graphics.TBitmap.Create;
+  FFiltered := False;
+  FCaseSensitive := False;
+
+  FItemHeight := 0;
+  FMargin := 2;
+
+  OnValidate := HandleOnValidate;
   OnDblClick := HandleDblClick;
 end;
 
 destructor TBCEditorCompletionProposalPopupWindow.Destroy;
 begin
-  if FItemHeight <> 0 then
-    FCompletionProposal.VisibleLines := ClientHeight div FItemHeight;
-  FCompletionProposal.Width := Width;
-
-  FCanFree := False;
-  if not FValueSet and Assigned(FOnCanceled) then
-    FOnCanceled(Self);
-  FCanFree := True;
-
+{$IFDEF USE_ALPHASKINS}
+  if FScrollWnd <> nil then
+    FreeAndNil(FScrollWnd);
+  if Assigned(FCommonData) then
+    FreeAndNil(FCommonData);
+{$ENDIF}
   RemoveKeyHandlers;
   FBitmapBuffer.Free;
   SetLength(FItemIndexArray, 0);
-  FItems.Free;
 
   inherited Destroy;
 end;
@@ -123,9 +129,17 @@ end;
 procedure TBCEditorCompletionProposalPopupWindow.Hide;
 begin
   RemoveKeyHandlers;
-
   inherited Hide;
 end;
+
+{$IFDEF USE_ALPHASKINS}
+procedure TBCEditorCompletionProposalPopupWindow.AfterConstruction;
+begin
+  inherited AfterConstruction;
+
+  UpdateData(FCommonData);
+end;
+{$ENDIF}
 
 procedure TBCEditorCompletionProposalPopupWindow.Assign(ASource: TPersistent);
 begin
@@ -136,8 +150,9 @@ begin
     begin
       Self.FCaseSensitive := cpoCaseSensitive in Options;
       Self.FFiltered := cpoFiltered in Options;
+      Self.FBitmapBuffer.Canvas.Font.Assign(Font);
+      Self.FItemHeight := TextHeight(FBitmapBuffer.Canvas, 'X');
       Self.FFormWidth := Width;
-      Self.Constraints.Assign(Constraints);
     end
   end
   else
@@ -146,67 +161,29 @@ end;
 
 procedure TBCEditorCompletionProposalPopupWindow.AddKeyHandlers;
 var
-  LEditor: TBCBaseEditor;
+  Editor: TBCBaseEditor;
 begin
-  LEditor := Owner as TBCBaseEditor;
-  if Assigned(LEditor) then
+  Editor := Owner as TBCBaseEditor;
+  if Assigned(Editor) then
   begin
-    LEditor.AddKeyPressHandler(EditorKeyPress);
-    LEditor.AddKeyDownHandler(EditorKeyDown);
+    Editor.AddKeyPressHandler(EditorKeyPress);
+    Editor.AddKeyDownHandler(EditorKeyDown);
   end;
 end;
 
 procedure TBCEditorCompletionProposalPopupWindow.RemoveKeyHandlers;
 var
-  LEditor: TBCBaseEditor;
+  Editor: TBCBaseEditor;
 begin
-  LEditor := Owner as TBCBaseEditor;
-  if Assigned(LEditor) then
+  Editor := Owner as TBCBaseEditor;
+  if Assigned(Editor) then
   begin
-    LEditor.RemoveKeyPressHandler(EditorKeyPress);
-    LEditor.RemoveKeyDownHandler(EditorKeyDown);
+    Editor.RemoveKeyPressHandler(EditorKeyPress);
+    Editor.RemoveKeyDownHandler(EditorKeyDown);
   end;
 end;
 
-function TBCEditorCompletionProposalPopupWindow.GetItemHeight: Integer;
-var
-  LColumnIndex, LHeight: Integer;
-  LColumn: TBCEditorCompletionProposalColumn;
-begin
-  Result := 0;
-  for LColumnIndex := 0 to FCompletionProposal.Columns.Count - 1 do
-  begin
-    LColumn := FCompletionProposal.Columns[LColumnIndex];
-    FBitmapBuffer.Canvas.Font.Assign(LColumn.Font);
-    LHeight := TextHeight(FBitmapBuffer.Canvas, 'X');
-    if LHeight > Result then
-      Result := LHeight;
-  end;
-end;
-
-function TBCEditorCompletionProposalPopupWindow.GetTitleHeight: Integer;
-var
-  LColumnIndex, LHeight: Integer;
-  LColumn: TBCEditorCompletionProposalColumn;
-begin
-  Result := 0;
-  if FTitleVisible then
-  for LColumnIndex := 0 to FCompletionProposal.Columns.Count - 1 do
-  begin
-    LColumn := FCompletionProposal.Columns[LColumnIndex];
-    FBitmapBuffer.Canvas.Font.Assign(LColumn.Title.Font);
-    LHeight := TextHeight(FBitmapBuffer.Canvas, 'X');
-    if LHeight > Result then
-      Result := LHeight;
-  end;
-end;
-
-function TBCEditorCompletionProposalPopupWindow.GetVisibleLines: Integer;
-begin
-  Result := (ClientHeight - FTitleHeight) div FItemHeight;
-end;
-
-procedure TBCEditorCompletionProposalPopupWindow.EditorKeyDown(ASender: TObject; var AKey: Word; AShift: TShiftState);
+procedure TBCEditorCompletionProposalPopupWindow.EditorKeyDown(Sender: TObject; var AKey: Word; AShift: TShiftState);
 var
   LChar: Char;
   LEditor: TBCBaseEditor;
@@ -217,8 +194,8 @@ begin
     LEditor := Owner as TBCBaseEditor;
   case AKey of
     VK_RETURN, VK_TAB:
-      if Assigned(FOnValidate) then
-        FOnValidate(Self, AShift, BCEDITOR_NONE_CHAR);
+      if Assigned(OnValidate) then
+        OnValidate(Self, AShift, BCEDITOR_NONE_CHAR);
     VK_ESCAPE:
       Hide;
     VK_LEFT:
@@ -256,9 +233,9 @@ begin
           end;
       end;
     VK_PRIOR:
-      MoveSelectedLine(-GetVisibleLines);
+      MoveLine(-FCompletionProposal.VisibleLines);
     VK_NEXT:
-      MoveSelectedLine(GetVisibleLines);
+      MoveLine(FCompletionProposal.VisibleLines);
     VK_END:
       TopLine := Length(FItemIndexArray) - 1;
     VK_HOME:
@@ -294,25 +271,21 @@ begin
     VK_DELETE:
       if Assigned(LEditor) then
         LEditor.CommandProcessor(ecDeleteChar, BCEDITOR_NONE_CHAR, nil);
-    VK_F1..VK_F12:
-      if Assigned(LEditor) then
-        LEditor.OnKeyDown(Self, AKey, AShift);
   end;
   AKey := 0;
   Invalidate;
 end;
 
-procedure TBCEditorCompletionProposalPopupWindow.EditorKeyPress(ASender: TObject; var AKey: Char);
+procedure TBCEditorCompletionProposalPopupWindow.EditorKeyPress(Sender: TObject; var AKey: Char);
 begin
   case AKey of
-    BCEDITOR_CARRIAGE_RETURN:
+    BCEDITOR_CARRIAGE_RETURN, BCEDITOR_ESCAPE:
       Hide;
     BCEDITOR_SPACE_CHAR .. High(Char):
       begin
-        if not (cpoAutoInvoke in FCompletionProposal.Options) then
-          if (Owner as TBCBaseEditor).IsWordBreakChar(AKey) and Assigned(FOnValidate) then
-            if AKey = BCEDITOR_SPACE_CHAR then
-              FOnValidate(Self, [], BCEDITOR_NONE_CHAR);
+        if (Owner as TBCBaseEditor).IsWordBreakChar(AKey) and Assigned(OnValidate) then
+          if AKey = BCEDITOR_SPACE_CHAR then
+            OnValidate(Self, [], BCEDITOR_NONE_CHAR);
         CurrentString := FCurrentString + AKey;
         if (cpoAutoInvoke in FCompletionProposal.Options) and (Length(FItemIndexArray) = 0) or
           (Pos(AKey, FCompletionProposal.CloseChars) <> 0) then
@@ -328,102 +301,98 @@ begin
   Invalidate;
 end;
 
+function TBCEditorCompletionProposalPopupWindow.CanResize(var AWidth, AHeight: Integer): Boolean;
+var
+  NewVisibleLines: Integer;
+begin
+  Result := True;
+
+  if FItemHeight <> 0 then
+  begin
+    NewVisibleLines := AHeight div FItemHeight;
+    if NewVisibleLines < 1 then
+      NewVisibleLines := 1;
+  end
+  else
+    NewVisibleLines := 0;
+
+  FCompletionProposal.VisibleLines := NewVisibleLines;
+end;
+
+procedure TBCEditorCompletionProposalPopupWindow.Resize;
+begin
+  inherited;
+  if FItemHeight <> 0 then
+    FCompletionProposal.VisibleLines := ClientHeight div FItemHeight;
+
+  Invalidate;
+end;
+
 procedure TBCEditorCompletionProposalPopupWindow.Paint;
 var
-  LIndex, LColumnIndex, LLeft: Integer;
+  i, j: Integer;
   LColumnWidth, LItemIndex: Integer;
-  LColumn: TBCEditorCompletionProposalColumn;
-  LRect: TRect;
 begin
+  FBitmapBuffer.Width := ClientWidth;
+  FBitmapBuffer.Height := ClientHeight;
   with FBitmapBuffer do
   begin
     Canvas.Brush.Color := FCompletionProposal.Colors.Background;
-    Height := 0;
-    Width := ClientWidth;
-    Height := ClientHeight;
-    { Title }
-    LRect := ClientRect;
-    LRect.Height := FItemHeight;
-    LColumnWidth := 0;
-    if FTitleVisible then
+    PatBlt(Canvas.Handle, ClientRect.Left, ClientRect.Top, ClientRect.Right-ClientRect.Left, ClientRect.Bottom-ClientRect.Top, PATCOPY);
+    for i := 0 to Min(FCompletionProposal.VisibleLines, Length(FItemIndexArray) - 1) do
     begin
-      LRect.Height := FTitleHeight;
-      for LColumnIndex := 0 to FCompletionProposal.Columns.Count - 1 do
-      begin
-        LColumn := FCompletionProposal.Columns[LColumnIndex];
-        Canvas.Brush.Color := LColumn.Title.Colors.Background;
-        LRect.Left := LColumnWidth;
-        LRect.Right := LColumnWidth + LColumn.Width;
-        Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, LRect, '', 0, nil);
-        Canvas.Font.Assign(LColumn.Title.Font);
-        if LColumn.Title.Visible then
-          Canvas.TextOut(FMargin + LColumnWidth, 0, LColumn.Title.Caption);
-        Canvas.Pen.Color := LColumn.Title.Colors.BottomBorder;
-        Canvas.MoveTo(LRect.Left, LRect.Bottom - 1);
-        Canvas.LineTo(LRect.Right, LRect.Bottom - 1);
-        Canvas.Pen.Color := LColumn.Title.Colors.RightBorder;
-        Canvas.MoveTo(LRect.Right - 1, LRect.Top - 1);
-        Canvas.LineTo(LRect.Right - 1, LRect.Bottom - 1);
-        LColumnWidth := LColumnWidth + LColumn.Width;
-      end;
-      LRect.Right := ClientRect.Right;
-      LRect.Left := 0;
-      LRect.Top := LRect.Bottom;
-      LRect.Bottom := LRect.Top + FItemHeight;
-    end;
-    { Data }
-    for LIndex := 0 to Min(GetVisibleLines, Length(FItemIndexArray) - 1) do
-    begin
-      if LIndex + TopLine >= Length(FItemIndexArray) then
+      if i + TopLine >= Length(FItemIndexArray) then
         Break;
 
-      if LIndex + TopLine = FSelectedLine then
+      if i + TopLine = FSelectedLine then
       begin
         Canvas.Brush.Color := FCompletionProposal.Colors.SelectedBackground;
         Canvas.Pen.Color := FCompletionProposal.Colors.SelectedBackground;
-        Canvas.Rectangle(LRect);
+        Canvas.Rectangle(0, FItemHeight * i, ClientWidth, FItemHeight * (i + 1));
+        Canvas.Font.Color := FCompletionProposal.Colors.SelectedText;
       end
       else
       begin
         Canvas.Brush.Color := FCompletionProposal.Colors.Background;
         Canvas.Pen.Color := FCompletionProposal.Colors.Background;
+        Canvas.Font.Color := FCompletionProposal.Colors.Foreground;
       end;
       LColumnWidth := 0;
-      for LColumnIndex := 0 to FCompletionProposal.Columns.Count - 1 do
+      for j := 0 to FCompletionProposal.Columns.Count - 1 do
       begin
-        LItemIndex := FItemIndexArray[TopLine + LIndex];
-        LColumn := FCompletionProposal.Columns[LColumnIndex];
-        Canvas.Font.Assign(LColumn.Font);
-
-        if LIndex + TopLine = FSelectedLine then
-          Canvas.Font.Color := FCompletionProposal.Colors.SelectedText
-        else
-          Canvas.Font.Color := FCompletionProposal.Colors.Foreground;
-
-        if LItemIndex < LColumn.Items.Count then
-        begin
-          LLeft := 0;
-          if LColumn.Items[LItemIndex].ImageIndex <> -1 then
-          begin
-            FCompletionProposal.Images.Draw(Canvas, FMargin + LColumnWidth, LRect.Top, LColumn.Items[LItemIndex].ImageIndex);
-            Inc(LLeft, FCompletionProposal.Images.Width + FMargin);
-          end;
-          Canvas.TextOut(FMargin + LColumnWidth + LLeft, LRect.Top, LColumn.Items[LItemIndex].Value);
-        end;
-        LColumnWidth := LColumnWidth + LColumn.Width;
+        LItemIndex := FItemIndexArray[TopLine + i];
+        if LItemIndex < FCompletionProposal.Columns[j].ItemList.Count then
+          Canvas.TextOut(FMargin + LColumnWidth, FItemHeight * i, FCompletionProposal.Columns[j].ItemList[LItemIndex]);
+        LColumnWidth := LColumnWidth + FCompletionProposal.Columns[j].Width;
       end;
-      LRect.Top := LRect.Bottom;
-      LRect.Bottom := LRect.Top + FItemHeight;
     end;
   end;
   Canvas.Draw(0, 0, FBitmapBuffer);
 end;
 
+procedure TBCEditorCompletionProposalPopupWindow.MoveLine(ALineCount: Integer);
+begin
+  if ALineCount > 0 then
+  begin
+    if TopLine < Length(FItemIndexArray) - ALineCount then
+      TopLine := TopLine + ALineCount
+    else
+      TopLine := Length(FItemIndexArray) - 1;
+  end
+  else
+  begin
+    if TopLine + ALineCount > 0 then
+      TopLine := TopLine + ALineCount
+    else
+      TopLine := 0;
+  end;
+end;
+
 procedure TBCEditorCompletionProposalPopupWindow.MoveSelectedLine(ALineCount: Integer);
 begin
   FSelectedLine := MinMax(FSelectedLine + ALineCount, 0, Length(FItemIndexArray) - 1);
-  if FSelectedLine >= TopLine + GetVisibleLines then
-    TopLine := FSelectedLine - GetVisibleLines + 1;
+  if FSelectedLine >= TopLine + FCompletionProposal.VisibleLines then
+    TopLine := FSelectedLine - FCompletionProposal.VisibleLines + 1;
   if FSelectedLine < TopLine then
     TopLine := FSelectedLine;
 end;
@@ -434,33 +403,33 @@ procedure TBCEditorCompletionProposalPopupWindow.SetCurrentString(const AValue: 
   var
     LCompareString: string;
   begin
-    LCompareString := Copy(GetItems[AIndex].Value, 1, Length(AValue));
+    LCompareString := Copy(GetItemList[AIndex], 1, Length(AValue));
 
     if FCaseSensitive then
-      Result := CompareStr(LCompareString, AValue) = 0
+      Result := WideCompareStr(LCompareString, AValue) = 0
     else
-      Result := CompareStr(LCompareString, AValue) = 0;
+      Result := WideCompareText(LCompareString, AValue) = 0;
   end;
 
   procedure RecalcList;
   var
-    LIndex, LIndex2, LItemsCount: Integer;
+    i, j, k: Integer;
   begin
-    LIndex2 := 0;
-    LItemsCount := GetItems.Count;
+    k := 0;
+    j := GetItemList.Count;
     SetLength(FItemIndexArray, 0);
-    SetLength(FItemIndexArray, LItemsCount);
-    for LIndex := 0 to LItemsCount - 1 do
-      if MatchItem(LIndex) then
+    SetLength(FItemIndexArray, j);
+    for i := 0 to j - 1 do
+      if MatchItem(i) then
       begin
-        FItemIndexArray[LIndex2] := LIndex;
-        Inc(LIndex2);
+        FItemIndexArray[k] := i;
+        Inc(k);
       end;
-    SetLength(FItemIndexArray, LIndex2);
+    SetLength(FItemIndexArray, k);
   end;
 
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   FCurrentString := AValue;
 
@@ -472,75 +441,87 @@ begin
   end
   else
   begin
-    LIndex := 0;
-    while (LIndex < Items.Count) and (not MatchItem(LIndex)) do
-      Inc(LIndex);
+    i := 0;
+    while (i < ItemList.Count) and (not MatchItem(i)) do
+      inc(i);
 
-    if LIndex < Items.Count then
-      TopLine := LIndex
+    if i < ItemList.Count then
+      TopLine := i
     else
       TopLine := 0;
   end;
 end;
 
 procedure TBCEditorCompletionProposalPopupWindow.SetTopLine(const AValue: Integer);
+var
+  LDelta: Integer;
+  LClientRect: TRect;
 begin
   if TopLine <> AValue then
   begin
+    LDelta := TopLine - AValue;
     FTopLine := AValue;
+    LClientRect := ClientRect;
+    if Abs(LDelta) < FCompletionProposal.VisibleLines then
+      ScrollWindow(Handle, 0, FItemHeight * LDelta, @LClientRect, @LClientRect)
+    else
+      Invalidate;
     UpdateScrollBar;
-    Invalidate;
   end;
 end;
 
-procedure TBCEditorCompletionProposalPopupWindow.MouseWheel(AShift: TShiftState; AWheelDelta: Integer; AMousePos: TPoint);
+procedure TBCEditorCompletionProposalPopupWindow.WMMouseWheel(var AMessage: TMessage);
 var
-  LLinesToScroll: Integer;
+  Delta: Integer;
+  WheelClicks: Integer;
 begin
   if csDesigning in ComponentState then
     Exit;
 
-  if ssCtrl in aShift then
-    LLinesToScroll := GetVisibleLines
+  if GetKeyState(VK_CONTROL) >= 0 then
+    Delta := Mouse.WheelScrollLines
   else
-    LLinesToScroll := 1;
+    Delta := FCompletionProposal.VisibleLines;
 
-  if AWheelDelta > 0 then
-    TopLine := Max(0, TopLine - LLinesToScroll)
-  else
-    TopLine := Min(GetItems.Count - GetVisibleLines, TopLine + LLinesToScroll);
+  Inc(FMouseWheelAccumulator, Integer(AMessage.wParamHi));
+  WheelClicks := FMouseWheelAccumulator div WHEEL_DELTA;
+  FMouseWheelAccumulator := FMouseWheelAccumulator mod WHEEL_DELTA;
+  if (Delta = Integer(WHEEL_PAGESCROLL)) or (Delta > FCompletionProposal.VisibleLines) then
+    Delta := FCompletionProposal.VisibleLines;
 
-  Invalidate;
+  TopLine := TopLine - (Delta * WheelClicks);
 end;
 
-procedure TBCEditorCompletionProposalPopupWindow.Execute(const ACurrentString: string; const APoint: TPoint);
-var
-  LPoint: TPoint;
+procedure TBCEditorCompletionProposalPopupWindow.Execute(const ACurrentString: string; X, Y: Integer);
 
   procedure CalculateFormPlacement;
   var
     LWidth: Integer;
     LHeight: Integer;
+    LX: Integer;
+    LY: Integer;
   begin
-    LPoint.X := APoint.X - TextWidth(FBitmapBuffer.Canvas, ACurrentString);
-    LPoint.Y := APoint.Y;
+    LX := X - TextWidth(FBitmapBuffer.Canvas, ACurrentString);
+    LY := Y;
 
     LWidth := FFormWidth;
-    LHeight := FItemHeight * FCompletionProposal.VisibleLines + FTitleHeight + 2;
+    LHeight := FItemHeight * FCompletionProposal.VisibleLines + 2;
 
-    if LPoint.X + LWidth > Screen.DesktopWidth then
+    if LX + LWidth > Screen.DesktopWidth then
     begin
-      LPoint.X := Screen.DesktopWidth - LWidth - 5;
-      if LPoint.X < 0 then
-        LPoint.X := 0;
+      LX := Screen.DesktopWidth - LWidth - 5;
+      if LX < 0 then
+        LX := 0;
     end;
 
-    if LPoint.Y + LHeight > Screen.DesktopHeight then
+    if LY + LHeight > Screen.DesktopHeight then
     begin
-      LPoint.Y := LPoint.Y - LHeight - (Owner as TBCBaseEditor).LineHeight - 2;
-      if LPoint.Y < 0 then
-        LPoint.Y := 0;
+      LY := LY - LHeight - (Owner as TBCBaseEditor).LineHeight - 2;
+      if LY < 0 then
+        LY := 0;
     end;
+
+    SetWindowPos(Handle, HWND_TOP, LX, LY, 0, 0, SWP_NOACTIVATE or SWP_SHOWWINDOW);
 
     Width := LWidth;
     Height := LHeight;
@@ -548,10 +529,10 @@ var
 
   procedure CalculateColumnWidths;
   var
-    LColumnIndex, LIndex: Integer;
+    i, j: Integer;
     LMaxWidth, LTempWidth, LAutoWidthCount, LWidthSum: Integer;
-    LItems: TBCEditorCompletionProposalColumnItems;
-    LProposalColumn: TBCEditorCompletionProposalColumn;
+    LItems: TStrings;
+    LProposalColumn: TBCEditorProposalColumn;
   begin
     if FCompletionProposal.Columns.Count = 1 then
     begin
@@ -563,16 +544,16 @@ var
 
     LAutoWidthCount := 0;
     LWidthSum := 0;
-    for LColumnIndex := 0 to FCompletionProposal.Columns.Count - 1 do
+    for i := 0 to FCompletionProposal.Columns.Count - 1 do
     begin
-      LProposalColumn := FCompletionProposal.Columns[LColumnIndex];
+      LProposalColumn := FCompletionProposal.Columns[i];
       if LProposalColumn.AutoWidth then
       begin
-        LItems := LProposalColumn.Items;
+        LItems := LProposalColumn.ItemList;
         LMaxWidth := 0;
-        for LIndex := 0 to LItems.Count - 1 do
+        for j := 0 to LItems.Count - 1 do
         begin
-          LTempWidth := TextWidth(FBitmapBuffer.Canvas, LItems[LIndex].Value);
+          LTempWidth := TextWidth(FBitmapBuffer.Canvas, LItems[j]);
           if LTempWidth > LMaxWidth then
             LMaxWidth := LTempWidth;
         end;
@@ -584,67 +565,37 @@ var
 
     LMaxWidth := (Width - LWidthSum - GetSystemMetrics(SM_CYHSCROLL)) div LAutoWidthCount;
     if LMaxWidth > 0 then
-    for LColumnIndex := 0 to FCompletionProposal.Columns.Count - 1 do
+    for i := 0 to FCompletionProposal.Columns.Count - 1 do
     begin
-      LProposalColumn := FCompletionProposal.Columns[LColumnIndex];
+      LProposalColumn := FCompletionProposal.Columns[i];
       if LProposalColumn.AutoWidth then
         LProposalColumn.Width := LProposalColumn.Width + LMaxWidth;
     end;
   end;
 
-  function GetTitleVisible: Boolean;
-  var
-    LColumnIndex: Integer;
-    LColumn: TBCEditorCompletionProposalColumn;
-  begin
-    Result := False;
-    for LColumnIndex := 0 to FCompletionProposal.Columns.Count - 1 do
-    begin
-      LColumn := FCompletionProposal.Columns[LColumnIndex];
-      if LColumn.Title.Visible then
-        Exit(True);
-    end;
-  end;
-
-  procedure SetAutoConstraints;
-  begin
-    if cpoAutoConstraints in FCompletionProposal.Options then
-    begin
-      FCompletionProposal.Constraints.MinHeight := Height;
-      FCompletionProposal.Constraints.MinWidth := Width;
-      Constraints.Assign(FCompletionProposal.Constraints);
-    end;
-  end;
-
 var
-  LIndex, LCount: Integer;
+  i, j: Integer;
 begin
-  LCount := GetItems.Count;
+  j := GetItemList.Count;
   SetLength(FItemIndexArray, 0);
-  SetLength(FItemIndexArray, LCount);
-  for LIndex := 0 to LCount - 1 do
-    FItemIndexArray[LIndex] := LIndex;
+  SetLength(FItemIndexArray, j);
+  for i := 0 to j - 1 do
+    FItemIndexArray[i] := i;
 
   if Length(FItemIndexArray) > 0 then
   begin
-    FTitleVisible := GetTitleVisible;
-    FItemHeight := GetItemHeight;
-    FTitleHeight := GetTitleHeight;
     CalculateFormPlacement;
     CalculateColumnWidths;
-    SetAutoConstraints;
     CurrentString := ACurrentString;
     if Length(FItemIndexArray) > 0 then
     begin
-      if cpoShowShadow in FCompletionProposal.Options then
-        ActivateDropShadow(Handle);
       UpdateScrollBar;
-      Show(LPoint);
+      Visible := True;
     end;
   end;
 end;
 
-procedure TBCEditorCompletionProposalPopupWindow.HandleOnValidate(ASender: TObject; AShift: TShiftState; AEndToken: Char);
+procedure TBCEditorCompletionProposalPopupWindow.HandleOnValidate(Sender: TObject; AShift: TShiftState; AEndToken: Char);
 var
   LEditor: TBCBaseEditor;
   LValue, LLine: string;
@@ -678,22 +629,15 @@ begin
       end;
 
       if FSelectedLine < Length(FItemIndexArray) then
-        LValue := GetItems[FItemIndexArray[FSelectedLine]].Value
+        LValue := GetItemList[FItemIndexArray[FSelectedLine]]
       else
         LValue := SelectedText;
 
-      FCanFree := False;
-      if Assigned(FOnSelected) then
-        FOnSelected(Self, LValue);
-      FCanFree := True;
-
-      FValueSet := SelectedText <> LValue;
-      if FValueSet then
+      if SelectedText <> LValue then
         SelectedText := LValue;
 
       if CanFocus then
         SetFocus;
-
       EnsureCursorPositionVisible;
       TextCaretPosition := SelectionEndPosition;
       SelectionBeginPosition := TextCaretPosition;
@@ -704,16 +648,16 @@ begin
   end;
 end;
 
-procedure TBCEditorCompletionProposalPopupWindow.HandleDblClick(ASender: TObject);
+procedure TBCEditorCompletionProposalPopupWindow.HandleDblClick(Sender: TObject);
 begin
-  if Assigned(FOnValidate) then
-    FOnValidate(Self, [], BCEDITOR_NONE_CHAR);
+  if Assigned(OnValidate) then
+    OnValidate(Self, [], BCEDITOR_NONE_CHAR);
   Hide;
 end;
 
 function TBCEditorCompletionProposalPopupWindow.GetCurrentInput: string;
 var
-  LIndex: Integer;
+  i: Integer;
   LLineText: string;
   LEditor: TBCBaseEditor;
   LTextCaretPosition: TBCEditorTextPosition;
@@ -724,14 +668,14 @@ begin
   LTextCaretPosition := LEditor.TextCaretPosition;
 
   LLineText := LEditor.Lines[LTextCaretPosition.Line];
-  LIndex := LTextCaretPosition.Char - 1;
-  if LIndex <= Length(LLineText) then
+  i := LTextCaretPosition.Char - 1;
+  if i <= Length(LLineText) then
   begin
     FAdjustCompletionStart := False;
-    while (LIndex > 0) and (LLineText[LIndex] > BCEDITOR_SPACE_CHAR) and not LEditor.IsWordBreakChar(LLineText[LIndex]) do
-      Dec(LIndex);
+    while (i > 0) and (LLineText[i] > BCEDITOR_SPACE_CHAR) and not LEditor.IsWordBreakChar(LLineText[i]) do
+      Dec(i);
 
-    FCompletionStart := LIndex + 1;
+    FCompletionStart := i + 1;
     Result := Copy(LLineText, FCompletionStart, LTextCaretPosition.Char - FCompletionStart);
   end
   else
@@ -741,11 +685,9 @@ begin
   end;
 end;
 
-function TBCEditorCompletionProposalPopupWindow.GetItems: TBCEditorCompletionProposalColumnItems;
+function TBCEditorCompletionProposalPopupWindow.GetItemList: TStrings;
 begin
-  Result := nil;
-  if FCompletionProposal.CompletionColumnIndex <  FCompletionProposal.Columns.Count then
-    Result := FCompletionProposal.Columns[FCompletionProposal.CompletionColumnIndex].Items;
+  Result := FCompletionProposal.Columns[FCompletionProposal.CompletionColumnIndex].ItemList;
 end;
 
 procedure TBCEditorCompletionProposalPopupWindow.UpdateScrollBar;
@@ -760,14 +702,14 @@ begin
     SendMessage(Handle, WM_SETREDRAW, 0, 0);
 
   LScrollInfo.nMin := 0;
-  LScrollInfo.nMax := Max(0, GetItems.Count - 2);
-  LScrollInfo.nPage := GetVisibleLines;
+  LScrollInfo.nMax := Max(0, GetItemList.Count - 2);
+  LScrollInfo.nPage := FCompletionProposal.VisibleLines;
   LScrollInfo.nPos := TopLine;
 
-  ShowScrollBar(Handle, SB_VERT, (LScrollInfo.nMin = 0) or (LScrollInfo.nMax > GetVisibleLines));
+  ShowScrollBar(Handle, SB_VERT, (LScrollInfo.nMin = 0) or (LScrollInfo.nMax > FCompletionProposal.VisibleLines));
   SetScrollInfo(Handle, SB_VERT, LScrollInfo, True);
 
-  if GetItems.Count <= GetVisibleLines then
+  if GetItemList.Count <= FCompletionProposal.VisibleLines then
     EnableScrollBar(Handle, SB_VERT, ESB_DISABLE_BOTH)
   else
   begin
@@ -775,16 +717,16 @@ begin
     if TopLine <= 0 then
       EnableScrollBar(Handle, SB_VERT, ESB_DISABLE_UP)
     else
-    if TopLine + GetVisibleLines >= GetItems.Count then
+    if TopLine + FCompletionProposal.VisibleLines >= GetItemList.Count then
       EnableScrollBar(Handle, SB_VERT, ESB_DISABLE_DOWN);
   end;
 
   if Visible then
     SendMessage(Handle, WM_SETREDRAW, -1, 0);
 
-{$if defined(USE_VCL_STYLES)}
+{$IFDEF USE_VCL_STYLES}
   Perform(CM_UPDATE_VCLSTYLE_SCROLLBARS, 0, 0);
-{$ifend}
+{$ENDIF}
 end;
 
 procedure TBCEditorCompletionProposalPopupWindow.WMVScroll(var AMessage: TWMScroll);
@@ -796,24 +738,106 @@ begin
     SB_TOP:
       TopLine := 0;
     SB_BOTTOM:
-      TopLine := GetItems.Count - 1;
+      TopLine := GetItemList.Count - 1;
     SB_LINEDOWN:
-      TopLine := Min(GetItems.Count - GetVisibleLines, TopLine + 1);
+      TopLine := Min(GetItemList.Count - FCompletionProposal.VisibleLines, TopLine + 1);
     SB_LINEUP:
       TopLine := Max(0, TopLine - 1);
     SB_PAGEDOWN:
-      TopLine := Min(GetItems.Count - GetVisibleLines, TopLine + GetVisibleLines);
+      TopLine := Min(GetItemList.Count - FCompletionProposal.VisibleLines, TopLine + FCompletionProposal.VisibleLines);
     SB_PAGEUP:
-      TopLine := Max(0, TopLine - GetVisibleLines);
+      TopLine := Max(0, TopLine - FCompletionProposal.VisibleLines);
     SB_THUMBPOSITION, SB_THUMBTRACK:
-      TopLine := AMessage.Pos;
+      begin
+        if GetItemList.Count > BCEDITOR_MAX_SCROLL_RANGE then
+          TopLine := MulDiv(FCompletionProposal.VisibleLines + GetItemList.Count - 1, AMessage.Pos, BCEDITOR_MAX_SCROLL_RANGE)
+        else
+          TopLine := AMessage.Pos;
+      end;
   end;
   Invalidate;
 end;
 
+procedure TBCEditorCompletionProposalPopupWindow.WndProc(var AMessage: TMessage);
+begin
+{$IFDEF USE_ALPHASKINS}
+  if AMessage.Msg = SM_ALPHACMD then
+    case AMessage.wParamHi of
+      AC_CTRLHANDLED:
+        begin
+          AMessage.Result := 1;
+          Exit;
+        end;
+
+      AC_GETAPPLICATION:
+        begin
+          AMessage.Result := LRESULT(Application);
+          Exit
+        end;
+
+      AC_REMOVESKIN:
+        if (ACUInt(AMessage.LParam) = ACUInt(SkinData.SkinManager)) and not(csDestroying in ComponentState) then
+        begin
+          if FScrollWnd <> nil then
+            FreeAndNil(FScrollWnd);
+
+          CommonWndProc(AMessage, FCommonData);
+          RecreateWnd;
+          Exit;
+        end;
+
+      AC_REFRESH:
+        if (ACUInt(AMessage.LParam) = ACUInt(SkinData.SkinManager)) and Visible then
+        begin
+          CommonWndProc(AMessage, FCommonData);
+          RefreshEditScrolls(SkinData, FScrollWnd);
+          SendMessage(Handle, WM_NCPAINT, 0, 0);
+          Exit;
+        end;
+
+      AC_SETNEWSKIN:
+        if (ACUInt(AMessage.LParam) = ACUInt(SkinData.SkinManager)) then
+        begin
+          CommonWndProc(AMessage, FCommonData);
+          Exit;
+        end;
+    end;
+
+  if not ControlIsReady(Self) or not Assigned(FCommonData) or not FCommonData.Skinned then
+    inherited
+  else
+  begin
+    if AMessage.Msg = SM_ALPHACMD then
+      case AMessage.wParamHi of
+        AC_ENDPARENTUPDATE:
+          if FCommonData.Updating then
+          begin
+            if not InUpdating(FCommonData, True) then
+              Perform(WM_NCPAINT, 0, 0);
+
+            Exit;
+          end;
+      end;
+
+    CommonWndProc(AMessage, FCommonData);
+
+    inherited;
+
+    case AMessage.Msg of
+      TB_SETANCHORHIGHLIGHT, WM_SIZE:
+        SendMessage(Handle, WM_NCPAINT, 0, 0);
+      CM_SHOWINGCHANGED:
+        RefreshEditScrolls(SkinData, FScrollWnd);
+    end;
+  end;
+{$ELSE}
+  inherited;
+{$ENDIF}
+end;
+
 procedure TBCEditorCompletionProposalPopupWindow.MouseDown(AButton: TMouseButton; AShift: TShiftState; X, Y: Integer);
 begin
-  FSelectedLine := Max(0, TopLine + ((Y - FTitleHeight) div FItemHeight));
+  FSelectedLine := Max(0, TopLine + (Y div FItemHeight));
   inherited MouseDown(AButton, AShift, X, Y);
   Refresh;
 end;

@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "; This is comment\r\n",
                "/[Setup]\r\n",
@@ -370,12 +370,12 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "\"",
                   "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": ";",
@@ -391,8 +391,7 @@
                      "CloseTokenBeginningOfLine": true,
                      "OpenIsClose": true,
                      "TokenEndIsPreviousLine": true,
-                     "OpenTokenEnd": "]",
-                     "BreakCharFollows": false
+                     "OpenTokenEnd": "]"
                   }
                }
             ]
@@ -420,12 +419,12 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": ";",

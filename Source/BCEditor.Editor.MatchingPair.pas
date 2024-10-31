@@ -16,7 +16,6 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorMatchingPairOption; const AEnabled: Boolean);
   published
     property Colors: TBCEditorMatchingPairColors read FColors write SetColors;
     property Enabled: Boolean read FEnabled write FEnabled;
@@ -24,6 +23,8 @@ type
   end;
 
 implementation
+
+{ TBCEditorMatchingPair }
 
 constructor TBCEditorMatchingPair.Create;
 begin
@@ -51,14 +52,6 @@ begin
   end
   else
     inherited Assign(ASource);
-end;
-
-procedure TBCEditorMatchingPair.SetOption(const AOption: TBCEditorMatchingPairOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
 end;
 
 procedure TBCEditorMatchingPair.SetColors(const AValue: TBCEditorMatchingPairColors);

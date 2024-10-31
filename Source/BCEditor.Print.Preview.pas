@@ -9,7 +9,7 @@ uses
   BCEditor.Print;
 
 type
-  TBCEditorPreviewPageEvent = procedure(ASender: TObject; APageNumber: Integer) of object;
+  TBCEditorPreviewPageEvent = procedure(Sender: TObject; PageNumber: Integer) of object;
   TBCEditorPreviewScale = (pscWholePage, pscPageWidth, pscUserScaled);
 
   TBCEditorPrintPreview = class(TCustomControl)
@@ -48,10 +48,10 @@ type
   protected
     procedure CreateParams(var AParams: TCreateParams); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    procedure ScrollHorizontallyFor(AValue: Integer);
-    procedure ScrollHorizontallyTo(AValue: Integer); virtual;
-    procedure ScrollVerticallyFor(AValue: Integer);
-    procedure ScrollVerticallyTo(AValue: Integer); virtual;
+    procedure ScrollHorzFor(AValue: Integer);
+    procedure ScrollHorzTo(AValue: Integer); virtual;
+    procedure ScrollVertFor(AValue: Integer);
+    procedure ScrollVertTo(AValue: Integer); virtual;
     procedure SizeChanged; virtual;
     procedure UpdateScrollbars; virtual;
   public
@@ -93,15 +93,11 @@ const
   MARGIN_WIDTH_LEFT_AND_RIGHT = 12;
   MARGIN_HEIGHT_TOP_AND_BOTTOM = 12;
 
-{$I BCEditor.RectHelper.inc}
-
 { TBCEditorPrintPreview }
 
 constructor TBCEditorPrintPreview.Create(AOwner: TComponent);
 begin
   inherited;
-
-  Align := alClient;
   ControlStyle := ControlStyle + [csNeedsBorderPaint];
   FBorderStyle := bsSingle;
   FScaleMode := pscUserScaled;
@@ -111,10 +107,11 @@ begin
   Height := 120;
   ParentColor := False;
   Color := clAppWorkspace;
+  Visible := True;
   FPageNumber := 1;
   FShowScrollHint := True;
+  Align := alClient;
   FWheelAccumulator := 0;
-  Visible := True;
 end;
 
 procedure TBCEditorPrintPreview.CreateParams(var AParams: TCreateParams);
@@ -201,9 +198,9 @@ begin
     Pen.Color := clBlack;
     Pen.Width := 1;
     Pen.Style := psSolid;
-    if (csDesigning in ComponentState) or not Assigned(FEditorPrint) then
+    if (csDesigning in ComponentState) or (not Assigned(FEditorPrint)) then
     begin
-      Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, LClipRect, '', 0, nil);
+      PatBlt(Canvas.Handle, LClipRect.Left, LClipRect.Top, LClipRect.Right-LClipRect.Left, LClipRect.Bottom-LClipRect.Top, PATCOPY);
       Brush.Color := FPageBackgroundColor;
       Rectangle(MARGIN_WIDTH_LEFT_AND_RIGHT, MARGIN_HEIGHT_TOP_AND_BOTTOM, MARGIN_WIDTH_LEFT_AND_RIGHT + 30,
         MARGIN_HEIGHT_TOP_AND_BOTTOM + 43);
@@ -218,7 +215,7 @@ begin
     PaperRect.Bottom := PaperRect.Top + FPageSize.Y;
     PaperRGN := CreateRectRgn(PaperRect.Left, PaperRect.Top, PaperRect.Right + 1, PaperRect.Bottom + 1);
     if NULLREGION <> ExtSelectClipRgn(Handle, PaperRGN, RGN_DIFF) then
-      Windows.ExtTextOut(Canvas.Handle, 0, 0, ETO_OPAQUE, LClipRect, '', 0, nil);
+      PatBlt(Canvas.Handle, LClipRect.Left, LClipRect.Top, LClipRect.Right-LClipRect.Left, LClipRect.Bottom-LClipRect.Top, PATCOPY);
     SelectClipRgn(Handle, PaperRGN);
     Brush.Color := FPageBackgroundColor;
     Rectangle(PaperRect.Left, PaperRect.Top, PaperRect.Right + 1, PaperRect.Bottom + 1);
@@ -233,7 +230,7 @@ begin
   with Canvas do
   begin
     PaintPaper;
-    if (csDesigning in ComponentState) or not Assigned(FEditorPrint) then
+    if (csDesigning in ComponentState) or (not Assigned(FEditorPrint)) then
       Exit;
     SetMapMode(Handle, MM_ANISOTROPIC);
     SetWindowExtEx(Handle, FEditorPrint.PrinterInfo.PhysicalWidth, FEditorPrint.PrinterInfo.PhysicalHeight, nil);
@@ -252,12 +249,12 @@ begin
   end;
 end;
 
-procedure TBCEditorPrintPreview.ScrollHorizontallyFor(AValue: Integer);
+procedure TBCEditorPrintPreview.ScrollHorzFor(AValue: Integer);
 begin
-  ScrollHorizontallyTo(FScrollPosition.X + AValue);
+  ScrollHorzTo(FScrollPosition.X + AValue);
 end;
 
-procedure TBCEditorPrintPreview.ScrollHorizontallyTo(AValue: Integer);
+procedure TBCEditorPrintPreview.ScrollHorzTo(AValue: Integer);
 var
   LWidth, LPosition: Integer;
 begin
@@ -282,12 +279,12 @@ begin
   end;
 end;
 
-procedure TBCEditorPrintPreview.ScrollVerticallyFor(AValue: Integer);
+procedure TBCEditorPrintPreview.ScrollVertFor(AValue: Integer);
 begin
-  ScrollVerticallyTo(FScrollPosition.Y + AValue);
+  ScrollVertTo(FScrollPosition.Y + AValue);
 end;
 
-procedure TBCEditorPrintPreview.ScrollVerticallyTo(AValue: Integer);
+procedure TBCEditorPrintPreview.ScrollVertTo(AValue: Integer);
 var
   LHeight, LPosition: Integer;
 begin
@@ -485,19 +482,19 @@ begin
     LWidth := ClientWidth;
     case AMessage.ScrollCode of
       SB_TOP:
-        ScrollHorizontallyTo(0);
+        ScrollHorzTo(0);
       SB_BOTTOM:
-        ScrollHorizontallyTo(-FVirtualSize.X);
+        ScrollHorzTo(-FVirtualSize.X);
       SB_LINEDOWN:
-        ScrollHorizontallyFor(-(LWidth div 10));
+        ScrollHorzFor(-(LWidth div 10));
       SB_LINEUP:
-        ScrollHorizontallyFor(LWidth div 10);
+        ScrollHorzFor(LWidth div 10);
       SB_PAGEDOWN:
-        ScrollHorizontallyFor(-(LWidth div 2));
+        ScrollHorzFor(-(LWidth div 2));
       SB_PAGEUP:
-        ScrollHorizontallyFor(LWidth div 2);
+        ScrollHorzFor(LWidth div 2);
       SB_THUMBPOSITION, SB_THUMBTRACK:
-        ScrollHorizontallyTo(-AMessage.Pos);
+        ScrollHorzTo(-AMessage.Pos);
     end;
   end;
 end;
@@ -505,7 +502,6 @@ end;
 procedure TBCEditorPrintPreview.WMSize(var AMessage: TWMSize);
 begin
   inherited;
-
   if not (csDesigning in ComponentState) then
     SizeChanged;
 end;
@@ -593,19 +589,19 @@ begin
     LHeight := ClientHeight;
     case AMessage.ScrollCode of
       SB_TOP:
-        ScrollVerticallyTo(0);
+        ScrollVertTo(0);
       SB_BOTTOM:
-        ScrollVerticallyTo(-FVirtualSize.Y);
+        ScrollVertTo(-FVirtualSize.Y);
       SB_LINEDOWN:
-        ScrollVerticallyFor(-(LHeight div 10));
+        ScrollVertFor(-(LHeight div 10));
       SB_LINEUP:
-        ScrollVerticallyFor(LHeight div 10);
+        ScrollVertFor(LHeight div 10);
       SB_PAGEDOWN:
-        ScrollVerticallyFor(-(LHeight div 2));
+        ScrollVertFor(-(LHeight div 2));
       SB_PAGEUP:
-        ScrollVerticallyFor(LHeight div 2);
+        ScrollVertFor(LHeight div 2);
       SB_THUMBPOSITION, SB_THUMBTRACK:
-        ScrollVerticallyTo(-AMessage.Pos);
+        ScrollVertTo(-AMessage.Pos);
     end;
   end;
 end;
@@ -619,7 +615,7 @@ var
     if LCtrlPressed and (FPageNumber > 1) then
       PreviousPage
     else
-      ScrollVerticallyFor(WHEEL_DELTA);
+      ScrollVertFor(WHEEL_DELTA);
   end;
 
   procedure MouseWheelDown;
@@ -627,7 +623,7 @@ var
     if LCtrlPressed and (FPageNumber < PageCount) then
       NextPage
     else
-      ScrollVerticallyFor(-WHEEL_DELTA);
+      ScrollVertFor(-WHEEL_DELTA);
   end;
 
 var

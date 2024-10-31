@@ -16,7 +16,7 @@ const
   ecDown = 4;
   ecWordLeft = 5;
   ecWordRight = 6;
-  ecLineBegin = 7;
+  ecLineStart = 7;
   ecLineEnd = 8;
   ecPageUp = 9;
   ecPageDown = 10;
@@ -35,7 +35,7 @@ const
   ecSelectionDown = ecDown + ecSelection;
   ecSelectionWordLeft = ecWordLeft + ecSelection;
   ecSelectionWordRight = ecWordRight + ecSelection;
-  ecSelectionLineBegin = ecLineBegin + ecSelection;
+  ecSelectionLineStart = ecLineStart + ecSelection;
   ecSelectionLineEnd = ecLineEnd + ecSelection;
   ecSelectionPageUp = ecPageUp + ecSelection;
   ecSelectionPageDown = ecPageDown + ecSelection;
@@ -46,8 +46,9 @@ const
   ecSelectionEditorTop = ecEditorTop + ecSelection;
   ecSelectionEditorBottom = ecEditorBottom + ecSelection;
   ecSelectionGotoXY = ecGotoXY + ecSelection;
-  ecSelectionWord = ecSelection + 21;
-  ecSelectAll = ecSelection + 22;
+  ecSelectionScope = ecSelection + 21;
+  ecSelectionWord = ecSelection + 22;
+  ecSelectAll = ecSelection + 23;
   { Scrolling }
   ecScrollUp = 211;
   ecScrollDown = 212;
@@ -61,27 +62,24 @@ const
   ecNormalSelect = 231;
   ecColumnSelect = 232;
   { Bookmark }
-  ecToggleBookmark = 300;
-  ecGotoBookmark1 = 310;
-  ecGotoBookmark2 = 311;
-  ecGotoBookmark3 = 312;
-  ecGotoBookmark4 = 313;
-  ecGotoBookmark5 = 314;
-  ecGotoBookmark6 = 315;
-  ecGotoBookmark7 = 316;
-  ecGotoBookmark8 = 317;
-  ecGotoBookmark9 = 318;
-  ecSetBookmark1 = 320;
-  ecSetBookmark2 = 321;
-  ecSetBookmark3 = 322;
-  ecSetBookmark4 = 323;
-  ecSetBookmark5 = 324;
-  ecSetBookmark6 = 325;
-  ecSetBookmark7 = 326;
-  ecSetBookmark8 = 327;
-  ecSetBookmark9 = 328;
-  ecGotoNextBookmark = 330;
-  ecGotoPreviousBookmark = 331;
+  ecGotoBookmark1 = 302;
+  ecGotoBookmark2 = 303;
+  ecGotoBookmark3 = 304;
+  ecGotoBookmark4 = 305;
+  ecGotoBookmark5 = 306;
+  ecGotoBookmark6 = 307;
+  ecGotoBookmark7 = 308;
+  ecGotoBookmark8 = 309;
+  ecGotoBookmark9 = 310;
+  ecSetBookmark1 = 352;
+  ecSetBookmark2 = 353;
+  ecSetBookmark3 = 354;
+  ecSetBookmark4 = 355;
+  ecSetBookmark5 = 356;
+  ecSetBookmark6 = 357;
+  ecSetBookmark7 = 358;
+  ecSetBookmark8 = 359;
+  ecSetBookmark9 = 360;
   { Focus }
   ecGotFocus = 480;
   ecLostFocus = 481;
@@ -123,10 +121,10 @@ const
   ecLowerCaseBlock = 626;
   ecAlternatingCaseBlock = 627;
   { Move }
-  ecMoveLineUp = 701;
-  ecMoveLineDown = 702;
-  ecMoveCharLeft = 703;
-  ecMoveCharRight = 704;
+  ecMoveLineUp      = 701;
+  ecMoveLineDown    = 702;
+  ecMoveCharLeft    = 703;
+  ecMoveCharRight   = 704;
   { Search }
   ecSearchNext = 800;
   ecSearchPrevious = 801;
@@ -135,13 +133,21 @@ const
   ecBlockComment = 901;
 
   ecUserFirst = 1001;
+  { code folding }
+  ecCollapse = ecUserFirst + 100;
+  ecUncollapse = ecUserFirst + 101;
+  ecCollapseLevel = ecUserFirst + 102;
+  ecUncollapseLevel = ecUserFirst + 103;
+  ecCollapseAll = ecUserFirst + 104;
+  ecUncollapseAll = ecUserFirst + 105;
+  ecCollapseCurrent = ecUserFirst + 109;
 
 type
   TBCEditorCommand = type Word;
 
-  TBCEditorHookedCommandEvent = procedure(ASender: TObject; AAfterProcessing: Boolean; var AHandled: Boolean;
+  TBCEditorHookedCommandEvent = procedure(Sender: TObject; AfterProcessing: Boolean; var AHandled: Boolean;
     var ACommand: TBCEditorCommand; var AChar: Char; Data: Pointer; AHandlerData: Pointer) of object;
-  TBCEditorProcessCommandEvent = procedure(ASender: TObject; var ACommand: TBCEditorCommand; const AChar: Char;
+  TBCEditorProcessCommandEvent = procedure(Sender: TObject; var ACommand: TBCEditorCommand; var AChar: Char;
     AData: Pointer) of object;
 
   TBCEditorHookedCommandHandler = class(TObject)
@@ -225,7 +231,7 @@ type
   end;
 
 const
-  EditorCommandStrings: array [0 .. 106] of TBCEditorCommandString = (
+  EditorCommandStrings: array [0 .. 110] of TBCEditorCommandString = (
     (Value: ecNone; Name: 'ecNone'),
     (Value: ecLeft; Name: 'ecLeft'),
     (Value: ecRight; Name: 'ecRight'),
@@ -233,7 +239,7 @@ const
     (Value: ecDown; Name: 'ecDown'),
     (Value: ecWordLeft; Name: 'ecWordLeft'),
     (Value: ecWordRight; Name: 'ecWordRight'),
-    (Value: ecLineBegin; Name: 'ecLineBegin'),
+    (Value: ecLineStart; Name: 'ecLineStart'),
     (Value: ecLineEnd; Name: 'ecLineEnd'),
     (Value: ecPageUp; Name: 'ecPageUp'),
     (Value: ecPageDown; Name: 'ecPageDown'),
@@ -250,7 +256,7 @@ const
     (Value: ecSelectionDown; Name: 'ecSelectionDown'),
     (Value: ecSelectionWordLeft; Name: 'ecSelectionWordLeft'),
     (Value: ecSelectionWordRight; Name: 'ecSelectionWordRight'),
-    (Value: ecSelectionLineBegin; Name: 'ecSelectionLineBegin'),
+    (Value: ecSelectionLineStart; Name: 'ecSelectionLineStart'),
     (Value: ecSelectionLineEnd; Name: 'ecSelectionLineEnd'),
     (Value: ecSelectionPageUp; Name: 'ecSelectionPageUp'),
     (Value: ecSelectionPageDown; Name: 'ecSelectionPageDown'),
@@ -295,7 +301,6 @@ const
     (Value: ecColumnSelect; Name: 'ecColumnSelect'),
     (Value: ecUserFirst; Name: 'ecUserFirst'),
     (Value: ecContextHelp; Name: 'ecContextHelp'),
-    (Value: ecToggleBookmark; Name: 'ecToggleBookmark'),
     (Value: ecGotoBookmark1; Name: 'ecGotoBookmark1'),
     (Value: ecGotoBookmark2; Name: 'ecGotoBookmark2'),
     (Value: ecGotoBookmark3; Name: 'ecGotoBookmark3'),
@@ -314,8 +319,6 @@ const
     (Value: ecSetBookmark7; Name: 'ecSetBookmark7'),
     (Value: ecSetBookmark8; Name: 'ecSetBookmark8'),
     (Value: ecSetBookmark9; Name: 'ecSetBookmark9'),
-    (Value: ecGotoNextBookmark; Name: 'ecGotoNextBookmark'),
-    (Value: ecGotoPreviousBookmark; Name: 'ecGotoPreviousBookmark'),
     (Value: ecString; Name: 'ecString'),
     (Value: ecMoveLineUp; Name: 'ecMoveLineUp'),
     (Value: ecMoveLineDown; Name: 'ecMoveLineDown'),
@@ -329,6 +332,13 @@ const
     (Value: ecUpperCaseBlock; Name: 'ecUpperCaseBlock'),
     (Value: ecLowerCaseBlock; Name: 'ecLowerCaseBlock'),
     (Value: ecAlternatingCaseBlock; Name: 'ecAlternatingCaseBlock'),
+    (Value: ecCollapse; Name: 'ecCollapse'),
+    (Value: ecUncollapse; Name: 'ecUncollapse'),
+    (Value: ecCollapseLevel; Name: 'ecCollapseLevel'),
+    (Value: ecUncollapseLevel; Name: 'ecUncollapseLevel'),
+    (Value: ecCollapseAll; Name: 'ecCollapseAll'),
+    (Value: ecUncollapseAll; Name: 'ecUncollapseAll'),
+    (Value: ecCollapseCurrent; Name: 'ecCollapseCurrent'),
     (Value: ecSearchNext; Name: 'ecSearchNext'),
     (Value: ecSearchPrevious; Name: 'ecSearchPrevious'),
     (Value: ecLineComment; Name: 'ecLineComment'),
@@ -337,41 +347,29 @@ const
 
 function IdentToEditorCommand(const AIdent: string; var ACommand: LongInt): Boolean;
 var
-  LIndex: Integer;
-  LCommandString: TBCEditorCommandString;
+  i: Integer;
 begin
   Result := True;
-
-  for LIndex := Low(EditorCommandStrings) to High(EditorCommandStrings) do
-  begin
-    LCommandString := EditorCommandStrings[LIndex];
-    if CompareText(LCommandString.Name, AIdent) = 0 then
+  for i := Low(EditorCommandStrings) to High(EditorCommandStrings) do
+    if CompareText(EditorCommandStrings[i].Name, AIdent) = 0 then
     begin
-      ACommand := LCommandString.Value;
+      ACommand := EditorCommandStrings[i].Value;
       Exit;
     end;
-  end;
-
   Result := False;
 end;
 
 function EditorCommandToIdent(ACommand: LongInt; var AIdent: string): Boolean;
 var
-  LIndex: Integer;
-  LCommandString: TBCEditorCommandString;
+  i: Integer;
 begin
   Result := True;
-
-  for LIndex := Low(EditorCommandStrings) to High(EditorCommandStrings) do
-  begin
-    LCommandString := EditorCommandStrings[LIndex];
-    if LCommandString.Value = ACommand then
+  for i := Low(EditorCommandStrings) to High(EditorCommandStrings) do
+    if EditorCommandStrings[i].Value = ACommand then
     begin
-      AIdent := LCommandString.Name;
+      AIdent := EditorCommandStrings[i].Name;
       Exit;
     end;
-  end;
-
   Result := False;
 end;
 
@@ -386,18 +384,13 @@ end;
 constructor TBCEditorHookedCommandHandler.Create(AEvent: TBCEditorHookedCommandEvent; AData: pointer);
 begin
   inherited Create;
-
   FEvent := AEvent;
   FData := AData;
 end;
 
 function TBCEditorHookedCommandHandler.Equals(AEvent: TBCEditorHookedCommandEvent): Boolean;
-var
-  LClassMethod, LParamMethod: TMethod;
 begin
-  LClassMethod := TMethod(FEvent);
-  LParamMethod := TMethod(AEvent);
-  Result := (LClassMethod.Code = LParamMethod.Code) and (LClassMethod.Data = LParamMethod.Data);
+  Result := (TMethod(FEvent).Code = TMethod(AEvent).Code) and (TMethod(FEvent).Data = TMethod(AEvent).Data);
 end;
 
 { TBCEditorKeyCommand }
@@ -459,12 +452,13 @@ begin
   begin
     LDuplicate := TBCEditorKeyCommands(Collection).FindShortcuts(AValue, SecondaryShortCut);
     if (LDuplicate <> -1) and (LDuplicate <> Self.Index) then
-      raise EBCEditorKeyCommandException.Create(SBCEditorDuplicateShortcut);
+      raise EBCEditorKeyCommandException.Create('Shortcut ' + ShortCutToText(AValue) + ' already used for '
+                                                + TBCEditorKeyCommands(Collection).Items[LDuplicate].GetDisplayName );
   end;
 
   Menus.ShortCutToKey(AValue, LNewKey, LNewShiftState);
 
-  if (LNewKey <> Key) or (LNewShiftState <> ShiftState) then
+  if (LNewKey <> Key) or (LNewShiftState <> ShiftState) then
   begin
     Key := LNewKey;
     ShiftState := LNewShiftState;
@@ -528,15 +522,15 @@ end;
 
 procedure TBCEditorKeyCommands.Assign(ASource: TPersistent);
 var
-  LIndex: Integer;
+  i: Integer;
   LKeyCommands: TBCEditorKeyCommands;
 begin
   if Assigned(ASource) and (ASource is TBCEditorKeyCommands) then
   begin
     LKeyCommands := ASource as TBCEditorKeyCommands;
     Self.Clear;
-    for LIndex := 0 to LKeyCommands.Count - 1 do
-      NewItem.Assign(LKeyCommands[LIndex]);
+    for i := 0 to LKeyCommands.Count - 1 do
+      NewItem.Assign(LKeyCommands[i]);
   end
   else
     inherited Assign(ASource);
@@ -551,65 +545,68 @@ end;
 
 function TBCEditorKeyCommands.FindCommand(ACommand: TBCEditorCommand): Integer;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   Result := -1;
-  for LIndex := 0 to Count - 1 do
-  if Items[LIndex].Command = ACommand then
-    Exit(LIndex);
+  for i := 0 to Count - 1 do
+    if Items[i].Command = ACommand then
+    begin
+      Result := i;
+      Break;
+    end;
 end;
 
 function TBCEditorKeyCommands.FindKeyCode(AKeycode: Word; AShift: TShiftState): Integer;
 var
-  LIndex: Integer;
-  LKeyCommand: TBCEditorKeyCommand;
+  i: Integer;
 begin
   Result := -1;
-  for LIndex := 0 to Count - 1 do
-  begin
-    LKeyCommand := Items[LIndex];
-    if (LKeyCommand.Key = AKeyCode) and (LKeyCommand.ShiftState = AShift) and (LKeyCommand.SecondaryKey = 0) then
-      Exit(LIndex);
-  end;
+  for i := 0 to Count - 1 do
+    if (Items[i].Key = AKeyCode) and (Items[i].ShiftState = AShift) and (Items[i].SecondaryKey = 0) then
+    begin
+      Result := i;
+      Break;
+    end;
 end;
 
 function TBCEditorKeyCommands.FindKeyCodes(AKeyCode: Word; AShift: TShiftState; ASecondaryKeyCode: Word; ASecondaryShift: TShiftState): Integer;
 var
-  LIndex: Integer;
-  LKeyCommand: TBCEditorKeyCommand;
+  i: Integer;
 begin
   Result := -1;
-  for LIndex := 0 to Count - 1 do
-  begin
-    LKeyCommand := Items[LIndex];
-    if (LKeyCommand.Key = AKeyCode) and (LKeyCommand.ShiftState = AShift) and (LKeyCommand.SecondaryKey = ASecondaryKeyCode) and
-      (LKeyCommand.SecondaryShiftState = ASecondaryShift) then
-      Exit(LIndex);
-  end;
+  for i := 0 to Count - 1 do
+    if (Items[i].Key = AKeyCode) and (Items[i].ShiftState = AShift) and (Items[i].SecondaryKey = ASecondaryKeyCode) and
+      (Items[i].SecondaryShiftState = ASecondaryShift) then
+    begin
+      Result := i;
+      Break;
+    end;
 end;
 
 function TBCEditorKeyCommands.FindShortcut(AShortCut: TShortCut): Integer;
 var
-  LIndex: Integer;
+  i: Integer;
 begin
   Result := -1;
-  for LIndex := 0 to Count - 1 do
-  if Items[LIndex].ShortCut = AShortCut then
-    Exit(LIndex);
+  for i := 0 to Count - 1 do
+    if Items[i].ShortCut = AShortCut then
+    begin
+      Result := i;
+      Break;
+    end;
 end;
 
 function TBCEditorKeyCommands.FindShortcuts(AShortCut, ASecondaryShortCut: TShortCut): Integer;
 var
-  LIndex: Integer;
-  LKeyCommand: TBCEditorKeyCommand;
+  i: Integer;
 begin
   Result := -1;
-  for LIndex := 0 to Count - 1 do
-  begin
-    LKeyCommand := Items[LIndex];
-    if (LKeyCommand.ShortCut = AShortCut) and (LKeyCommand.SecondaryShortCut = ASecondaryShortCut) then
-      Exit(LIndex);
-  end;
+  for i := 0 to Count - 1 do
+    if (Items[i].ShortCut = AShortCut) and (Items[i].SecondaryShortCut = ASecondaryShortCut) then
+    begin
+      Result := i;
+      break;
+    end;
 end;
 
 function TBCEditorKeyCommands.GetItem(AIndex: Integer): TBCEditorKeyCommand;
@@ -649,8 +646,8 @@ begin
   Add(ecSelectionPageUp, [ssShift], VK_PRIOR);
   Add(ecPageTop, [ssCtrl], VK_PRIOR);
   Add(ecSelectionPageTop, [ssShift, ssCtrl], VK_PRIOR);
-  Add(ecLineBegin, [], VK_HOME);
-  Add(ecSelectionLineBegin, [ssShift], VK_HOME);
+  Add(ecLineStart, [], VK_HOME);
+  Add(ecSelectionLineStart, [ssShift], VK_HOME);
   Add(ecEditorTop, [ssCtrl], VK_HOME);
   Add(ecSelectionEditorTop, [ssShift, ssCtrl], VK_HOME);
   Add(ecLineEnd, [], VK_END);
@@ -702,7 +699,6 @@ begin
   Add(ecMoveCharLeft, [ssAlt, ssCtrl], VK_LEFT);
   Add(ecMoveCharRight, [ssAlt, ssCtrl], VK_RIGHT);
   { Bookmarks }
-  Add(ecToggleBookmark, [ssCtrl], VK_F2);
   Add(ecGotoBookmark1, [ssCtrl], Ord('1'));
   Add(ecGotoBookmark2, [ssCtrl], Ord('2'));
   Add(ecGotoBookmark3, [ssCtrl], Ord('3'));
@@ -721,8 +717,6 @@ begin
   Add(ecSetBookmark7, [ssCtrl, ssShift], Ord('7'));
   Add(ecSetBookmark8, [ssCtrl, ssShift], Ord('8'));
   Add(ecSetBookmark9, [ssCtrl, ssShift], Ord('9'));
-  Add(ecGotoNextBookmark, [], VK_F2);
-  Add(ecGotoPreviousBookmark, [ssShift], VK_F2);
   { Selection modes }
   Add(ecNormalSelect, [ssCtrl, ssAlt], Ord('N'));
   Add(ecColumnSelect, [ssCtrl, ssAlt], Ord('C'));
@@ -740,8 +734,8 @@ initialization
 
   RegisterIntegerConsts(TypeInfo(TBCEditorCommand), IdentToEditorCommand, EditorCommandToIdent);
 
-finalization
-
-  UnregisterIntegerConsts(TypeInfo(TBCEditorCommand), IdentToEditorCommand, EditorCommandToIdent);
+//finalization
+//  Causes a memory leak in the RTL..............
+//  UnregisterIntegerConsts(TypeInfo(TBCEditorCommand), IdentToEditorCommand, EditorCommandToIdent);
 
 end.

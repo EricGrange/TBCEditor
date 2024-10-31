@@ -3,7 +3,7 @@ unit BCEditor.StyleHooks;
 interface
 
 uses
-  Windows, Messages, Controls, Themes, Classes, Types;
+  Winapi.Windows, Winapi.Messages, Vcl.Controls, Vcl.Themes, System.Classes, System.Types;
 
 const
   CM_UPDATE_VCLSTYLE_SCROLLBARS = CM_BASE + 2050;
@@ -102,7 +102,7 @@ var
   P: TPoint;
   BorderValue: TSize;
   BarInfo: TScrollBarInfo;
-  LIndex: Integer;
+  I: Integer;
 
   procedure CalcVerticalRects;
   begin
@@ -121,18 +121,18 @@ var
       FVertScrollBarRect.BottomRight := P;
       OffsetRect(FVertScrollBarRect, BorderValue.cx, BorderValue.cy);
 
-      LIndex := GetSystemMetrics(SM_CYVTHUMB);
+      I := GetSystemMetrics(SM_CYVTHUMB);
       // Down Button
       FVertScrollBarDownButtonRect := FVertScrollBarRect;
-      FVertScrollBarDownButtonRect.Top := FVertScrollBarDownButtonRect.Bottom - LIndex;
+      FVertScrollBarDownButtonRect.Top := FVertScrollBarDownButtonRect.Bottom - I;
 
       // UP Button
       FVertScrollBarUpButtonRect := FVertScrollBarRect;
-      FVertScrollBarUpButtonRect.Bottom := FVertScrollBarUpButtonRect.Top + LIndex;
+      FVertScrollBarUpButtonRect.Bottom := FVertScrollBarUpButtonRect.Top + I;
 
       FVertScrollBarSliderTrackRect := FVertScrollBarRect;
-      Inc(FVertScrollBarSliderTrackRect.Top, LIndex);
-      Dec(FVertScrollBarSliderTrackRect.Bottom, LIndex);
+      Inc(FVertScrollBarSliderTrackRect.Top, I);
+      Dec(FVertScrollBarSliderTrackRect.Bottom, I);
     end;
   end;
 
@@ -153,18 +153,18 @@ var
       FHorzScrollBarRect.BottomRight := P;
       OffsetRect(FHorzScrollBarRect, BorderValue.cx, BorderValue.cy);
 
-      LIndex := GetSystemMetrics(SM_CXHTHUMB);
+      I := GetSystemMetrics(SM_CXHTHUMB);
       // Down Button
       FHorzScrollBarDownButtonRect := FHorzScrollBarRect;
-      FHorzScrollBarDownButtonRect.Left := FHorzScrollBarDownButtonRect.Right - LIndex;
+      FHorzScrollBarDownButtonRect.Left := FHorzScrollBarDownButtonRect.Right - I;
 
       // UP Button
       FHorzScrollBarUpButtonRect := FHorzScrollBarRect;
-      FHorzScrollBarUpButtonRect.Right := FHorzScrollBarUpButtonRect.Left + LIndex;
+      FHorzScrollBarUpButtonRect.Right := FHorzScrollBarUpButtonRect.Left + I;
 
       FHorzScrollBarSliderTrackRect := FHorzScrollBarRect;
-      Inc(FHorzScrollBarSliderTrackRect.Left, LIndex);
-      Dec(FHorzScrollBarSliderTrackRect.Right, LIndex);
+      Inc(FHorzScrollBarSliderTrackRect.Left, I);
+      Dec(FHorzScrollBarSliderTrackRect.Right, I);
     end;
   end;
 

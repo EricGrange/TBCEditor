@@ -5,7 +5,7 @@ interface
 uses
   Classes, Graphics, BCEditor.Types;
 
-type
+type
   TBCEditorLeftMarginBorder = class(TPersistent)
   strict private
     FOnChange: TNotifyEvent;

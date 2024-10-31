@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "10.01.2017",
+            "Version": "1.4.2",
+            "Date": "13.03.2016",
             "Sample": [
                "// Hello World in Pascal\r\n",
                "\r\n",
@@ -406,7 +406,7 @@
                },
                {
                   "Type": "Float",
-                  "Symbols": ".0123456789E",
+                  "Symbols": ".0123456789",
                   "Attributes": {
                      "Element": "Number"
                   }
@@ -422,7 +422,7 @@
                {
                   "OpenToken": "'",
                   "CloseToken": "'",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                },
                {
                   "OpenToken": "//",
@@ -522,7 +522,7 @@
                },
                {
                   "OpenToken": "PROGRAM",
-                  "CloseToken": "END.",
+                  "CloseToken": "END",
                   "Properties": {
                      "OpenTokenBeginningOfLine": true,
                      "SharedClose": true
@@ -532,9 +532,7 @@
                   "OpenToken": "$REGION",
                   "CloseToken": "$ENDREGION",
                   "Properties": {
-                     "OpenTokenEnd": "}",
-										 "ShowGuideLine": false,
-										 "BeginWithBreakChar": true
+                     "OpenTokenEnd": "}"
                   }
                }
             ]
@@ -590,7 +588,7 @@
          {
             "OpenToken": "'",
             "CloseToken": "'",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          },
          {
             "OpenToken": "//",

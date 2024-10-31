@@ -24,6 +24,8 @@ type
 
 implementation
 
+{ TBCEditorSearchHighlighter }
+
 constructor TBCEditorSearchHighlighter.Create;
 begin
   inherited;

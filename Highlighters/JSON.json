@@ -2,8 +2,8 @@
    "Highlighter": {
       "Info": {
          "General": {
-            "Version": "2.0.0",
-            "Date": "05.01.2017",
+            "Version": "1.4.2",
+            "Date": "09.01.2016",
             "Sample": [
                "{\r\n",
                "  \"firstName\": \"John\",\r\n",
@@ -266,23 +266,17 @@
                {
                   "OpenToken": "\"",
                   "CloseToken": "\"",
-                  "RegionType": "SingleLineString"
+                  "RegionType": "String"
                }
             ],
             "FoldRegion": [
                {
                   "OpenToken": "{",
-                  "CloseToken": "}",
-                  "Properties": {
-                     "BreakCharFollows": false
-                  }
+                  "CloseToken": "}"
                },
                {
                   "OpenToken": "[",
-                  "CloseToken": "]",
-                  "Properties": {
-                     "BreakCharFollows": false
-                  }
+                  "CloseToken": "]"
                }
             ]
          }
@@ -309,7 +303,7 @@
          {
             "OpenToken": "\"",
             "CloseToken": "\"",
-            "RegionType": "SingleLineString"
+            "RegionType": "String"
          }
       ]
    }

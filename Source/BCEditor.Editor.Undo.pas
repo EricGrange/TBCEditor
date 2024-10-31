@@ -3,7 +3,7 @@ unit BCEditor.Editor.Undo;
 interface
 
 uses
-  Classes, BCEditor.Types;
+  Classes, BCEditor.Consts, BCEditor.Types;
 
 type
   TBCEditorUndo = class(TPersistent)
@@ -13,7 +13,6 @@ type
   public
     constructor Create;
     procedure Assign(ASource: TPersistent); override;
-    procedure SetOption(const AOption: TBCEditorUndoOption; const AEnabled: Boolean);
   published
     property Options: TBCEditorUndoOptions read FOptions write SetOptions default [uoGroupUndo];
   end;
@@ -34,14 +33,6 @@ begin
     Self.FOptions := FOptions
   else
     inherited Assign(ASource);
-end;
-
-procedure TBCEditorUndo.SetOption(const AOption: TBCEditorUndoOption; const AEnabled: Boolean);
-begin
-  if AEnabled then
-    Include(FOptions, AOption)
-  else
-    Exclude(FOptions, AOption);
 end;
 
 procedure TBCEditorUndo.SetOptions(const AValue: TBCEditorUndoOptions);

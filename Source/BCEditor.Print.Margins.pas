@@ -86,6 +86,8 @@ type
 
 implementation
 
+{ TBCEditorPrintMargins }
+
 const
   mmPerInch = 25.4;
   mmPerCm = 10;
