@@ -1,6 +1,4 @@
-The latest release version <a href="https://github.com/bonecode/TBCEditor/releases">1.9.0</a>
-
-Use the Issues page to report bugs or send them directly to lasse@bonecode.com.
+This is a 2016 fork of TBCEditor before 1.9.0 that his more stable (wrt to undos), below Readme content is "as is" for now and may be incorrect.
 
 <h3>Description</h3>
 
